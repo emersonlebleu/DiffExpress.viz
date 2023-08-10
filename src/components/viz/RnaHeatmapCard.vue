@@ -1,13 +1,15 @@
 <template>
     <div class="rna-hm-card-container" ref="hmCardContainer">
-        <p class="card-title">RNA Heatmap</p>
+        <p class="card-title">Heatmap</p>
   
         <div class="viz-container">
         <!-- Only Render Once there is Data -->
         <RnaHeatmapViz v-if="data && data.length && summaryData && Object.keys(summaryData).length" 
               :data="data" 
               :selection="selectedGene" 
-              :summaryData="summaryData"/>
+              :summaryData="summaryData"
+              :axGenes="genes"
+              :axGroups="groups"/>
         </div>
     </div>
   </template>
@@ -25,12 +27,14 @@
         selection: String,
         summaryData: Object,
         selectedFile: String,
-        geneNames: Array,
+        axGenes: Array,
+        axGroups: Array,
       },
       data() {
         return {
             fileSelected: this.selectedFile,
-            genes: this.geneNames || [],
+            genes: this.axGenes || [],
+            groups: this.axGroups || [],
             selectedGene: this.selection,
         }
       },
@@ -38,9 +42,12 @@
         //Nothing now
       },
       watch: {
-        geneNames: function(newVal, oldVal) {
-        this.genes = newVal;
-      },
+        axGenes: function(newVal, oldVal) {
+            this.genes = newVal;
+         },
+        axGroups: function(newVal, oldVal) {
+            this.groups = newVal;
+         },
       },
       mounted() {
         //Nothing Now
@@ -71,7 +78,7 @@
 
     .viz-container {
         width: 100%;
-        min-height: 85%;
+        min-height: 95%;
     }
     .card-title {
         margin: 1em;

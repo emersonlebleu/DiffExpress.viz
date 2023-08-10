@@ -1,6 +1,6 @@
 <template>
   <div class="rna-volc-card-container" ref="volcCardContainer">
-    <p class="card-title">RNA Volcano Plot</p>
+    <p class="card-title">Volcano Plot</p>
 
     <div class="viz-container">
       <!-- Only Render Once there is Data -->
@@ -13,7 +13,7 @@
   
     <div class="card-tool-bar">
       <div class="label-input-container">
-        <p class="label">Data File: </p>
+        <p class="label">Sample Data: </p>
         <select class="data-selector" v-model="fileSelected" @change="emitFileSelected">
           <option value="fish">Fish</option>
           <option value="mouse">Mouse</option>

@@ -1,3 +1,4 @@
+import { lab } from "d3";
 
 
 export default async function fetchData(set, pValFilter, log2FCFilter) {
@@ -24,6 +25,7 @@ export default async function fetchData(set, pValFilter, log2FCFilter) {
       //Lables are the first row of rawdata
       const labels = rawdata[0].split('\t');
       let geneNames = new Set();
+      let groups = labels.slice(10);
 
       //Add A label for the negLog10Pvalue & color
       labels.push('negLog10Pvalue');
@@ -115,7 +117,7 @@ export default async function fetchData(set, pValFilter, log2FCFilter) {
 
       sumStats = createSumStats(labels, data);
 
-      return [dataObj, sumStats, genesArraySorted];
+      return [dataObj, sumStats, genesArraySorted, groups];
       
     } catch (error) {
       console.error('Error fetching data:', error);

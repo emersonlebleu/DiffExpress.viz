@@ -13,6 +13,8 @@
             data: Array,
             selection: String,
             summaryData: Object,
+            axGenes: Array,
+            axGroups: Array,
         },
         data() {
             return {
@@ -48,10 +50,8 @@
                 let height = container.clientHeight;
 
                 this.hmChart = RnaHeatmapD3()
-                    .setXMin(xMin)
-                    .setXMax(xMax)
-                    .setYMin(yMin)
-                    .setYMax(yMax)
+                    .setYValues(this.axGroups)
+                    .setXValues(this.axGenes)
                     .setHeight(height)
                     .setWidth(width)
                     .setSelection(this.selection);
