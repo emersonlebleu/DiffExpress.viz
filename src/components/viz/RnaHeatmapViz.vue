@@ -42,10 +42,8 @@
                     d3.select(container).selectAll("*").remove();
                 }
                 
-                let xMin = this.summaryData.log2FoldChange.range[0];
-                let xMax = this.summaryData.log2FoldChange.range[1];
-                let yMin = this.summaryData.negLog10Pvalue.range[0];
-                let yMax = this.summaryData.negLog10Pvalue.range[1];
+                let norms = this.getNorms(this.summaryData);
+
                 let width = container.clientWidth;
                 let height = container.clientHeight;
 
@@ -56,8 +54,24 @@
                     .setWidth(width)
                     .setSelection(this.selection);
 
-                this.hmChart(container, this.data);
-            }
+                this.hmChart(container, this.data, norms);
+            },
+            getNorms(sumData) {
+                let norms = [];
+                let mins = [];
+                let maxs = [];
+
+                for (let group of this.axGroups) {
+                    mins.push(sumData[group]['range'][0]);
+                    maxs.push(sumData[group]['range'][1]);
+                }
+                
+                let min = Math.min(...mins);
+                let max = Math.max(...maxs);
+                norms = [min, max];
+
+                return norms;
+            },
         },
         watch: {
             summaryData(newVal, oldVal) {

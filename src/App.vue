@@ -73,7 +73,7 @@
       },
       getHmData(data) {
         //For now take a slice to work with
-        this.hmData = this.data.slice(0, 30);
+        this.hmData = data.slice(0, 20);
       },
       async populateData() {
         try {
