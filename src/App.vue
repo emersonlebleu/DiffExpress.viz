@@ -9,18 +9,27 @@
       :geneNames="geneNames"
       @newfileSelected="changeData"
       @newPFilter="filterPVal"
-      @newFCFilter="filterFCVal"/>  
+      @newFCFilter="filterFCVal"/>
+      
+      <RnaHeatmapCard class="data-card"
+      :data="data"
+      :selection="selection"
+      :summaryData="summaryData"
+      :selectedFile="selectedFile"
+      :geneNames="geneNames"/>  
 
 </template>
 
 <script>
   import RnaVolcanoCard from './components/viz/RnaVolcanoCard.vue';
+  import RnaHeatmapCard from './components/viz/RnaHeatmapCard.vue';
   import fetchData from './data/fetchData.js';
   
   export default {
     name: 'App',
     components: {
-      RnaVolcanoCard
+      RnaVolcanoCard,
+      RnaHeatmapCard
     }, 
     data() {
       return {
