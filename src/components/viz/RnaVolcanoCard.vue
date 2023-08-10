@@ -98,7 +98,6 @@
       }
     },
     watch: {
-      //Nothing Now
       geneNames: function(newVal, oldVal) {
         this.genes = newVal;
       },
@@ -118,7 +117,7 @@
       justify-content: center;
 
       width: 100%;
-      height: 100%;
+      height: 50%;
 
       padding: 20px;
       background-color: #f5f5f5;

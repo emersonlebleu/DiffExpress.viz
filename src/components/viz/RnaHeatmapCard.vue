@@ -49,5 +49,23 @@
   </script>
   
   <style scoped>
-  
+    .rna-hm-card-container {     
+    /* flex */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      width: 100%;
+      height: 50%;
+
+      padding: 20px;
+      background-color: #f5f5f5;
+      border-radius: 5px;
+
+      margin-top: 20px;
+
+      color: black;
+      box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+    }
   </style>
