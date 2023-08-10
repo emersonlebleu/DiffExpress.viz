@@ -77,5 +77,23 @@
 </script>
 
 <style scoped>
+    #tool-tip{
+        position: absolute;
+        display: none;
+        width: auto;
+        height: auto;
+        background: none repeat scroll 0 0 #4F4F54;
+        border-radius: 8px;
+        box-shadow: -3px 3px 15px #888888;
+        color: white;
+        font: 12px sans-serif;
+        padding: 5px;
+        text-align: center;
+    }
+
+    #chart-container {
+        width: 100%;
+        height: 100%;
+    }
 
 </style>
