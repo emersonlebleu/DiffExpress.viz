@@ -9,7 +9,8 @@
       :geneNames="geneNames"
       @newfileSelected="changeData"
       @newPFilter="filterPVal"
-      @newFCFilter="filterFCVal"/>
+      @newFCFilter="filterFCVal"
+      @hmSelection="updateHmSelect"/>
 
       <RnaHeatmapCard class="data-card"
       :data="hmData"
@@ -50,6 +51,10 @@
       this.populateData();
     },
     methods: {
+      updateHmSelect(n) {
+        this.hmData = n;
+        this.hmGeneNames = this.getHmGeneNames(this.hmData);
+      },
       changeData(n) {
         this.selectedFile = n;
         this.populateData();

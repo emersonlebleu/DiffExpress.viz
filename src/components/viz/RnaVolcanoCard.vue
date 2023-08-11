@@ -7,7 +7,8 @@
       <RnaVolcanoViz v-if="data && data.length && summaryData && Object.keys(summaryData).length" 
               :data="data" 
               :selection="selectedGene" 
-              :summaryData="summaryData"/>
+              :summaryData="summaryData"
+              @click="emitHmSelection"/>
     </div>
 
   
@@ -61,6 +62,7 @@
 
 <script>
   import RnaVolcanoViz from './RnaVolcanoViz.vue';
+  import * as d3 from 'd3';
 
   export default {
     name: 'RnaVolcanoCard',
@@ -95,7 +97,12 @@
       },
       emitFCFilter() {
         this.$emit('newFCFilter', parseFloat(this.fcFilter))
-      }
+      },
+      emitHmSelection() {
+        //use d3 to get all of the points with the class of selected
+        let selectedPoints = d3.selectAll('.selected').data();
+        this.$emit('hmSelection', selectedPoints);
+      },
     },
     watch: {
       geneNames: function(newVal, oldVal) {

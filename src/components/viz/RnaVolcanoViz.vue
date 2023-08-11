@@ -1,5 +1,5 @@
 <template>
-    <div ref="volcano" id="chart-container"></div>
+    <div ref="volcano" id="chart-container" @click="handleClick"></div>
     <div id="tool-tip"></div>
 </template>
  
@@ -57,8 +57,12 @@
                     .setSelection(this.selection);
 
                 this.volcChart(container, this.data);
+            },
+            handleClick(event){
+                this.$emit('click', event);
             }
         },
+        emits: ['click'],
         watch: {
             summaryData(newVal, oldVal) {
                 if (Object.keys(newVal).length > 0) {
