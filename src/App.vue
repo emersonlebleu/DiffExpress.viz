@@ -15,7 +15,7 @@
       <RnaHeatmapCard class="data-card"
       :data="hmData"
       :selection="selection"
-      :summaryData="summaryData"
+      :summaryData="hmSummaryData"
       :selectedFile="selectedFile"
       :axGenes="hmGeneNames"
       :axGroups="hmGroupNames"/>  
@@ -45,6 +45,7 @@
         hmData: [],
         hmGeneNames: [],
         hmGroupNames: [],
+        hmSummaryData: {},
       }
     },
     async mounted() {
@@ -54,6 +55,7 @@
       updateHmSelect(n) {
         this.hmData = n;
         this.hmGeneNames = this.getHmGeneNames(this.hmData);
+        this.hmSummaryData = this.getHmSummaryData(this.hmData, this.hmGroupNames);
       },
       changeData(n) {
         this.selectedFile = n;
@@ -76,23 +78,47 @@
         }
         return genes;
       },
-      getHmData(data) {
-        //Nothing at present
+      getHmSummaryData(data, groupNames) {
+        //Used to get summary data that is reflective of the scale of the selected hm data
+        let stats = {};
+
+        for (let i = 0; i < groupNames.length; i++) {
+            let label = groupNames[i];
+
+            function createColumn(label, dataObj) {
+              let column = [];
+              for (let data of dataObj) {
+                  if (!isNaN(parseFloat(data[label]))) {
+                    column.push(parseFloat(data[label]))
+                  } 
+              }
+              return column;
+            }
+
+            let column = createColumn(label, data);
+
+            if (typeof column[0] === 'number') {
+              stats[label] = {
+                range: [Math.min(...column), Math.max(...column)],
+                mean: column.reduce((total, current) => total + current, 0) / column.length,
+              }
+
+              stats[label].stdDev = Math.sqrt(column.reduce((total, current) => total + Math.pow(current - stats[label].mean, 2), 0) / column.length);
+            }
+        }
+        return stats;
       },
       async populateData() {
         try {
           let outputData = await fetchData(this.selectedFile, this.pFilterVal, this.fcFilterVal);
           this.data = outputData[0];
 
-          //The summary data used for both charts to calculate the axis ranges or the heatmap color scale
-          //Comes from the full data set that is filtered by the p and fc values 
-          //Heatmap color scale is based on the full data set rather than just the heatmap selection
           this.summaryData = outputData[1];
           this.geneNames = outputData[2];
           this.hmGroupNames = outputData[3];
 
-          this.getHmData(this.data);
           this.hmGeneNames = this.getHmGeneNames(this.hmData);
+          this.hmSummaryData = this.getHmSummaryData(this.hmData, this.hmGroupNames);
 
         } catch (error) {
           console.error('Error fetching data:', error);
