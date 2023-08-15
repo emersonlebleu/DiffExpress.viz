@@ -77,8 +77,7 @@
         return genes;
       },
       getHmData(data) {
-        //For now take a slice to work with
-        this.hmData = data.slice(0, 20);
+        //Nothing at present
       },
       async populateData() {
         try {

@@ -1,6 +1,6 @@
 <template>
     <div class="rna-hm-card-container" ref="hmCardContainer">
-        <p class="card-title">Heatmap</p>
+        <p class="card-title" v-if="data && data.length && summaryData && Object.keys(summaryData).length">Heatmap</p>
   
         <div class="viz-container">
         <!-- Only Render Once there is Data -->
@@ -10,6 +10,8 @@
               :summaryData="summaryData"
               :axGenes="genes"
               :axGroups="groups"/>
+
+        <div id="no-hm-data" v-else>Select genes to render heatmap.</div>
         </div>
     </div>
   </template>
@@ -86,5 +88,17 @@
         text-align: center;
 
         width: 100%;
+    }
+
+    #no-hm-data {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2em;
+        color: red;
+        font-size: large;
+        font-weight: bold;
+
+        height: 100%;
     }
   </style>
