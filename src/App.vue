@@ -83,6 +83,10 @@
         try {
           let outputData = await fetchData(this.selectedFile, this.pFilterVal, this.fcFilterVal);
           this.data = outputData[0];
+
+          //The summary data used for both charts to calculate the axis ranges or the heatmap color scale
+          //Comes from the full data set that is filtered by the p and fc values 
+          //Heatmap color scale is based on the full data set rather than just the heatmap selection
           this.summaryData = outputData[1];
           this.geneNames = outputData[2];
           this.hmGroupNames = outputData[3];
