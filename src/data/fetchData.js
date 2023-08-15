@@ -64,7 +64,14 @@ export default async function fetchData(set, pValFilter, log2FCFilter) {
 
           //Add the negLog10Pvalue to the row (only fires if above conditions are not met)
           data[i].push(-Math.log10(data[i][5]));
-          data[i].push("blue");
+
+          if (data[i][2] > 0) {
+            data[i].push("red");
+          } else if (data[i][2] < 0) {
+            data[i].push("blue");
+          } else {
+            data[i].push("grey");
+          }
           geneNames.add(data[i][7]);
       }
       
