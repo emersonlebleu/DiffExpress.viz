@@ -1,79 +1,89 @@
 <template>
-    <div ref="volcano" id="chart-container" @click="handleClick"></div>
+    <div ref="heatmap" id="chart-container"></div>
     <div id="tool-tip"></div>
 </template>
  
 <script>
-    import RnaVolcanoD3 from '../../d3/RnaVolcano.d3.js';
+    import RnaHeatmapD3 from '../../d3/RnaHeatmap.d3.js';
     import * as d3 from 'd3';
 
     export default {
-        name: 'RnaVolcanoViz',
+        name: 'RnaHeatmapViz',
         props: {
             data: Array,
             selection: String,
             summaryData: Object,
+            axGenes: Array,
+            axGroups: Array,
         },
         data() {
             return {
-                volcChart: null,
+                hmChart: null,
             }
         },
         mounted() {
             //no longer need condition as the chart is not rendered at all until data is loaded
-            this.drawVolc();
+            this.drawHm();
             //allow the chart to resize when the window resizes
-            window.addEventListener('resize', this.drawVolc);
+            window.addEventListener('resize', this.drawHm);
         },
         updated() {
-            this.drawVolc();
+            this.drawHm();
         },
         beforeDestroy() {
-            window.removeEventListener('resize', this.drawVolc);
+            window.removeEventListener('resize', this.drawHm);
         },
         methods: {
-            drawVolc() {
-                let container = this.$refs.volcano;
+            drawHm() {
+                let container = this.$refs.heatmap;
 
-                if (this.volcChart) {
+                if (this.hmChart) {
                     //clear container
                     d3.select(container).selectAll("*").remove();
                 }
                 
-                let xMin = this.summaryData.log2FoldChange.range[0];
-                let xMax = this.summaryData.log2FoldChange.range[1];
-                let yMin = this.summaryData.negLog10Pvalue.range[0];
-                let yMax = this.summaryData.negLog10Pvalue.range[1];
+                let norms = this.getNorms(this.summaryData);
+
                 let width = container.clientWidth;
                 let height = container.clientHeight;
 
-                this.volcChart = RnaVolcanoD3()
-                    .setXMin(xMin)
-                    .setXMax(xMax)
-                    .setYMin(yMin)
-                    .setYMax(yMax)
+                this.hmChart = RnaHeatmapD3()
+                    .setYValues(this.axGroups)
+                    .setXValues(this.axGenes)
                     .setHeight(height)
                     .setWidth(width)
                     .setSelection(this.selection);
 
-                this.volcChart(container, this.data);
+                this.hmChart(container, this.data, norms);
             },
-            handleClick(event){
-                this.$emit('click', event);
-            }
+            getNorms(sumData) {
+                let norms = [];
+                let mins = [];
+                let maxs = [];
+
+                for (let group of this.axGroups) {
+                    mins.push(sumData[group]['range'][0]);
+                    maxs.push(sumData[group]['range'][1]);
+                }
+                
+                let min = Math.min(...mins);
+                let max = Math.max(...maxs);
+                norms = [min, max];
+
+                return norms;
+            },
         },
-        emits: ['click'],
         watch: {
             summaryData(newVal, oldVal) {
                 if (Object.keys(newVal).length > 0) {
-                    this.drawVolc();
+                    this.drawHm();
                 } else if (newVal !== oldVal && Object.keys(newVal).length > 0) {
-                    this.drawVolc();
+                    this.drawHm();
                 };
             },
             selection(newVal, oldVal) {
                 if (newVal !== oldVal) {
-                    this.drawVolc();
+                    this.drawHm();
                 };
             },
         }

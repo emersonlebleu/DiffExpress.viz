@@ -1,19 +1,20 @@
 <template>
   <div class="rna-volc-card-container" ref="volcCardContainer">
-    <p class="card-title">RNA Volcano Plot</p>
+    <p class="card-title">Volcano Plot</p>
 
     <div class="viz-container">
       <!-- Only Render Once there is Data -->
       <RnaVolcanoViz v-if="data && data.length && summaryData && Object.keys(summaryData).length" 
               :data="data" 
               :selection="selectedGene" 
-              :summaryData="summaryData"/>
+              :summaryData="summaryData"
+              @click="emitHmSelection"/>
     </div>
 
   
     <div class="card-tool-bar">
       <div class="label-input-container">
-        <p class="label">Data File: </p>
+        <p class="label">Sample Data: </p>
         <select class="data-selector" v-model="fileSelected" @change="emitFileSelected">
           <option value="fish">Fish</option>
           <option value="mouse">Mouse</option>
@@ -61,6 +62,7 @@
 
 <script>
   import RnaVolcanoViz from './RnaVolcanoViz.vue';
+  import * as d3 from 'd3';
 
   export default {
     name: 'RnaVolcanoCard',
@@ -95,10 +97,14 @@
       },
       emitFCFilter() {
         this.$emit('newFCFilter', parseFloat(this.fcFilter))
-      }
+      },
+      emitHmSelection() {
+        //use d3 to get all of the points with the class of selected
+        let selectedPoints = d3.selectAll('.selected').data();
+        this.$emit('hmSelection', selectedPoints);
+      },
     },
     watch: {
-      //Nothing Now
       geneNames: function(newVal, oldVal) {
         this.genes = newVal;
       },
@@ -118,7 +124,7 @@
       justify-content: center;
 
       width: 100%;
-      height: 100%;
+      height: 50%;
 
       padding: 20px;
       background-color: #f5f5f5;
