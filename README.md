@@ -1,5 +1,5 @@
 ## Summary
-A basic volcano plot for RNAseq data.
+A basic volcano plot for DEseq2 data.
 
 ## Structure
 - App
