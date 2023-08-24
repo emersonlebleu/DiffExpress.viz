@@ -55,11 +55,16 @@ export default async function fetchData(set, pValFilter, log2FCFilter) {
             continue;
           }
 
-          if (data[i][5] > pValFilterNum || data[i][2] < log2FCFilterNum && data[i][2] > -log2FCFilterNum) {
+          if (pValFilterNum == 0) {
+            if (data[i][2] < log2FCFilterNum && data[i][2] > -log2FCFilterNum) {
+              //remove the row from data 
+              data.splice(i, 1);
+              continue;
+            }
+          } else if (data[i][5] > pValFilterNum || data[i][2] < log2FCFilterNum && data[i][2] > -log2FCFilterNum) {
             //remove the row from data 
             data.splice(i, 1);
             continue;
-
           }
 
           //Add the negLog10Pvalue to the row (only fires if above conditions are not met)

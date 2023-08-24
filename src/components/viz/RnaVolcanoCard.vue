@@ -32,12 +32,14 @@
         <option value="0.000001">.000001</option>
         <option value="0.0000001">.0000001</option>
         <option value="0.0000001">.00000001</option>
+        <option value="0">0</option>
       </select>
     </div>
 
     <div class="label-input-container">
       <p class="label">Filter FC: </p>
       <select class="data-selector" v-model="fcFilter" @change="emitFCFilter">
+        <option value="0">0</option>
         <option value="0.5">.5</option>
         <option value="1">1</option>
         <option value="1.5">1.5</option>
@@ -82,8 +84,8 @@
     data() {
       return {
         fileSelected: this.selectedFile,
-        pFilter: (this.pFilterVal || 0.05).toString(),
-        fcFilter: (this.fcFilterVal || 0.5).toString(),
+        pFilter: (this.pFilterVal || 0.0).toString(),
+        fcFilter: (this.fcFilterVal || 0.0).toString(),
         genes: this.geneNames || [],
         selectedGene: this.selection,
       }
