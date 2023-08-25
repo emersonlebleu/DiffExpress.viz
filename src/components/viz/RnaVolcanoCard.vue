@@ -13,8 +13,12 @@
               @click="emitHmSelection"/>
     </div>
 
-  
     <div class="card-tool-bar">
+      <div class="label-input-container">
+        <p class="label">Hard Filter</p>
+        <input type="checkbox" v-model="hardFilterData" @change="emitHardFilterChange">
+      </div>
+      
       <div class="label-input-container">
         <p class="label">Sample Data: </p>
         <select class="data-selector" v-model="fileSelected" @change="emitFileSelected">
@@ -82,6 +86,7 @@
       pFilterVal: Number,
       fcFilterVal: Number,
       geneNames: Array,
+      hardFilter: Boolean,
     },
     data() {
       return {
@@ -90,6 +95,7 @@
         fcFilter: (this.fcFilterVal || 0.0).toString(),
         genes: this.geneNames || [],
         selectedGene: this.selection,
+        hardFilterData: this.hardFilter || false,
       }
     },
     methods: {
@@ -107,6 +113,9 @@
         let selectedPoints = d3.selectAll('.selected').data();
         this.$emit('hmSelection', selectedPoints);
       },
+      emitHardFilterChange() {
+        this.$emit('hardFilterChange', this.hardFilterData);
+      }
     },
     watch: {
       geneNames: function(newVal, oldVal) {
