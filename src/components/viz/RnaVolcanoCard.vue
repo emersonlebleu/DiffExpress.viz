@@ -8,6 +8,7 @@
               :data="data" 
               :selection="selectedGene" 
               :summaryData="summaryData"
+              :pFilterVal="pFilterVal"
               @click="emitHmSelection"/>
     </div>
 
@@ -24,6 +25,7 @@
     <div class="label-input-container">
       <p class="label">Filter P: </p>
       <select class="data-selector" v-model="pFilter" @change="emitPFilter">
+        <option value="0">0</option>
         <option value="0.05">.05 </option>
         <option value="0.01">.01</option>
         <option value="0.001">.001</option>
@@ -32,7 +34,6 @@
         <option value="0.000001">.000001</option>
         <option value="0.0000001">.0000001</option>
         <option value="0.0000001">.00000001</option>
-        <option value="0">0</option>
       </select>
     </div>
 
