@@ -15,6 +15,8 @@ export default function RnaVolcanoD3() {
     var marginRight = 20;
     var marginBottom = 30;
     var marginLeft = 40;
+    var filterPValue = 0.0;
+    var filterFC = 0.0;
 
     var selectedGene = "All";
     
@@ -104,7 +106,169 @@ export default function RnaVolcanoD3() {
         for (let node of selectedPoints.nodes()) {
             svg.append(() => node);
         }
+//--------------------------------------------------------------------------------------------Lines
+        // FC Filter Line
+        // If FC is 0, then the line will be at 0 and there will only be one line and box
+        if (filterFC == 0.0) {
+            //Adds a box over the fc line that gives it a shaded effect
+            var fcBox = svg.append("rect")
+                .attr("x", function() {
+                    if (filterFC == 0.0) {
+                        //Small offset to center the box, will change dependign on the size of the box and line
+                        return x(0.0 - .15);
+                    }
+                    //Small offset to center the box, will change dependign on the size of the box and line
+                    return x(filterFC - .15)
+                })
+                .attr("y", marginTop)
+                .attr("width", 4)
+                .attr("height", height - marginTop - marginBottom)
+                .attr("fill", "blue")
+                .attr("opacity", 0.3)
+                .attr("id", "fc-box");
 
+            var fcLine = svg.append("line")
+                .attr("x1", function() {
+                    if (filterFC == 0.0) {
+                        return x(0.0);
+                    }
+                    return x(filterFC);
+                })
+                .attr("y1", marginTop)
+                .attr("x2", function() {
+                    if (filterFC == 0.0) {
+                        return x(0.0);
+                    }
+                    return x(filterFC);
+                })
+                .attr("y2", height - marginBottom)
+                .attr("stroke-width", 2)
+                .attr("stroke", "blue")
+                .attr("stroke-dasharray", "5,5")
+                .attr("id", "fc-line");
+        } else {
+            //If the fc is not zero we will do lines and boxes for both the positive and negative sides
+
+            //Adds a box over the fc line that gives it a shaded effect for the positive side
+            var fcBox = svg.append("rect")
+                .attr("x", function() {
+                    if (filterFC == 0.0) {
+                        //Small offset to center the box, will change dependign on the size of the box and line
+                        return x(0.0 - .1);
+                    }
+                    //Small offset to center the box, will change dependign on the size of the box and line
+                    return x(filterFC - .1)
+                }
+                )
+                .attr("y", marginTop)
+                .attr("width", 4)
+                .attr("height", height - marginTop - marginBottom)
+                .attr("fill", "blue")
+                .attr("opacity", 0.3)
+                .attr("id", "fc-box");
+            
+            // FC Filter Line Positive
+            var fcLine = svg.append("line")
+                .attr("x1", function() {
+                    if (filterFC == 0.0) {
+                        return x(0.0);
+                    }
+                    return x(filterFC);
+                }
+                )
+                .attr("y1", marginTop)
+                .attr("x2", function() {
+                    if (filterFC == 0.0) {
+                        return x(0.0);
+                    }
+                    return x(filterFC);
+                }
+                )
+                .attr("y2", height - marginBottom)
+                .attr("stroke-width", 2)
+                .attr("stroke", "blue")
+                .attr("stroke-dasharray", "5,5")
+                .attr("id", "fc-line");
+
+            //Adds a box over the fc line that gives it a shaded effect for the negative side
+            var fcBox2 = svg.append("rect")
+                .attr("x", function() {
+                    if (filterFC == 0.0) {
+                        //Small offset to center the box, will change dependign on the size of the box and line
+                        return x(0.0 - .1);
+                    }
+                    //Small offset to center the box, will change dependign on the size of the box and line
+                    return x(-filterFC - .1)
+                }
+                )
+                .attr("y", marginTop)
+                .attr("width", 4)
+                .attr("height", height - marginTop - marginBottom)
+                .attr("fill", "blue")
+                .attr("opacity", 0.3)
+                .attr("id", "fc-box");
+
+            // FC Filter Line Negative
+            var fcLine2 = svg.append("line")
+                .attr("x1", function() {
+                    if (filterFC == 0.0) {
+                        return x(0.0);
+                    }
+                    return x(-filterFC);
+                }
+                )
+                .attr("y1", marginTop)
+                .attr("x2", function() {
+                    if (filterFC == 0.0) {
+                        return x(0.0);
+                    }
+                    return x(-filterFC);
+                }
+                )
+                .attr("y2", height - marginBottom)
+                .attr("stroke-width", 2)
+                .attr("stroke", "blue")
+                .attr("stroke-dasharray", "5,5")
+                .attr("id", "fc-line");
+        }
+
+        //Adds a box over the pvalue line that gives it a shaded effect
+        var pValBox = svg.append("rect")
+            .attr("x", marginLeft)
+            .attr("y", function() {
+                if (filterPValue == 0.0) {
+                    //Small offset to center the box, will change dependign on the size of the box and line
+                    return y(0.0 + 1.75);
+                }
+                //Small offset to center the box, will change dependign on the size of the box and line
+                return y(-Math.log10(filterPValue) + 1.75)
+            })
+            .attr("width", width - marginLeft - marginRight)
+            .attr("height", 4)
+            .attr("fill", "green")
+            .attr("opacity", 0.3)
+            .attr("id", "pval-box");
+
+        // pValue Filter Line
+        var pValLine = svg.append("line")
+        .attr("x1", marginLeft)
+        .attr("y1", function() {
+            if (filterPValue == 0.0) {
+                return y(0.0);
+            }
+            return y(-Math.log10(filterPValue))
+        })
+        .attr("x2", width - marginRight)
+        .attr("y2", function() {
+            if (filterPValue == 0.0) {
+                return y(0.0);
+            }
+            return y(-Math.log10(filterPValue));
+        })
+        .attr("stroke-width", 2)
+        .attr("stroke", "green")
+        .attr("stroke-dasharray", "5,5")
+        .attr("id", "pval-line");
 //--------------------------------------------------------------------------------------------Hovering
         function handleMouseEnter(event, d) {
             //get the point that was hovered
@@ -198,6 +362,16 @@ export default function RnaVolcanoD3() {
 
     chart.setSelection = function(newSelection) {
         selectedGene = newSelection;
+        return chart;
+    }
+
+    chart.setPvalue = function(newPvalue) {
+        filterPValue = newPvalue;
+        return chart;
+    }
+
+    chart.setFC = function(newFC) {
+        filterFC = newFC;
         return chart;
     }
     

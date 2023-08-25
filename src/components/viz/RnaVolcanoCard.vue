@@ -8,11 +8,17 @@
               :data="data" 
               :selection="selectedGene" 
               :summaryData="summaryData"
+              :pFilterVal="pFilterVal"
+              :fcFilterVal="fcFilterVal"
               @click="emitHmSelection"/>
     </div>
 
-  
     <div class="card-tool-bar">
+      <div class="label-input-container">
+        <p class="label">Hard Filter</p>
+        <input type="checkbox" v-model="hardFilterData" @change="emitHardFilterChange">
+      </div>
+      
       <div class="label-input-container">
         <p class="label">Sample Data: </p>
         <select class="data-selector" v-model="fileSelected" @change="emitFileSelected">
@@ -24,6 +30,7 @@
     <div class="label-input-container">
       <p class="label">Filter P: </p>
       <select class="data-selector" v-model="pFilter" @change="emitPFilter">
+        <option value="0">0</option>
         <option value="0.05">.05 </option>
         <option value="0.01">.01</option>
         <option value="0.001">.001</option>
@@ -38,6 +45,7 @@
     <div class="label-input-container">
       <p class="label">Filter FC: </p>
       <select class="data-selector" v-model="fcFilter" @change="emitFCFilter">
+        <option value="0">0</option>
         <option value="0.5">.5</option>
         <option value="1">1</option>
         <option value="1.5">1.5</option>
@@ -78,14 +86,16 @@
       pFilterVal: Number,
       fcFilterVal: Number,
       geneNames: Array,
+      hardFilter: Boolean,
     },
     data() {
       return {
         fileSelected: this.selectedFile,
-        pFilter: (this.pFilterVal || 0.05).toString(),
-        fcFilter: (this.fcFilterVal || 0.5).toString(),
+        pFilter: (this.pFilterVal || 0.0).toString(),
+        fcFilter: (this.fcFilterVal || 0.0).toString(),
         genes: this.geneNames || [],
         selectedGene: this.selection,
+        hardFilterData: this.hardFilter || false,
       }
     },
     methods: {
@@ -103,6 +113,9 @@
         let selectedPoints = d3.selectAll('.selected').data();
         this.$emit('hmSelection', selectedPoints);
       },
+      emitHardFilterChange() {
+        this.$emit('hardFilterChange', this.hardFilterData);
+      }
     },
     watch: {
       geneNames: function(newVal, oldVal) {

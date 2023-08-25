@@ -7,10 +7,12 @@
       :pFilterVal="pFilterVal"
       :fcFilterVal="fcFilterVal"
       :geneNames="geneNames"
+      :hardFilter="hardFilter"
       @newfileSelected="changeData"
       @newPFilter="filterPVal"
       @newFCFilter="filterFCVal"
-      @hmSelection="updateHmSelect"/>
+      @hmSelection="updateHmSelect"
+      @hardFilterChange="updateHardFilter"/>
 
       <RnaHeatmapCard class="data-card"
       :data="hmData"
@@ -39,25 +41,33 @@
         selection: 'All',
         summaryData: {},
         selectedFile: 'fish',
-        pFilterVal: .05,
-        fcFilterVal: .5,
+        pFilterVal: 0.0,
+        fcFilterVal: 0.0,
         geneNames: [],
         hmData: [],
         hmGeneNames: [],
         hmGroupNames: [],
         hmSummaryData: {},
+        hardFilter: false,
       }
     },
     async mounted() {
       this.populateData();
     },
     methods: {
+      updateHardFilter(n) {
+        //new value of hard filter
+        this.hardFilter = n;
+        this.populateData();
+      },
       updateHmSelect(n) {
+        //n here is the new selection object from the volcano plot
         this.hmData = n;
         this.hmGeneNames = this.getHmGeneNames(this.hmData);
         this.hmSummaryData = this.getHmSummaryData(this.hmData, this.hmGroupNames);
       },
       changeData(n) {
+        //n is the file name selection from the options
         this.selectedFile = n;
         this.populateData();
       },
@@ -108,9 +118,13 @@
         }
         return stats;
       },
+      //This function is the base function for populating the data all other functions that populate data are called from here when data is populated or changed by a filter
+      //it is this function that is called.
       async populateData() {
         try {
-          let outputData = await fetchData(this.selectedFile, this.pFilterVal, this.fcFilterVal);
+          //This is the function that populates the data array the structure of this may differ in the future depending on the context
+          //that the object eventually gets situated in.
+          let outputData = await fetchData(this.selectedFile, this.pFilterVal, this.fcFilterVal, this.hardFilter);
           this.data = outputData[0];
 
           this.summaryData = outputData[1];
