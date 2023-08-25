@@ -63,6 +63,7 @@
       fcFilterVal: Number,
       geneNames: Array,
       hardFilter: Boolean,
+      selection: String,
     },
     data() {
       return {
@@ -115,9 +116,11 @@
     }
 
     .label{
-        margin: 0 10px 0 0;
+        margin: 0 0 0 0;
         text-align: center;
-        color: black;
+        color: whitesmoke;
+        background-color: rgb(78, 77, 77);
+        border-radius: 2px;
     }
     option {
         text-align: center;

@@ -1,19 +1,18 @@
 @import './base.css';
 
 #app {
-  margin: 0 auto;
-  padding: 2rem;
+  margin: 0;
+  padding: 0px;
 
   font-weight: normal;
+
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 
-  height: 90%;
-  width: 90%;
-
-  max-width: 1000px;
+  height: 100%;
+  width: 100%;
 
   font-size: 1em;
 }
@@ -30,7 +29,6 @@
   #app {
     padding: 0;
     margin: 0;
-    width: 95%;
 
     max-height: 100%;
 
