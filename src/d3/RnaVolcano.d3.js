@@ -15,6 +15,7 @@ export default function RnaVolcanoD3() {
     var marginRight = 20;
     var marginBottom = 30;
     var marginLeft = 40;
+    var filterPValue = 0.0;
 
     var selectedGene = "All";
     
@@ -105,6 +106,43 @@ export default function RnaVolcanoD3() {
             svg.append(() => node);
         }
 
+        //Adds a box over the line that gives it a shaded effect
+        var pValBox = svg.append("rect")
+            .attr("x", marginLeft)
+            .attr("y", function() {
+                if (filterPValue == 0.0) {
+                    //Small offset to center the box, will change dependign on the size of the box and line
+                    return y(0.0 + 1.75);
+                }
+                //Small offset to center the box, will change dependign on the size of the box and line
+                return y(-Math.log10(filterPValue) + 1.75)
+            })
+            .attr("width", width - marginLeft - marginRight)
+            .attr("height", 4)
+            .attr("fill", "green")
+            .attr("opacity", 0.3)
+            .attr("id", "pval-box");
+
+        // pValue Filter Line
+        var pValLine = svg.append("line")
+        .attr("x1", marginLeft)
+        .attr("y1", function() {
+            if (filterPValue == 0.0) {
+                return y(0.0);
+            }
+            return y(-Math.log10(filterPValue))
+        })
+        .attr("x2", width - marginRight)
+        .attr("y2", function() {
+            if (filterPValue == 0.0) {
+                return y(0.0);
+            }
+            return y(-Math.log10(filterPValue));
+        })
+        .attr("stroke-width", 2)
+        .attr("stroke", "green")
+        .attr("stroke-dasharray", "5,5")
+        .attr("id", "pval-line");
 //--------------------------------------------------------------------------------------------Hovering
         function handleMouseEnter(event, d) {
             //get the point that was hovered
@@ -198,6 +236,11 @@ export default function RnaVolcanoD3() {
 
     chart.setSelection = function(newSelection) {
         selectedGene = newSelection;
+        return chart;
+    }
+
+    chart.setPvalue = function(newPvalue) {
+        filterPValue = newPvalue;
         return chart;
     }
     

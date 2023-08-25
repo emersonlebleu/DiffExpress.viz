@@ -13,6 +13,7 @@
             data: Array,
             selection: String,
             summaryData: Object,
+            pFilterVal: Number,
         },
         data() {
             return {
@@ -54,6 +55,7 @@
                     .setYMax(yMax)
                     .setHeight(height)
                     .setWidth(width)
+                    .setPvalue(this.pFilterVal)
                     .setSelection(this.selection);
 
                 this.volcChart(container, this.data);
