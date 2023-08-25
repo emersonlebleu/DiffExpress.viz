@@ -9,6 +9,7 @@
               :selection="selectedGene" 
               :summaryData="summaryData"
               :pFilterVal="pFilterVal"
+              :fcFilterVal="fcFilterVal"
               @click="emitHmSelection"/>
     </div>
 

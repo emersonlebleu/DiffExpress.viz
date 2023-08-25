@@ -14,6 +14,7 @@
             selection: String,
             summaryData: Object,
             pFilterVal: Number,
+            fcFilterVal: Number,
         },
         data() {
             return {
@@ -56,6 +57,7 @@
                     .setHeight(height)
                     .setWidth(width)
                     .setPvalue(this.pFilterVal)
+                    .setFC(this.fcFilterVal)
                     .setSelection(this.selection);
 
                 this.volcChart(container, this.data);
