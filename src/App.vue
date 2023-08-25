@@ -1,8 +1,5 @@
 <template>
-      <RnaVolcanoCard class="data-card" 
-      :data="data" 
-      :selection="selection" 
-      :summaryData="summaryData"
+      <OptionsMenu class="options-menu"
       :selectedFile="selectedFile"
       :pFilterVal="pFilterVal"
       :fcFilterVal="fcFilterVal"
@@ -11,8 +8,17 @@
       @newfileSelected="changeData"
       @newPFilter="filterPVal"
       @newFCFilter="filterFCVal"
-      @hmSelection="updateHmSelect"
       @hardFilterChange="updateHardFilter"/>
+
+      <RnaVolcanoCard class="data-card" 
+      :data="data" 
+      :selection="selection" 
+      :summaryData="summaryData"
+      :selectedFile="selectedFile"
+      :pFilterVal="pFilterVal"
+      :fcFilterVal="fcFilterVal"
+      :geneNames="geneNames"
+      @hmSelection="updateHmSelect"/>
 
       <RnaHeatmapCard class="data-card"
       :data="hmData"
@@ -21,19 +27,20 @@
       :selectedFile="selectedFile"
       :axGenes="hmGeneNames"
       :axGroups="hmGroupNames"/>  
-
 </template>
 
 <script>
   import RnaVolcanoCard from './components/viz/RnaVolcanoCard.vue';
   import RnaHeatmapCard from './components/viz/RnaHeatmapCard.vue';
+  import OptionsMenu from './components/parts/OptionsMenu.vue';
   import fetchData from './data/fetchData.js';
   
   export default {
     name: 'App',
     components: {
       RnaVolcanoCard,
-      RnaHeatmapCard
+      RnaHeatmapCard,
+      OptionsMenu,
     }, 
     data() {
       return {
