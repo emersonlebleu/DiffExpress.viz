@@ -45,11 +45,12 @@
         </select>
       </div>
 
-      <div class="label-input-container" v-if="geneNames && geneNames.length">
-        <p class="label">Gene</p>
-        <select class="data-selector" v-model="selectedGene">
-          <option v-for="gene in genes" :value="gene">{{ gene }}</option>
+      <div class="label-input-container" v-if="genesData && genesData.length">
+        <p class="label">Genes</p>
+        <select class="data-selector" v-model="selectedGenesData" @change="emitSelectedGenes" multiple>
+          <option v-for="gene in genesData" :value="gene" :selected="selectedGenesData.includes(gene.external_gene_name)">{{ gene.external_gene_name }}</option>
         </select>
+        <button id="clear-selection-btn" @click="emitClearSelection">Clear Selection</button>
       </div>
     </div>
 </template>
@@ -63,18 +64,18 @@
       selectedFile: String,
       pFilterVal: Number,
       fcFilterVal: Number,
-      geneNames: Array,
       hardFilter: Boolean,
-      selection: String,
+      selectedGenes: Array,
+      genes: Array,
     },
     data() {
       return {
         fileSelected: this.selectedFile,
         pFilter: (this.pFilterVal || 0.0).toString(),
         fcFilter: (this.fcFilterVal || 0.0).toString(),
-        genes: this.geneNames || [],
-        selectedGene: this.selection,
+        selectedGenesData: this.selectedGenes,
         hardFilterData: this.hardFilter || false,
+        genesData: this.genes || [],
       }
     },
     methods: {
@@ -89,12 +90,21 @@
       },
       emitHardFilterChange() {
         this.$emit('hardFilterChange', this.hardFilterData);
+      },
+      emitSelectedGenes() {
+        this.$emit('newSelectedGenes', this.selectedGenesData);
+      },
+      emitClearSelection() {
+        this.$emit('clearSelection');
       }
     },
     watch: {
-      geneNames: function(newVal, oldVal) {
-        this.genes = newVal;
-      },
+        genes: function(newVal, oldVal) {
+            this.genesData = newVal;
+        },
+        selectedGenes: function(newVal, oldVal) {
+            this.selectedGenesData = newVal;
+        },
     },
     mounted() {
       //Nothing Now
@@ -115,6 +125,7 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+        background-color: whitesmoke;
 
   
         border-radius: 4px;
@@ -147,5 +158,21 @@
         border: none;
         border-radius: 0 0 4px 4px;
         background-color: white;
+    }
+
+    #clear-selection-btn{
+        margin: 5px 5px 5px 5px;
+        padding: 5px 10px;
+
+        border: none;
+        border-radius: 4px;
+        background-color: rgb(32, 36, 76);
+        color: white;
+    }
+
+    #clear-selection-btn:hover {
+        background-color: rgb(52, 56, 112);
+        color: white;
+        cursor: pointer;
     }
 </style>

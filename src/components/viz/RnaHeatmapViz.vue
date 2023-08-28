@@ -10,8 +10,8 @@
     export default {
         name: 'RnaHeatmapViz',
         props: {
-            data: Array,
-            selection: String,
+            selectedGenes: Array,
+            selection: Array,
             summaryData: Object,
             axGenes: Array,
             axGroups: Array,
@@ -54,7 +54,7 @@
                     .setWidth(width)
                     .setSelection(this.selection);
 
-                this.hmChart(container, this.data, norms);
+                this.hmChart(container, this.selectedGenes, norms);
             },
             getNorms(sumData) {
                 let norms = [];

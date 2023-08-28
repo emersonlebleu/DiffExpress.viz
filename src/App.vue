@@ -3,17 +3,15 @@
       <div class="home-chart-container">
         <RnaVolcanoCard class="data-card" 
         :data="data" 
-        :selection="selection" 
+        :selection="optionsSelection" 
         :summaryData="summaryData"
         :selectedFile="selectedFile"
         :pFilterVal="pFilterVal"
         :fcFilterVal="fcFilterVal"
-        :geneNames="geneNames"
-        @hmSelection="updateHmSelect"/>
+        @hmSelection="updateHeatMapAndSelect"/>
 
         <RnaHeatmapCard class="data-card"
-        :data="hmData"
-        :selection="selection"
+        :selectedGenes="hmGenes"
         :summaryData="hmSummaryData"
         :selectedFile="selectedFile"
         :axGenes="hmGeneNames"
@@ -25,13 +23,15 @@
       :selectedFile="selectedFile"
       :pFilterVal="pFilterVal"
       :fcFilterVal="fcFilterVal"
-      :geneNames="geneNames"
       :hardFilter="hardFilter"
-      :selection="selection"
+      :selectedGenes="optionsSelection"
+      :genes="data"
       @newfileSelected="changeData"
+      @clearSelection="clearSelection"
       @newPFilter="filterPVal"
       @newFCFilter="filterFCVal"
-      @hardFilterChange="updateHardFilter"/>
+      @hardFilterChange="updateHardFilter"
+      @newSelectedGenes="updateHeatMapAndSelect"/>
 
 </template>
 
@@ -51,15 +51,18 @@
     data() {
       return {
         data: [], 
-        selection: 'All',
+        optionsSelection: [],
         summaryData: {},
         selectedFile: 'fish',
         pFilterVal: 0.0,
         fcFilterVal: 0.0,
-        geneNames: [],
-        hmData: [],
+        //This is the list of genes for the heatmap
+        hmGenes: [],
+        //This is the list of gene names for the heatmap
         hmGeneNames: [],
+        //This is the list of group names for the heatmap
         hmGroupNames: [],
+        //This is the summary data for the heatmap colors to use
         hmSummaryData: {},
         hardFilter: false,
       }
@@ -68,6 +71,12 @@
       this.populateData();
     },
     methods: {
+      clearSelection() {
+        this.optionsSelection = [];
+        this.hmGenes = [];
+        this.hmGeneNames = [];
+        this.hmSummaryData = {};
+      },
       updateHardFilter(n) {
         //new value of hard filter
         this.hardFilter = n;
@@ -75,9 +84,18 @@
       },
       updateHmSelect(n) {
         //n here is the new selection object from the volcano plot
-        this.hmData = n;
-        this.hmGeneNames = this.getHmGeneNames(this.hmData);
-        this.hmSummaryData = this.getHmSummaryData(this.hmData, this.hmGroupNames);
+        this.optionsSelection = [];
+        this.hmGenes = n;
+        this.hmGeneNames = this.getHmGeneNames(this.hmGenes);
+        this.hmSummaryData = this.getHmSummaryData(this.hmGenes, this.hmGroupNames);
+      },
+      updateSelectedGenes(n) {
+        //n here is the new selection object from the options menu
+        this.optionsSelection = n;
+      },
+      updateHeatMapAndSelect(n) {
+        this.updateHmSelect(n);
+        this.updateSelectedGenes(n);
       },
       changeData(n) {
         //n is the file name selection from the options
@@ -92,10 +110,10 @@
         this.fcFilterVal = n;
         this.populateData();
       },
-      getHmGeneNames(hmData){
+      getHmGeneNames(hmGenes){
         let genes = [];
         //go through the data and get the group names & gene names as two lists
-        for (let dataObj of hmData) {
+        for (let dataObj of hmGenes) {
           //get the gene names add to names list
           genes.push(dataObj.external_gene_name)
         }
@@ -141,11 +159,10 @@
           this.data = outputData[0];
 
           this.summaryData = outputData[1];
-          this.geneNames = outputData[2];
-          this.hmGroupNames = outputData[3];
+          this.hmGroupNames = outputData[2];
 
-          this.hmGeneNames = this.getHmGeneNames(this.hmData);
-          this.hmSummaryData = this.getHmSummaryData(this.hmData, this.hmGroupNames);
+          this.hmGeneNames = this.getHmGeneNames(this.hmGenes);
+          this.hmSummaryData = this.getHmSummaryData(this.hmGenes, this.hmGroupNames);
 
         } catch (error) {
           console.error('Error fetching data:', error);

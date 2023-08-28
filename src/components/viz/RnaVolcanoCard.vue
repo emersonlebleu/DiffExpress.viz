@@ -6,7 +6,7 @@
       <!-- Only Render Once there is Data -->
       <RnaVolcanoViz v-if="data && data.length && summaryData && Object.keys(summaryData).length" 
               :data="data" 
-              :selection="selectedGene" 
+              :selection="selectedGenes" 
               :summaryData="summaryData"
               :pFilterVal="pFilterVal"
               :fcFilterVal="fcFilterVal"
@@ -27,20 +27,18 @@
     },
     props: {
       data: Array,
-      selection: String,
+      selection: Array,
       //summary Statistics
       summaryData: Object,
       pFilterVal: Number,
       fcFilterVal: Number,
-      geneNames: Array,
     },
     data() {
       return {
         fileSelected: this.selectedFile,
         pFilter: (this.pFilterVal || 0.0).toString(),
         fcFilter: (this.fcFilterVal || 0.0).toString(),
-        genes: this.geneNames || [],
-        selectedGene: this.selection,
+        selectedGenes: this.selection,
       }
     },
     methods: {
@@ -51,8 +49,8 @@
       },
     },
     watch: {
-      geneNames: function(newVal, oldVal) {
-        this.genes = newVal;
+      selection: function(newVal, oldVal) {
+        this.selectedGenes = newVal;
       },
     },
     mounted() {

@@ -11,7 +11,7 @@
         name: 'RnaVolcanoViz',
         props: {
             data: Array,
-            selection: String,
+            selection: Array,
             summaryData: Object,
             pFilterVal: Number,
             fcFilterVal: Number,
@@ -19,6 +19,7 @@
         data() {
             return {
                 volcChart: null,
+                selectionData: this.selection,
             }
         },
         mounted() {
@@ -58,7 +59,7 @@
                     .setWidth(width)
                     .setPvalue(this.pFilterVal)
                     .setFC(this.fcFilterVal)
-                    .setSelection(this.selection);
+                    .setSelection(this.selectionData);
 
                 this.volcChart(container, this.data);
             },
@@ -77,6 +78,7 @@
             },
             selection(newVal, oldVal) {
                 if (newVal !== oldVal) {
+                    this.selectionData = newVal;
                     this.drawVolc();
                 };
             },

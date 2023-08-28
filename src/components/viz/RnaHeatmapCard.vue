@@ -1,12 +1,11 @@
 <template>
     <div class="rna-hm-card-container" ref="hmCardContainer">
-        <p class="card-title" v-if="data && data.length && summaryData && Object.keys(summaryData).length">Heatmap</p>
+        <p class="card-title" v-if="selectedGenes && selectedGenes.length && summaryData && Object.keys(summaryData).length">Heatmap</p>
   
         <div class="viz-container">
         <!-- Only Render Once there is Data -->
-        <RnaHeatmapViz v-if="data && data.length && summaryData && Object.keys(summaryData).length" 
-              :data="data" 
-              :selection="selectedGene" 
+        <RnaHeatmapViz v-if="selectedGenes && selectedGenes.length && summaryData && Object.keys(summaryData).length" 
+              :selectedGenes="selectedGenes" 
               :summaryData="summaryData"
               :axGenes="genes"
               :axGroups="groups"/>
@@ -25,8 +24,7 @@
         RnaHeatmapViz
       },
       props: {
-        data: Array,
-        selection: String,
+        selectedGenes: Array,
         summaryData: Object,
         selectedFile: String,
         axGenes: Array,
@@ -37,7 +35,6 @@
             fileSelected: this.selectedFile,
             genes: this.axGenes || [],
             groups: this.axGroups || [],
-            selectedGene: this.selection,
         }
       },
       methods: {

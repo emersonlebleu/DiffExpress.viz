@@ -21,23 +21,23 @@ export default async function fetchData(set, pValFilter, log2FCFilter, hardFilte
     const response = await fetch(selectedSet);
     const fileContent = await response.text();
 
-    //Split everything by row
-    const rawdata = fileContent.split('\n');
+    //Split everything by row so raw data is an array of rows not yet split by tab
+    let rawdata = fileContent.split('\n');
 
-    //Lables are the first row of rawdata
-    const labels = rawdata[0].split('\t');
-    let geneNames = new Set();
+    //Lables are the first row of rawdata split by
+    let labels = rawdata[0].split('\t');
     let groups = labels.slice(10);
+
+    //Just the data without the labels into data
+    let data = rawdata.slice(1);
 
     //Add A label for the negLog10Pvalue & color
     labels.push('negLog10Pvalue');
     labels.push('color')
 
     //Will have a stats Obj with the range, mean, and standard deviation of each column
-    var sumStats = {}
-
-    //Just the data without the labels into data
-    const data = rawdata.slice(1)
+    let sumStats = {}
+    let cleanData = [];
 
     //Add the negLog10Pvalue to each row & clean up & Filter
     for (let i = 0; i < data.length; i++) {
@@ -46,36 +46,31 @@ export default async function fetchData(set, pValFilter, log2FCFilter, hardFilte
         //CLEAN UP------------------------------------------------------------------------------------------------
         //if there is no pvalue or it is 0 then remove the row from data
         if (isNaN(parseFloat(data[i][5])) || data[i][5] == '' || data[i][5] == 0) {
-          //remove the row from data 
-          data.splice(i, 1);
+          //Don't add this row
           continue;
         }
 
         //if there is no log2FoldChange then remove the row from data
         if (isNaN(parseFloat(data[i][2])) || data[i][2] == '') {
-          //remove the row from data 
-          data.splice(i, 1);
+          //Don't add this row
           continue;
         }
 
         //FILTER------------------------------------------------------------------------------------------------
         if (pValFilterNum == 0 && hardFilter) {
           if (data[i][2] < log2FCFilterNum && data[i][2] > -log2FCFilterNum) {
-            //remove the row from data 
-            data.splice(i, 1);
+            //Don't add this row
             continue;
           }
         } else if ((data[i][5] > pValFilterNum || data[i][2] < log2FCFilterNum && data[i][2] > -log2FCFilterNum) && hardFilter) {
-          //remove the row from data 
-          data.splice(i, 1);
+          //Don't add this row
           continue;
         }
 
-        //Add the negLog10Pvalue to the rows that haven't been removed by the above filters
         data[i].push(-Math.log10(data[i][5]));
 
         //BAD LOGIC works but could be a lot better------------------------------------------------------------------------------------------------*
-        //Add the color to the rows that haven't been removed by the above filters
+        //Add the color to the rows that haven't been skipped
         if (pValFilterNum == 0) {
           //if pvalue is above 0 then check fold change and assign color
           if (data[i][5] > 0) {
@@ -98,20 +93,16 @@ export default async function fetchData(set, pValFilter, log2FCFilter, hardFilte
         } else {
           data[i].push("grey");
         }
-
-        //Populate the geneNames set with this particular gene
-        geneNames.add(data[i][7]);
+      
+        
+      //if we get here then add the row to cleanData
+      cleanData.push(data[i]);
     }
-    
-    //Add the All group to the groups array
-    geneNames.add("All");
-    //Sort the geneNames array
-    let genesArraySorted = Array.from(geneNames).sort();
 
 
     //Create an object with the values for each column mapped back to the labels
     //This might be a problem.... but is working at present.
-    const dataObj = data.map((row) => {
+    const dataObj = cleanData.map((row) => {
         const rowArray = row;
         const rowObject = {};
         for (let i = 0; i < labels.length; i++) {
@@ -152,9 +143,9 @@ export default async function fetchData(set, pValFilter, log2FCFilter, hardFilte
       return stats;
     }
 
-    sumStats = createSumStats(labels, data);
+    sumStats = createSumStats(labels, cleanData);
 
-    return [dataObj, sumStats, genesArraySorted, groups];
+    return [dataObj, sumStats, groups];
     
   } catch (error) {
     console.error('Error fetching data:', error);
