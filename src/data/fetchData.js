@@ -143,7 +143,7 @@ export default async function fetchData(set, pValFilter, log2FCFilter, hardFilte
       return stats;
     }
 
-    sumStats = createSumStats(labels, data);
+    sumStats = createSumStats(labels, cleanData);
 
     return [dataObj, sumStats, groups];
     
