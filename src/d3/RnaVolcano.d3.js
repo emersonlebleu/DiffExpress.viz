@@ -18,7 +18,7 @@ export default function RnaVolcanoD3() {
     var filterPValue = 0.0;
     var filterFC = 0.0;
 
-    var selectedGene = "All";
+    var selectedGenes = [];
     
     function chart(container, dataArray) {
 
@@ -76,7 +76,7 @@ export default function RnaVolcanoD3() {
             .append("path") // Use <path> instead of <line>
             .attr("d", (d) => `M${x(d.log2FoldChange)},${y(d.negLog10Pvalue)} L${x(d.log2FoldChange)},${y(d.negLog10Pvalue)}`)
             .attr("stroke-width",function(d){
-                if (d["external_gene_name"] == selectedGene) {
+                if (selectedGenes.includes(d["external_gene_name"])) {
                     return 10;
                 } else {
                     return 4;
@@ -84,7 +84,7 @@ export default function RnaVolcanoD3() {
             }) 
             .attr("stroke-linecap", "round")
             .style("stroke", function(d){
-                if (d["external_gene_name"] == selectedGene) {
+                if (selectedGenes.includes(d["external_gene_name"])) {
                     return "#DC5EB6";
                 } else {
 
@@ -92,7 +92,7 @@ export default function RnaVolcanoD3() {
                 }
             })
             .classed("point-of-interest", function(d){
-                if (d["external_gene_name"] == selectedGene) {
+                if (selectedGenes.includes(d["external_gene_name"])) {
                     return true;
                 } else {
                     return false;
@@ -102,6 +102,7 @@ export default function RnaVolcanoD3() {
             .on("click", handleSelection);
 
         let selectedPoints = svg.selectAll(".point-of-interest")
+            .style("stroke", "#DC5EB6")
 
         for (let node of selectedPoints.nodes()) {
             svg.append(() => node);
@@ -275,7 +276,7 @@ export default function RnaVolcanoD3() {
             let point = d3.select(this);
             let classes = point.attr("class");
 
-            if ((!classes || !point.attr("class").includes("selected")) && d["external_gene_name"] != selectedGene) {
+            if ((!classes || !point.attr("class").includes("selected")) && !(selectedGenes.includes(d["external_gene_name"]))) {
                 point.attr("stroke-width", 10);
                 point.style("stroke", "#92140C");
             } 
@@ -296,7 +297,7 @@ export default function RnaVolcanoD3() {
             let point = d3.select(this);
             let classes = point.attr("class");
 
-            if ((classes && point.attr("class").includes("selected")) || d["external_gene_name"] == selectedGene) {
+            if ((classes && point.attr("class").includes("selected")) || selectedGenes.includes(d["external_gene_name"])) {
                 //do nothing
             } else {
                 point.attr("stroke-width", 4);
@@ -317,7 +318,7 @@ export default function RnaVolcanoD3() {
                 point.classed("selected", false)
                     .style("stroke", (d) => d["color"])
                     .attr("stroke-width", 4);
-            } else if (d["external_gene_name"] == selectedGene) {
+            } else if (d["external_gene_name"] in selectedGenes) {
                 //do nothing
             } else {
                 point.classed("selected", true) 
@@ -361,7 +362,10 @@ export default function RnaVolcanoD3() {
     }
 
     chart.setSelection = function(newSelection) {
-        selectedGene = newSelection;
+        selectedGenes = [];
+        for (let gene of newSelection) {
+            selectedGenes.push(gene["external_gene_name"]);
+        }
         return chart;
     }
 

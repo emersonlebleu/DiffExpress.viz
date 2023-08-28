@@ -45,7 +45,7 @@
         </select>
       </div>
 
-      <div class="label-input-container" v-if="geneNames && geneNames.length">
+      <div class="label-input-container" v-if="genesData && genesData.length">
         <p class="label">Genes</p>
         <select class="data-selector" v-model="selectedGenesData" @change="emitSelectedGenes" multiple>
           <option v-for="gene in genesData" :value="gene">{{ gene.external_gene_name }}</option>
@@ -63,7 +63,6 @@
       selectedFile: String,
       pFilterVal: Number,
       fcFilterVal: Number,
-      geneNames: Array,
       hardFilter: Boolean,
       selectedGenes: Array,
       genes: Array,
@@ -73,7 +72,6 @@
         fileSelected: this.selectedFile,
         pFilter: (this.pFilterVal || 0.0).toString(),
         fcFilter: (this.fcFilterVal || 0.0).toString(),
-        geneNamesData: this.geneNames || [],
         selectedGenesData: this.selectedGenes,
         hardFilterData: this.hardFilter || false,
         genesData: this.genes || [],
@@ -97,11 +95,11 @@
       }
     },
     watch: {
-        geneNames: function(newVal, oldVal) {
-        this.geneNamesData = newVal;
-        },
         genes: function(newVal, oldVal) {
             this.genesData = newVal;
+        },
+        selectedGenes: function(newVal, oldVal) {
+            this.selectedGenesData = newVal;
         },
     },
     mounted() {

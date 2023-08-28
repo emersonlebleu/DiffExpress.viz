@@ -8,11 +8,10 @@
         :selectedFile="selectedFile"
         :pFilterVal="pFilterVal"
         :fcFilterVal="fcFilterVal"
-        :geneNames="geneNames"
         @hmSelection="updateHmSelect"/>
 
         <RnaHeatmapCard class="data-card"
-        :selectedGenes="selectedGenes"
+        :selectedGenes="hmGenes"
         :selection="selection"
         :summaryData="hmSummaryData"
         :selectedFile="selectedFile"
@@ -25,7 +24,6 @@
       :selectedFile="selectedFile"
       :pFilterVal="pFilterVal"
       :fcFilterVal="fcFilterVal"
-      :geneNames="geneNames"
       :hardFilter="hardFilter"
       :selectedGenes="selection"
       :genes="data"
@@ -58,10 +56,13 @@
         selectedFile: 'fish',
         pFilterVal: 0.0,
         fcFilterVal: 0.0,
-        geneNames: [],
-        selectedGenes: [],
+        //This is the list of genes for the heatmap
+        hmGenes: [],
+        //This is the list of gene names for the heatmap
         hmGeneNames: [],
+        //This is the list of group names for the heatmap
         hmGroupNames: [],
+        //This is the summary data for the heatmap colors to use
         hmSummaryData: {},
         hardFilter: false,
       }
@@ -77,15 +78,17 @@
       },
       updateHmSelect(n) {
         //n here is the new selection object from the volcano plot
-        this.selectedGenes = n;
-        this.hmGeneNames = this.getHmGeneNames(this.selectedGenes);
-        this.hmSummaryData = this.getHmSummaryData(this.selectedGenes, this.hmGroupNames);
+        this.hmGenes = n;
+        this.hmGeneNames = this.getHmGeneNames(this.hmGenes);
+        this.hmSummaryData = this.getHmSummaryData(this.hmGenes, this.hmGroupNames);
       },
       updateSelectedGenes(n) {
         //n here is the new selection object from the heatmap
-        this.selectedGenes = n;
-        this.hmGeneNames = this.getHmGeneNames(this.selectedGenes);
-        this.hmSummaryData = this.getHmSummaryData(this.selectedGenes, this.hmGroupNames);
+        this.selection = n;
+
+        this.hmGenes = n;
+        this.hmGeneNames = this.getHmGeneNames(this.hmGenes);
+        this.hmSummaryData = this.getHmSummaryData(this.hmGenes, this.hmGroupNames);
       },
       changeData(n) {
         //n is the file name selection from the options
@@ -100,10 +103,10 @@
         this.fcFilterVal = n;
         this.populateData();
       },
-      getHmGeneNames(selectedGenes){
+      getHmGeneNames(hmGenes){
         let genes = [];
         //go through the data and get the group names & gene names as two lists
-        for (let dataObj of selectedGenes) {
+        for (let dataObj of hmGenes) {
           //get the gene names add to names list
           genes.push(dataObj.external_gene_name)
         }
@@ -149,11 +152,10 @@
           this.data = outputData[0];
 
           this.summaryData = outputData[1];
-          this.geneNames = outputData[2];
-          this.hmGroupNames = outputData[3];
+          this.hmGroupNames = outputData[2];
 
-          this.hmGeneNames = this.getHmGeneNames(this.selectedGenes);
-          this.hmSummaryData = this.getHmSummaryData(this.selectedGenes, this.hmGroupNames);
+          this.hmGeneNames = this.getHmGeneNames(this.hmGenes);
+          this.hmSummaryData = this.getHmSummaryData(this.hmGenes, this.hmGroupNames);
 
         } catch (error) {
           console.error('Error fetching data:', error);

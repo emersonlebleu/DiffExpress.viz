@@ -154,7 +154,7 @@ export default async function fetchData(set, pValFilter, log2FCFilter, hardFilte
 
     sumStats = createSumStats(labels, data);
 
-    return [dataObj, sumStats, genesArraySorted, groups];
+    return [dataObj, sumStats, groups];
     
   } catch (error) {
     console.error('Error fetching data:', error);
