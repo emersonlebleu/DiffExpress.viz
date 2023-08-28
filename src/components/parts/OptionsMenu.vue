@@ -2,11 +2,13 @@
     <div class="card-tool-bar">
       <div class="label-input-container">
         <p class="label">Hard Filter</p>
-        <input type="checkbox" v-model="hardFilterData" @change="emitHardFilterChange">
+        <div class="data-selector">
+            <input type="checkbox" v-model="hardFilterData" @change="emitHardFilterChange">
+        </div>
       </div>
       
       <div class="label-input-container">
-        <p class="label">Sample Data: </p>
+        <p class="label">Sample Data </p>
         <select class="data-selector" v-model="fileSelected" @change="emitFileSelected">
           <option value="fish">Fish</option>
           <option value="mouse">Mouse</option>
@@ -14,7 +16,7 @@
       </div>
 
       <div class="label-input-container">
-        <p class="label">Filter P: </p>
+        <p class="label">Filter P </p>
         <select class="data-selector" v-model="pFilter" @change="emitPFilter">
           <option value="0">0</option>
           <option value="0.05">.05 </option>
@@ -29,7 +31,7 @@
       </div>
 
       <div class="label-input-container">
-        <p class="label">Filter FC: </p>
+        <p class="label">Filter FC </p>
         <select class="data-selector" v-model="fcFilter" @change="emitFCFilter">
           <option value="0">0</option>
           <option value="0.5">.5</option>
@@ -44,7 +46,7 @@
       </div>
 
       <div class="label-input-container" v-if="geneNames && geneNames.length">
-        <p class="label">Gene: </p>
+        <p class="label">Gene</p>
         <select class="data-selector" v-model="selectedGene">
           <option v-for="gene in genes" :value="gene">{{ gene }}</option>
         </select>
@@ -113,26 +115,37 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+
+  
+        border-radius: 4px;
+
+        margin-top: 5px;
+        margin-bottom: 5px;
+
+        box-shadow: 0 3px 1px -2px rgba(79, 79, 79, 0.2), 0 2px 2px 0 rgba(79, 79, 79, 0.2), 0 1px 5px 0 rgba(79, 79, 79, 0.2);
     }
 
     .label{
         margin: 0 0 0 0;
+        color: rgb(255, 255, 255);
+        background-color: rgb(32, 36, 76);
+
+        border: none;
+        border-radius: 3px 3px 0 0;
         text-align: center;
-        color: whitesmoke;
-        background-color: rgb(78, 77, 77);
-        border-radius: 2px;
     }
+
     option {
         text-align: center;
     }
 
     .data-selector {
-        margin-bottom: 10px;
+        text-align: center;
+
         padding: 5px 10px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
+
+        border: none;
+        border-radius: 0 0 4px 4px;
         background-color: white;
     }
-
-
 </style>
