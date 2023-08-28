@@ -1,39 +1,52 @@
 <template>
-      <RnaVolcanoCard class="data-card" 
-      :data="data" 
-      :selection="selection" 
-      :summaryData="summaryData"
+
+      <div class="home-chart-container">
+        <RnaVolcanoCard class="data-card" 
+        :data="data" 
+        :selection="selection" 
+        :summaryData="summaryData"
+        :selectedFile="selectedFile"
+        :pFilterVal="pFilterVal"
+        :fcFilterVal="fcFilterVal"
+        :geneNames="geneNames"
+        @hmSelection="updateHmSelect"/>
+
+        <RnaHeatmapCard class="data-card"
+        :data="hmData"
+        :selection="selection"
+        :summaryData="hmSummaryData"
+        :selectedFile="selectedFile"
+        :axGenes="hmGeneNames"
+        :axGroups="hmGroupNames"/>  
+      </div>
+
+      <OptionsMenu 
+      class="options-menu"
       :selectedFile="selectedFile"
       :pFilterVal="pFilterVal"
       :fcFilterVal="fcFilterVal"
       :geneNames="geneNames"
       :hardFilter="hardFilter"
+      :selection="selection"
       @newfileSelected="changeData"
       @newPFilter="filterPVal"
       @newFCFilter="filterFCVal"
-      @hmSelection="updateHmSelect"
       @hardFilterChange="updateHardFilter"/>
-
-      <RnaHeatmapCard class="data-card"
-      :data="hmData"
-      :selection="selection"
-      :summaryData="hmSummaryData"
-      :selectedFile="selectedFile"
-      :axGenes="hmGeneNames"
-      :axGroups="hmGroupNames"/>  
 
 </template>
 
 <script>
   import RnaVolcanoCard from './components/viz/RnaVolcanoCard.vue';
   import RnaHeatmapCard from './components/viz/RnaHeatmapCard.vue';
+  import OptionsMenu from './components/parts/OptionsMenu.vue';
   import fetchData from './data/fetchData.js';
   
   export default {
     name: 'App',
     components: {
       RnaVolcanoCard,
-      RnaHeatmapCard
+      RnaHeatmapCard,
+      OptionsMenu,
     }, 
     data() {
       return {
@@ -145,5 +158,28 @@
 </script>
 
 <style scoped>
+  .home-chart-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    margin-left: 25%;
+    
+    padding: 1em;
+  }
+
+  .options-menu {
+    justify-content: flex-start;
+    margin: 0%;
+    height: 100%;
+    max-width: 300px;
+    padding: 1em;
+    background-color: #a7aaad;
+    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+
+    overflow-y: auto;
+  }
 
 </style>
