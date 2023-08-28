@@ -6,7 +6,6 @@
         <!-- Only Render Once there is Data -->
         <RnaHeatmapViz v-if="selectedGenes && selectedGenes.length && summaryData && Object.keys(summaryData).length" 
               :selectedGenes="selectedGenes" 
-              :selection="selectedGene" 
               :summaryData="summaryData"
               :axGenes="genes"
               :axGroups="groups"/>
@@ -26,7 +25,6 @@
       },
       props: {
         selectedGenes: Array,
-        selection: Array,
         summaryData: Object,
         selectedFile: String,
         axGenes: Array,
@@ -37,7 +35,6 @@
             fileSelected: this.selectedFile,
             genes: this.axGenes || [],
             groups: this.axGroups || [],
-            selectedGene: this.selection,
         }
       },
       methods: {
