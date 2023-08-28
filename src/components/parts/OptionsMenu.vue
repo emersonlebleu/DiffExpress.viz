@@ -48,7 +48,7 @@
       <div class="label-input-container" v-if="genesData && genesData.length">
         <p class="label">Genes</p>
         <select class="data-selector" v-model="selectedGenesData" @change="emitSelectedGenes" multiple>
-          <option v-for="gene in genesData" :value="gene">{{ gene.external_gene_name }}</option>
+          <option v-for="gene in genesData" :value="gene" :selected="selectedGenesData.includes(gene.external_gene_name)">{{ gene.external_gene_name }}</option>
         </select>
       </div>
     </div>

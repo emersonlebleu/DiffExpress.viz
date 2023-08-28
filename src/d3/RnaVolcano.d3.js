@@ -85,13 +85,13 @@ export default function RnaVolcanoD3() {
             .attr("stroke-linecap", "round")
             .style("stroke", function(d){
                 if (selectedGenes.includes(d["external_gene_name"])) {
-                    return "#DC5EB6";
+                    return "#E6C153";
                 } else {
 
                     return d["color"];
                 }
             })
-            .classed("point-of-interest", function(d){
+            .classed("selected", function(d){
                 if (selectedGenes.includes(d["external_gene_name"])) {
                     return true;
                 } else {
@@ -101,12 +101,9 @@ export default function RnaVolcanoD3() {
             .on("mouseout", handleMouseLeave)
             .on("click", handleSelection);
 
-        let selectedPoints = svg.selectAll(".point-of-interest")
-            .style("stroke", "#DC5EB6")
-
-        for (let node of selectedPoints.nodes()) {
-            svg.append(() => node);
-        }
+        //get all the selected points and put them on top
+        let selectedPoints = svg.selectAll(".selected");
+        selectedPoints.raise();
 //--------------------------------------------------------------------------------------------Lines
         // FC Filter Line
         // If FC is 0, then the line will be at 0 and there will only be one line and box
@@ -318,8 +315,6 @@ export default function RnaVolcanoD3() {
                 point.classed("selected", false)
                     .style("stroke", (d) => d["color"])
                     .attr("stroke-width", 4);
-            } else if (d["external_gene_name"] in selectedGenes) {
-                //do nothing
             } else {
                 point.classed("selected", true) 
                     .attr("stroke-width", 10)

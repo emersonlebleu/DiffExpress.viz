@@ -78,7 +78,7 @@
             },
             selection(newVal, oldVal) {
                 if (newVal !== oldVal) {
-                    // this.selectionData = newVal;
+                    this.selectionData = newVal;
                     this.drawVolc();
                 };
             },

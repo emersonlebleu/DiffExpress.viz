@@ -3,16 +3,15 @@
       <div class="home-chart-container">
         <RnaVolcanoCard class="data-card" 
         :data="data" 
-        :selection="selection" 
+        :selection="optionsSelection" 
         :summaryData="summaryData"
         :selectedFile="selectedFile"
         :pFilterVal="pFilterVal"
         :fcFilterVal="fcFilterVal"
-        @hmSelection="updateHmSelect"/>
+        @hmSelection="updateHeatMapAndSelect"/>
 
         <RnaHeatmapCard class="data-card"
         :selectedGenes="hmGenes"
-        :selection="selection"
         :summaryData="hmSummaryData"
         :selectedFile="selectedFile"
         :axGenes="hmGeneNames"
@@ -25,13 +24,13 @@
       :pFilterVal="pFilterVal"
       :fcFilterVal="fcFilterVal"
       :hardFilter="hardFilter"
-      :selectedGenes="selection"
+      :selectedGenes="optionsSelection"
       :genes="data"
       @newfileSelected="changeData"
       @newPFilter="filterPVal"
       @newFCFilter="filterFCVal"
       @hardFilterChange="updateHardFilter"
-      @newSelectedGenes="updateSelectedGenes"/>
+      @newSelectedGenes="updateHeatMapAndSelect"/>
 
 </template>
 
@@ -51,7 +50,7 @@
     data() {
       return {
         data: [], 
-        selection: [],
+        optionsSelection: [],
         summaryData: {},
         selectedFile: 'fish',
         pFilterVal: 0.0,
@@ -78,17 +77,18 @@
       },
       updateHmSelect(n) {
         //n here is the new selection object from the volcano plot
+        this.optionsSelection = [];
         this.hmGenes = n;
         this.hmGeneNames = this.getHmGeneNames(this.hmGenes);
         this.hmSummaryData = this.getHmSummaryData(this.hmGenes, this.hmGroupNames);
       },
       updateSelectedGenes(n) {
-        //n here is the new selection object from the heatmap
-        this.selection = n;
-
-        this.hmGenes = n;
-        this.hmGeneNames = this.getHmGeneNames(this.hmGenes);
-        this.hmSummaryData = this.getHmSummaryData(this.hmGenes, this.hmGroupNames);
+        //n here is the new selection object from the options menu
+        this.optionsSelection = n;
+      },
+      updateHeatMapAndSelect(n) {
+        this.updateHmSelect(n);
+        this.updateSelectedGenes(n);
       },
       changeData(n) {
         //n is the file name selection from the options
