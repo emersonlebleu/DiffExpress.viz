@@ -11,7 +11,7 @@
         name: 'RnaHeatmapViz',
         props: {
             selectedGenes: Array,
-            selection: String,
+            selection: Array,
             summaryData: Object,
             axGenes: Array,
             axGroups: Array,

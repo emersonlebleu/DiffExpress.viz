@@ -46,9 +46,9 @@
       </div>
 
       <div class="label-input-container" v-if="geneNames && geneNames.length">
-        <p class="label">Gene</p>
-        <select class="data-selector" v-model="selectedGene">
-          <option v-for="gene in genes" :value="gene">{{ gene }}</option>
+        <p class="label">Genes</p>
+        <select class="data-selector" v-model="selectedGenesData" @change="emitSelectedGenes" multiple>
+          <option v-for="gene in genesData" :value="gene">{{ gene.external_gene_name }}</option>
         </select>
       </div>
     </div>
@@ -65,16 +65,18 @@
       fcFilterVal: Number,
       geneNames: Array,
       hardFilter: Boolean,
-      selection: String,
+      selectedGenes: Array,
+      genes: Array,
     },
     data() {
       return {
         fileSelected: this.selectedFile,
         pFilter: (this.pFilterVal || 0.0).toString(),
         fcFilter: (this.fcFilterVal || 0.0).toString(),
-        genes: this.geneNames || [],
-        selectedGene: this.selection,
+        geneNamesData: this.geneNames || [],
+        selectedGenesData: this.selectedGenes,
         hardFilterData: this.hardFilter || false,
+        genesData: this.genes || [],
       }
     },
     methods: {
@@ -89,12 +91,18 @@
       },
       emitHardFilterChange() {
         this.$emit('hardFilterChange', this.hardFilterData);
+      },
+      emitSelectedGenes() {
+        this.$emit('newSelectedGenes', this.selectedGenesData);
       }
     },
     watch: {
-      geneNames: function(newVal, oldVal) {
-        this.genes = newVal;
-      },
+        geneNames: function(newVal, oldVal) {
+        this.geneNamesData = newVal;
+        },
+        genes: function(newVal, oldVal) {
+            this.genesData = newVal;
+        },
     },
     mounted() {
       //Nothing Now

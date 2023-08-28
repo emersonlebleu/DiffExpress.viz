@@ -27,11 +27,13 @@
       :fcFilterVal="fcFilterVal"
       :geneNames="geneNames"
       :hardFilter="hardFilter"
-      :selection="selection"
+      :selectedGenes="selection"
+      :genes="data"
       @newfileSelected="changeData"
       @newPFilter="filterPVal"
       @newFCFilter="filterFCVal"
-      @hardFilterChange="updateHardFilter"/>
+      @hardFilterChange="updateHardFilter"
+      @newSelectedGenes="updateSelectedGenes"/>
 
 </template>
 
@@ -51,7 +53,7 @@
     data() {
       return {
         data: [], 
-        selection: 'All',
+        selection: [],
         summaryData: {},
         selectedFile: 'fish',
         pFilterVal: 0.0,
@@ -75,6 +77,12 @@
       },
       updateHmSelect(n) {
         //n here is the new selection object from the volcano plot
+        this.selectedGenes = n;
+        this.hmGeneNames = this.getHmGeneNames(this.selectedGenes);
+        this.hmSummaryData = this.getHmSummaryData(this.selectedGenes, this.hmGroupNames);
+      },
+      updateSelectedGenes(n) {
+        //n here is the new selection object from the heatmap
         this.selectedGenes = n;
         this.hmGeneNames = this.getHmGeneNames(this.selectedGenes);
         this.hmSummaryData = this.getHmSummaryData(this.selectedGenes, this.hmGroupNames);

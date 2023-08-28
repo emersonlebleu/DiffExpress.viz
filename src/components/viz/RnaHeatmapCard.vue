@@ -26,7 +26,7 @@
       },
       props: {
         selectedGenes: Array,
-        selection: String,
+        selection: Array,
         summaryData: Object,
         selectedFile: String,
         axGenes: Array,

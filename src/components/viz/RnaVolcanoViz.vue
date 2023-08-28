@@ -11,7 +11,7 @@
         name: 'RnaVolcanoViz',
         props: {
             data: Array,
-            selection: String,
+            selection: Array,
             summaryData: Object,
             pFilterVal: Number,
             fcFilterVal: Number,

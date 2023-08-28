@@ -27,7 +27,7 @@
     },
     props: {
       data: Array,
-      selection: String,
+      selection: Array,
       //summary Statistics
       summaryData: Object,
       pFilterVal: Number,
