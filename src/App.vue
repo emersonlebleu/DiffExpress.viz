@@ -12,7 +12,7 @@
         @hmSelection="updateHmSelect"/>
 
         <RnaHeatmapCard class="data-card"
-        :data="hmData"
+        :selectedGenes="selectedGenes"
         :selection="selection"
         :summaryData="hmSummaryData"
         :selectedFile="selectedFile"
@@ -57,7 +57,7 @@
         pFilterVal: 0.0,
         fcFilterVal: 0.0,
         geneNames: [],
-        hmData: [],
+        selectedGenes: [],
         hmGeneNames: [],
         hmGroupNames: [],
         hmSummaryData: {},
@@ -75,9 +75,9 @@
       },
       updateHmSelect(n) {
         //n here is the new selection object from the volcano plot
-        this.hmData = n;
-        this.hmGeneNames = this.getHmGeneNames(this.hmData);
-        this.hmSummaryData = this.getHmSummaryData(this.hmData, this.hmGroupNames);
+        this.selectedGenes = n;
+        this.hmGeneNames = this.getHmGeneNames(this.selectedGenes);
+        this.hmSummaryData = this.getHmSummaryData(this.selectedGenes, this.hmGroupNames);
       },
       changeData(n) {
         //n is the file name selection from the options
@@ -92,10 +92,10 @@
         this.fcFilterVal = n;
         this.populateData();
       },
-      getHmGeneNames(hmData){
+      getHmGeneNames(selectedGenes){
         let genes = [];
         //go through the data and get the group names & gene names as two lists
-        for (let dataObj of hmData) {
+        for (let dataObj of selectedGenes) {
           //get the gene names add to names list
           genes.push(dataObj.external_gene_name)
         }
@@ -144,8 +144,8 @@
           this.geneNames = outputData[2];
           this.hmGroupNames = outputData[3];
 
-          this.hmGeneNames = this.getHmGeneNames(this.hmData);
-          this.hmSummaryData = this.getHmSummaryData(this.hmData, this.hmGroupNames);
+          this.hmGeneNames = this.getHmGeneNames(this.selectedGenes);
+          this.hmSummaryData = this.getHmSummaryData(this.selectedGenes, this.hmGroupNames);
 
         } catch (error) {
           console.error('Error fetching data:', error);
