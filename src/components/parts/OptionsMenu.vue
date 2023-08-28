@@ -50,6 +50,7 @@
         <select class="data-selector" v-model="selectedGenesData" @change="emitSelectedGenes" multiple>
           <option v-for="gene in genesData" :value="gene" :selected="selectedGenesData.includes(gene.external_gene_name)">{{ gene.external_gene_name }}</option>
         </select>
+        <button id="clear-selection-btn" @click="emitClearSelection">Clear Selection</button>
       </div>
     </div>
 </template>
@@ -92,6 +93,9 @@
       },
       emitSelectedGenes() {
         this.$emit('newSelectedGenes', this.selectedGenesData);
+      },
+      emitClearSelection() {
+        this.$emit('clearSelection');
       }
     },
     watch: {
@@ -121,6 +125,7 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+        background-color: whitesmoke;
 
   
         border-radius: 4px;
@@ -153,5 +158,21 @@
         border: none;
         border-radius: 0 0 4px 4px;
         background-color: white;
+    }
+
+    #clear-selection-btn{
+        margin: 5px 5px 5px 5px;
+        padding: 5px 10px;
+
+        border: none;
+        border-radius: 4px;
+        background-color: rgb(32, 36, 76);
+        color: white;
+    }
+
+    #clear-selection-btn:hover {
+        background-color: rgb(52, 56, 112);
+        color: white;
+        cursor: pointer;
     }
 </style>

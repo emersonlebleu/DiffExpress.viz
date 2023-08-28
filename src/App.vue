@@ -27,6 +27,7 @@
       :selectedGenes="optionsSelection"
       :genes="data"
       @newfileSelected="changeData"
+      @clearSelection="clearSelection"
       @newPFilter="filterPVal"
       @newFCFilter="filterFCVal"
       @hardFilterChange="updateHardFilter"
@@ -70,6 +71,12 @@
       this.populateData();
     },
     methods: {
+      clearSelection() {
+        this.optionsSelection = [];
+        this.hmGenes = [];
+        this.hmGeneNames = [];
+        this.hmSummaryData = {};
+      },
       updateHardFilter(n) {
         //new value of hard filter
         this.hardFilter = n;
