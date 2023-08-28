@@ -164,8 +164,9 @@
     justify-content: space-around;
     align-items: center;
     height: 100%;
-    width: 100%;
-    margin-left: 25%;
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
     
     padding: 1em;
   }
