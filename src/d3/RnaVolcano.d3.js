@@ -161,7 +161,7 @@ export default function RnaVolcanoD3() {
                 .attr("y", marginTop)
                 .attr("width", 4)
                 .attr("height", height - marginTop - marginBottom)
-                .attr("fill", "blue")
+                .attr("fill", "red")
                 .attr("opacity", 0.3)
                 .attr("id", "fc-box");
             
@@ -184,7 +184,7 @@ export default function RnaVolcanoD3() {
                 )
                 .attr("y2", height - marginBottom)
                 .attr("stroke-width", 2)
-                .attr("stroke", "blue")
+                .attr("stroke", "red")
                 .attr("stroke-dasharray", "5,5")
                 .attr("id", "fc-line");
 
