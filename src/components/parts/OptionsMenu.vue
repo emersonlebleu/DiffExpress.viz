@@ -47,15 +47,19 @@
 
       <div class="label-input-container" v-if="genesData && genesData.length">
         <p class="label">Search</p>
-        <input type="text" v-model="newSearchGene" id="new-search-gene-input" label="Gene name">
-        <Typeahead
-          v-model="lookupGene" 
-          :data="genesData" 
-          target="#new-search-gene-input"
-          match-start
-          ignore-case
-          force-select
-          item-key="external_gene_name"></Typeahead>
+        <div id="search-btn-container">
+          <input type="text" v-model="newSearchGene" id="new-search-gene-input" label="Gene name">
+          <button class="btn btn-primary">+</button>
+        </div>
+          <Typeahead
+            v-model="lookupGene" 
+            :data="genesData" 
+            target="#new-search-gene-input"
+            match-start
+            ignore-case
+            force-select
+            item-key="external_gene_name"></Typeahead>          
+
         <p class="label">Selected Genes</p>
         <select class="data-selector" v-model="selectedGenesData" @change="emitSelectedGenes" multiple>
           <option v-for="gene in genesData" :value="gene" :selected="selectedGenesData.includes(gene.external_gene_name)">{{ gene.external_gene_name }}</option>
@@ -203,9 +207,9 @@
     }
 
     .dropdown.open {
-      width: 50%;
+      width: 80%;
       margin-top: 0%;
-      margin-left: 5px;
+      align-self: center;
     }
 
     .dropdown.open .dropdown-menu {
@@ -229,5 +233,25 @@
 
     .dropdown.open .dropdown-menu a:hover {
         background-color: rgba(147, 192, 250, 0.5);
+    }
+
+    #search-btn-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .btn.btn-primary {
+      padding: 0px 0px 2px 0px;
+      width: 20px;
+      height: 20px;
+      background-color: rgb(39, 45, 112);
+      border: none;
+
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
     }
 </style>
