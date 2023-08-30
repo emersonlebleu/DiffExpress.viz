@@ -1,11 +1,5 @@
 <template>
     <div class="card-tool-bar">
-      <div class="label-input-container">
-        <p class="label">Hard Filter</p>
-        <div class="data-selector">
-            <input type="checkbox" v-model="hardFilterData" @change="emitHardFilterChange">
-        </div>
-      </div>
       
       <div class="label-input-container">
         <p class="label">Sample Data </p>
@@ -15,37 +9,8 @@
         </select>      
       </div>
 
-      <div class="label-input-container">
-        <p class="label">Filter P </p>
-        <select class="data-selector" v-model="pFilter" @change="emitPFilter">
-          <option value="0">0</option>
-          <option value="0.05">.05 </option>
-          <option value="0.01">.01</option>
-          <option value="0.001">.001</option>
-          <option value="0.0001">.0001</option>
-          <option value="0.00001">.00001</option>
-          <option value="0.000001">.000001</option>
-          <option value="0.0000001">.0000001</option>
-          <option value="0.0000001">.00000001</option>
-        </select>
-      </div>
-
-      <div class="label-input-container">
-        <p class="label">Filter FC </p>
-        <select class="data-selector" v-model="fcFilter" @change="emitFCFilter">
-          <option value="0">0</option>
-          <option value="0.5">.5</option>
-          <option value="1">1</option>
-          <option value="1.5">1.5</option>
-          <option value="2">2</option>
-          <option value="2.5">2.5</option>
-          <option value="3">3</option>
-          <option value="3.5">3.5</option>
-          <option value="4">4</option>
-        </select>
-      </div>
-
-      <v-expansion-panels v-model="openPanels">
+      <v-expansion-panels v-model="openPanels" multiple>
+        <!-- GENE SELECTION -->
         <v-expansion-panel v-if="genesData && genesData.length">
           <v-expansion-panel-title>Select Genes</v-expansion-panel-title>
           <v-expansion-panel-text id="gene-selection-dropdown">
@@ -68,6 +33,45 @@
                 <option v-for="gene in genesData" :value="gene" :selected="selectedGenesData.includes(gene.external_gene_name)">{{ gene.external_gene_name }}</option>
               </select>
               <button id="clear-selection-btn" @click="emitClearSelection">Clear Selection</button>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+
+        <!-- FILTERS -->
+        <v-expansion-panel>
+          <v-expansion-panel-title>Data Filters</v-expansion-panel-title>
+          <v-expansion-panel-text id="filter-selection-dropdown">
+
+            <p class="label">Hard Filter</p>
+            <div class="data-selector checkbox">
+                <input type="checkbox" v-model="hardFilterData" @change="emitHardFilterChange">
+            </div>
+
+            <p class="label">Filter P </p>
+            <select class="data-selector" v-model="pFilter" @change="emitPFilter">
+              <option value="0">0</option>
+              <option value="0.05">.05 </option>
+              <option value="0.01">.01</option>
+              <option value="0.001">.001</option>
+              <option value="0.0001">.0001</option>
+              <option value="0.00001">.00001</option>
+              <option value="0.000001">.000001</option>
+              <option value="0.0000001">.0000001</option>
+              <option value="0.0000001">.00000001</option>
+            </select>
+
+            <p class="label">Filter FC </p>
+            <select class="data-selector" v-model="fcFilter" @change="emitFCFilter">
+              <option value="0">0</option>
+              <option value="0.5">.5</option>
+              <option value="1">1</option>
+              <option value="1.5">1.5</option>
+              <option value="2">2</option>
+              <option value="2.5">2.5</option>
+              <option value="3">3</option>
+              <option value="3.5">3.5</option>
+              <option value="4">4</option>
+            </select>
+
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -168,7 +172,7 @@
     }
 
     #gene-selection-dropdown .v-expansion-panel-text__wrapper {
-      padding: 0px 0px 0px 0px;
+      padding: 1em 1em 2em 1em;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -176,7 +180,7 @@
     }
 
     #gene-selection-dropdown .label {
-      border-radius: 0 0 0 0;
+      border-radius: 3px;
       text-align: left;
       padding: 0px 0px 0px 15px;
       width: 100%;
@@ -184,8 +188,51 @@
 
     #gene-selection-dropdown .data-selector {
       width: 100%;
-      border-bottom: #ced4da 1px solid;
-      border-radius: 0%;
+      border: #ced4da 1px solid;
+      border-radius: 3px;
+      margin: 3px 0px 3px 0px;
+    }
+
+    #filter-selection-dropdown.v-expansion-panel-text {
+      padding: 1em 1em 2em 1em;
+    }
+
+    #filter-selection-dropdown .v-expansion-panel-text__wrapper {
+      padding: 0px 0px 0px 0px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #filter-selection-dropdown .label {
+      border-radius: 3px;
+      text-align: left;
+      padding: 0px 0px 0px 15px;
+      width: 100%;
+    }
+
+    #filter-selection-dropdown .data-selector {
+      width: 50%;
+      border: #ced4da 1px solid;
+      border-radius: 3px;
+      margin: 3px 0px 3px 0px;
+    }
+
+    #filter-selection-dropdown .data-selector.checkbox {
+      border: none;
+    }
+
+    #filter-selection-dropdown .data-selector.checkbox:hover {
+      cursor: auto;
+    }
+
+    #filter-selection-dropdown .data-selector.checkbox input {
+      cursor: pointer;
+    }
+
+    #filter-selection-dropdown .data-selector:hover {
+      cursor: pointer;
     }
 
     .label{

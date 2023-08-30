@@ -1,5 +1,4 @@
 <template>
-
       <div class="home-chart-container">
         <RnaVolcanoCard class="data-card" 
         :data="data" 
@@ -32,7 +31,6 @@
       @newFCFilter="filterFCVal"
       @hardFilterChange="updateHardFilter"
       @newSelectedGenes="updateHeatMapAndSelect"/>
-
 </template>
 
 <script>
