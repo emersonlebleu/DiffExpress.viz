@@ -45,27 +45,33 @@
         </select>
       </div>
 
-      <div class="label-input-container" v-if="genesData && genesData.length">
-        <p class="label">Search</p>
-        <div id="search-btn-container">
-          <input type="text" v-model="newSearchGene" id="new-search-gene-input" label="Gene name">
-          <button class="btn btn-primary">+</button>
-        </div>
-          <Typeahead
-            v-model="lookupGene" 
-            :data="genesData" 
-            target="#new-search-gene-input"
-            match-start
-            ignore-case
-            force-select
-            item-key="external_gene_name"></Typeahead>          
+      <v-expansion-panels v-model="openPanels">
+        <v-expansion-panel v-if="genesData && genesData.length">
+          <v-expansion-panel-title>Select Genes</v-expansion-panel-title>
+          <v-expansion-panel-text id="gene-selection-dropdown">
+              <p class="label">Search</p>
+              <div id="search-btn-container">
+                <input type="text" v-model="newSearchGene" id="new-search-gene-input" label="Gene name">
+                <button class="btn btn-primary" id="add-gene-btn">+</button>
+              </div>
+                <Typeahead
+                  v-model="lookupGene" 
+                  :data="genesData" 
+                  target="#new-search-gene-input"
+                  match-start
+                  ignore-case
+                  force-select
+                  item-key="external_gene_name"></Typeahead>          
 
-        <p class="label">Selected Genes</p>
-        <select class="data-selector" v-model="selectedGenesData" @change="emitSelectedGenes" multiple>
-          <option v-for="gene in genesData" :value="gene" :selected="selectedGenesData.includes(gene.external_gene_name)">{{ gene.external_gene_name }}</option>
-        </select>
-        <button id="clear-selection-btn" @click="emitClearSelection">Clear Selection</button>
-      </div>
+              <p class="label">Selected Genes</p>
+              <select class="data-selector" v-model="selectedGenesData" @change="emitSelectedGenes" multiple>
+                <option v-for="gene in genesData" :value="gene" :selected="selectedGenesData.includes(gene.external_gene_name)">{{ gene.external_gene_name }}</option>
+              </select>
+              <button id="clear-selection-btn" @click="emitClearSelection">Clear Selection</button>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-expansion-panels>
+
     </div>
 </template>
 
@@ -95,6 +101,7 @@
         genesData: this.genes || [],
         newSearchGene: '',
         lookupGene: '',
+        openPanels: [0],
       }
     },
     methods: {
@@ -160,6 +167,27 @@
         box-shadow: 0 3px 1px -2px rgba(79, 79, 79, 0.2), 0 2px 2px 0 rgba(79, 79, 79, 0.2), 0 1px 5px 0 rgba(79, 79, 79, 0.2);
     }
 
+    #gene-selection-dropdown .v-expansion-panel-text__wrapper {
+      padding: 0px 0px 0px 0px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #gene-selection-dropdown .label {
+      border-radius: 0 0 0 0;
+      text-align: left;
+      padding: 0px 0px 0px 15px;
+      width: 100%;
+    }
+
+    #gene-selection-dropdown .data-selector {
+      width: 100%;
+      border-bottom: #ced4da 1px solid;
+      border-radius: 0%;
+    }
+
     .label{
         margin: 0 0 0 0;
         color: rgb(255, 255, 255);
@@ -186,18 +214,21 @@
 
     #clear-selection-btn{
         margin: 5px 5px 5px 5px;
-        padding: 5px 10px;
+        padding: 0px 10px;
 
         border: none;
         border-radius: 4px;
         background-color: rgb(32, 36, 76);
         color: white;
+        align-self: center;
     }
 
     #clear-selection-btn:hover {
-        background-color: rgb(52, 56, 112);
+        background-color: rgb(209, 72, 72);
         color: white;
         cursor: pointer;
+
+        transition: all 0.15s ease-in-out;
     }
 
     #new-search-gene-input {
@@ -242,7 +273,7 @@
       align-items: center;
     }
 
-    .btn.btn-primary {
+    #add-gene-btn {
       padding: 0px 0px 2px 0px;
       width: 20px;
       height: 20px;
@@ -253,5 +284,13 @@
       flex-direction: row;
       align-items: center;
       justify-content: center;
+    }
+
+    #add-gene-btn:hover {
+      background-color: rgb(25, 171, 47);
+      color: white;
+      cursor: pointer;
+
+      transition: all 0.15s ease-in-out;
     }
 </style>
