@@ -46,7 +46,17 @@
       </div>
 
       <div class="label-input-container" v-if="genesData && genesData.length">
-        <p class="label">Genes</p>
+        <p class="label">Search</p>
+        <input type="text" v-model="newSearchGene" id="new-search-gene-input" label="Gene name">
+        <Typeahead
+          v-model="lookupGene" 
+          :data="genesData" 
+          target="#new-search-gene-input"
+          match-start
+          ignore-case
+          force-select
+          item-key="external_gene_name"></Typeahead>
+        <p class="label">Selected Genes</p>
         <select class="data-selector" v-model="selectedGenesData" @change="emitSelectedGenes" multiple>
           <option v-for="gene in genesData" :value="gene" :selected="selectedGenesData.includes(gene.external_gene_name)">{{ gene.external_gene_name }}</option>
         </select>
@@ -56,9 +66,12 @@
 </template>
 
 <script>
+  import { Typeahead } from 'uiv'
+
   export default {
     name: 'OptionsMenu',
     components: {
+      Typeahead,
     },
     props: {
       selectedFile: String,
@@ -76,6 +89,8 @@
         selectedGenesData: this.selectedGenes,
         hardFilterData: this.hardFilter || false,
         genesData: this.genes || [],
+        newSearchGene: '',
+        lookupGene: '',
       }
     },
     methods: {
@@ -105,6 +120,11 @@
         selectedGenes: function(newVal, oldVal) {
             this.selectedGenesData = newVal;
         },
+    },
+    computed: {
+      geneNameslist() {
+        return this.genesData.map(gene => gene.external_gene_name);
+      },
     },
     mounted() {
       //Nothing Now
@@ -174,5 +194,40 @@
         background-color: rgb(52, 56, 112);
         color: white;
         cursor: pointer;
+    }
+
+    #new-search-gene-input {
+      margin: 5px 5px 5px 5px;
+      border-radius: 2px;
+      border: 1px solid #ced4da;
+    }
+
+    .dropdown.open {
+      width: 50%;
+      margin-top: 0%;
+      margin-left: 5px;
+    }
+
+    .dropdown.open .dropdown-menu {
+        display: block;
+        text-align: center;
+        width: 100%;
+        opacity: .95;
+        background-color: rgb(32, 36, 76);
+
+        border-radius: 4px;
+        border: 1px solid whitesmoke;
+        box-shadow: 0 3px 1px -2px rgba(79, 79, 79, 0.2), 0 2px 2px 0 rgba(79, 79, 79, 0.2), 0 1px 5px 0 rgba(79, 79, 79, 0.2);
+    }
+
+    .dropdown.open .dropdown-menu a {
+        display: block;
+        text-decoration: none;
+        color: white;
+        width: 100%;
+    }
+
+    .dropdown.open .dropdown-menu a:hover {
+        background-color: rgba(147, 192, 250, 0.5);
     }
 </style>
