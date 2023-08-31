@@ -186,16 +186,4 @@
     padding: 1em;
   }
 
-  .options-menu {
-    justify-content: flex-start;
-    margin: 0%;
-    height: 100%;
-    max-width: 300px;
-    padding: 1em;
-    background-color: #a7aaad;
-    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
-
-    overflow-y: auto;
-  }
-
 </style>

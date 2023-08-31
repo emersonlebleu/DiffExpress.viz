@@ -12,11 +12,11 @@
       <v-expansion-panels v-model="openPanels" multiple>
         <!-- GENE SELECTION -->
         <v-expansion-panel v-if="genesData && genesData.length">
-          <v-expansion-panel-title>Select Genes</v-expansion-panel-title>
+          <v-expansion-panel-title color="rgb(19, 52, 102)">Select Genes</v-expansion-panel-title>
           <v-expansion-panel-text id="gene-selection-dropdown">
-              <p class="label">Search</p>
+              <p class="label">Search Genes</p>
               <div id="search-btn-container">
-                <input type="text" v-model="newSearchGene" id="new-search-gene-input" label="Gene name">
+                <input type="text" v-model="newSearchGene" id="new-search-gene-input" label="Gene name" placeholder="Search...">
                 <button class="btn btn-primary" id="add-gene-btn">+</button>
               </div>
                 <Typeahead
@@ -29,16 +29,23 @@
                   item-key="external_gene_name"></Typeahead>          
 
               <p class="label">Selected Genes</p>
-              <select class="data-selector" v-model="selectedGenesData" @change="emitSelectedGenes" multiple>
-                <option v-for="gene in genesData" :value="gene" :selected="selectedGenesData.includes(gene.external_gene_name)">{{ gene.external_gene_name }}</option>
-              </select>
+              <div class="data-selector">
+                <v-chip-group>
+                  <p class="placeholder-text" v-if="selectedGenesData.length == 0"><i>Add or select genes to display.</i></p>
+                  <v-chip v-for="gene in selectedGenesData" closable size="x-small" class="chip" :class="gene.color">
+                  {{ gene.external_gene_name}}
+                  </v-chip>
+                </v-chip-group>
+
+              </div>
+
               <button id="clear-selection-btn" @click="emitClearSelection">Clear Selection</button>
           </v-expansion-panel-text>
         </v-expansion-panel>
 
         <!-- FILTERS -->
         <v-expansion-panel>
-          <v-expansion-panel-title>Data Filters</v-expansion-panel-title>
+          <v-expansion-panel-title color="rgb(19, 52, 102)">Data Filters</v-expansion-panel-title>
           <v-expansion-panel-text id="filter-selection-dropdown">
 
             <p class="label">Hard Filter</p>
@@ -151,9 +158,12 @@
     .card-tool-bar {
         display: flex;
         flex-direction: column;
-        justify-content: space-evenly;
-        margin: 5px 20px;
-        width: 100%;
+        justify-content: flex-start;
+        align-items:center;
+        width: 350px;
+        height: 100%;
+        padding-right: 20px;
+        padding-top: 1rem;
     }
 
     .label-input-container {
@@ -161,11 +171,10 @@
         flex-direction: column;
         justify-content: center;
         background-color: whitesmoke;
-
+        width: 100%;
   
         border-radius: 4px;
 
-        margin-top: 5px;
         margin-bottom: 5px;
 
         box-shadow: 0 3px 1px -2px rgba(79, 79, 79, 0.2), 0 2px 2px 0 rgba(79, 79, 79, 0.2), 0 1px 5px 0 rgba(79, 79, 79, 0.2);
@@ -238,7 +247,7 @@
     .label{
         margin: 0 0 0 0;
         color: rgb(255, 255, 255);
-        background-color: rgb(32, 36, 76);
+        background-color: rgb(72, 103, 150);
 
         border: none;
         border-radius: 3px 3px 0 0;
@@ -265,7 +274,7 @@
 
         border: none;
         border-radius: 4px;
-        background-color: rgb(32, 36, 76);
+        background-color: rgb(72, 103, 150);
         color: white;
         align-self: center;
     }
@@ -282,6 +291,7 @@
       margin: 5px 5px 5px 5px;
       border-radius: 2px;
       border: 1px solid #ced4da;
+      padding-left: 5px;
     }
 
     .dropdown.open {
@@ -295,7 +305,7 @@
         text-align: center;
         width: 100%;
         opacity: .95;
-        background-color: rgb(32, 36, 76);
+        background-color: rgb(72, 103, 150);
 
         border-radius: 4px;
         border: 1px solid whitesmoke;
@@ -324,7 +334,7 @@
       padding: 0px 0px 2px 0px;
       width: 20px;
       height: 20px;
-      background-color: rgb(39, 45, 112);
+      background-color: rgb(72, 103, 150);
       border: none;
 
       display: flex;
@@ -339,5 +349,26 @@
       cursor: pointer;
 
       transition: all 0.15s ease-in-out;
+    }
+
+    .placeholder-text {
+      color: #6c757d;
+      width: 100%;
+      text-align: left;
+    }
+
+    .chip.red {
+      background-color: red;
+      color: white;
+    }
+
+    .chip.blue {
+      background-color: blue;
+      color: white;
+    }
+
+    .chip.grey {
+      background-color: grey;
+      color: white;
     }
 </style>
