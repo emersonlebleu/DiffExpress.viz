@@ -7,6 +7,7 @@
         :selectedFile="selectedFile"
         :pFilterVal="pFilterVal"
         :fcFilterVal="fcFilterVal"
+        :showSelectedLabels="showSelectedLabels"
         @updateSelectedGenes="syncSelectedGenes"/>
 
         <RnaHeatmapCard class="data-card"
@@ -25,12 +26,14 @@
       :hardFilter="hardFilter"
       :selectedGenes="optionsSelectedGenes"
       :genes="data"
+      :showSelectedLabels="showSelectedLabels"
       @newfileSelected="changeData"
       @clearSelection="clearSelection"
       @newPFilter="filterPVal"
       @newFCFilter="filterFCVal"
       @hardFilterChange="updateHardFilter"
-      @updateSelectedGenes="syncSelectedGenes"/>
+      @updateSelectedGenes="syncSelectedGenes"
+      @showLabelsChange="toggleShowLabels"/>
 </template>
 
 <script>
@@ -64,12 +67,16 @@
         hardFilter: false,
         volcSelectedGenes: [],
         optionsSelectedGenes: [],
+        showSelectedLabels: true,
       }
     },
     async mounted() {
       this.populateData();
     },
     methods: {
+      toggleShowLabels(showLabels) {
+        this.showSelectedLabels = showLabels;
+      },
       clearSelection() {
         this.optionsSelectedGenes = [];
         this.volcSelectedGenes = [];

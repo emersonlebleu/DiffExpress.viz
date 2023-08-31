@@ -15,6 +15,7 @@
             summaryData: Object,
             pFilterVal: Number,
             fcFilterVal: Number,
+            showSelectedLabels: Boolean,
         },
         data() {
             return {
@@ -59,6 +60,7 @@
                     .setWidth(width)
                     .setPvalue(this.pFilterVal)
                     .setFC(this.fcFilterVal)
+                    .setShowLabels(this.showSelectedLabels)
                     .setSelection(this.selectionData);
 
                 this.volcChart(container, this.data);

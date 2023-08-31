@@ -10,6 +10,7 @@
               :summaryData="summaryData"
               :pFilterVal="pFilterVal"
               :fcFilterVal="fcFilterVal"
+              :showSelectedLabels="showSelectedLabels"
               @click="emitUpdateSelectedGenes"/>
     </div>
 
@@ -32,6 +33,7 @@
       summaryData: Object,
       pFilterVal: Number,
       fcFilterVal: Number,
+      showSelectedLabels: Boolean,
     },
     data() {
       return {

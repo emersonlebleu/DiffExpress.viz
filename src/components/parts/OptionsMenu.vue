@@ -102,6 +102,39 @@
 
           </v-expansion-panel-text>
         </v-expansion-panel>
+
+        <!-- OPTIONS -->
+        <v-expansion-panel>
+          <v-expansion-panel-title color="rgb(19, 52, 102)">Options</v-expansion-panel-title>
+          <v-expansion-panel-text id="filter-selection-dropdown">
+
+            <p class="label">Show Labels On Select</p>
+            <div class="data-selector checkbox">
+                <!-- TODO Add show labels data and emit function for it -->
+                <input type="checkbox" v-model="showLabels" @change="emitShowLablesChange">
+            </div>
+
+            <p class="label">Subchart Selection</p>
+            <v-radio-group density="compact" v-model="subChartSelection">
+              <v-radio color="indigo-darken-3" value="None">
+                <template v-slot:label>
+                  <div class="radio-label">No sub-chart</div>
+                </template>
+              </v-radio>
+              <v-radio color="indigo-darken-3" value="Heatmap">
+                <template v-slot:label>
+                  <div class="radio-label">View heatmap of selection</div>
+                </template>
+              </v-radio>
+              <v-radio color="indigo-darken-3" value="Minimap">
+                <template v-slot:label>
+                  <div class="radio-label">Explore with zoom-map</div>
+                </template>
+              </v-radio>
+            </v-radio-group>
+
+          </v-expansion-panel-text>
+        </v-expansion-panel>
       </v-expansion-panels>
 
     </div>
@@ -122,6 +155,7 @@
       hardFilter: Boolean,
       selectedGenes: Array,
       genes: Array,
+      showSelectedLabels: Boolean,
     },
     data() {
       return {
@@ -134,6 +168,8 @@
         newSearchGene: {},
         lookupGene: '',
         openPanels: [0],
+        subChartSelection: 'Heatmap',
+        showLabels: this.showSelectedLabels || true,
       }
     },
     methods: {
@@ -154,6 +190,9 @@
       },
       emitClearSelection() {
         this.$emit('clearSelection');
+      },
+      emitShowLablesChange() {
+        this.$emit('showLabelsChange', this.showLabels);
       },
       updateNewSearchGene(item) {
         if (item) {
@@ -299,6 +338,14 @@
 
     option {
         text-align: center;
+    }
+
+    div.radio-label {
+      font-size: small;
+    }
+
+    .v-radio-group {
+      padding-top: 1em;
     }
 
     .data-selector {

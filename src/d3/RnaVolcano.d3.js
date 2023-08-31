@@ -19,6 +19,7 @@ export default function RnaVolcanoD3() {
     var filterFC = 0.0;
 
     var selectedGenes = [];
+    var showLabels = false;
     
     function chart(container, dataArray) {
 
@@ -104,6 +105,23 @@ export default function RnaVolcanoD3() {
         //get all the selected points and put them on top
         let selectedPoints = svg.selectAll(".selected");
         selectedPoints.raise();
+
+        //If showLabels then add the labels to the selected points otherwise do nothing
+        if (showLabels) {
+            var selectedData = selectedPoints.data();
+
+            svg.selectAll(null) // selectAll(null) will create an empty selection to append new elements to
+            .data(selectedData)
+            .enter()
+            .append("text")
+            .attr("x", function(d) { return x(d.log2FoldChange) + 10; })
+            .attr("y", function(d) { return y(d.negLog10Pvalue) - 10; })
+            .text(function(d) { return d["external_gene_name"]; })
+            .style("fill", "black")
+            .style("font-size", "10px")
+            .style("font-weight", "bold");
+        }
+
 //--------------------------------------------------------------------------------------------Lines
         // FC Filter Line
         // If FC is 0, then the line will be at 0 and there will only be one line and box
@@ -371,6 +389,11 @@ export default function RnaVolcanoD3() {
 
     chart.setFC = function(newFC) {
         filterFC = newFC;
+        return chart;
+    }
+
+    chart.setShowLabels = function(showLabel) {
+        showLabels = showLabel;
         return chart;
     }
     
