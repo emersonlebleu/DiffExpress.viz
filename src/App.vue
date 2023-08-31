@@ -2,12 +2,12 @@
       <div class="home-chart-container">
         <RnaVolcanoCard class="data-card" 
         :data="data" 
-        :selection="optionsSelection" 
+        :selectedGenes="volcSelectedGenes" 
         :summaryData="summaryData"
         :selectedFile="selectedFile"
         :pFilterVal="pFilterVal"
         :fcFilterVal="fcFilterVal"
-        @hmSelection="updateHeatMapAndSelect"/>
+        @updateSelectedGenes="syncSelectedGenes"/>
 
         <RnaHeatmapCard class="data-card"
         :selectedGenes="hmGenes"
@@ -23,14 +23,14 @@
       :pFilterVal="pFilterVal"
       :fcFilterVal="fcFilterVal"
       :hardFilter="hardFilter"
-      :selectedGenes="optionsSelection"
+      :selectedGenes="optionsSelectedGenes"
       :genes="data"
       @newfileSelected="changeData"
       @clearSelection="clearSelection"
       @newPFilter="filterPVal"
       @newFCFilter="filterFCVal"
       @hardFilterChange="updateHardFilter"
-      @newSelectedGenes="updateHeatMapAndSelect"/>
+      @updateSelectedGenes="syncSelectedGenes"/>
 </template>
 
 <script>
@@ -48,8 +48,7 @@
     }, 
     data() {
       return {
-        data: [], 
-        optionsSelection: [],
+        data: [],
         summaryData: {},
         selectedFile: 'fish',
         pFilterVal: 0.0,
@@ -63,6 +62,8 @@
         //This is the summary data for the heatmap colors to use
         hmSummaryData: {},
         hardFilter: false,
+        volcSelectedGenes: [],
+        optionsSelectedGenes: [],
       }
     },
     async mounted() {
@@ -70,10 +71,9 @@
     },
     methods: {
       clearSelection() {
-        this.optionsSelection = [];
-        this.hmGenes = [];
-        this.hmGeneNames = [];
-        this.hmSummaryData = {};
+        this.optionsSelectedGenes = [];
+        this.volcSelectedGenes = [];
+        this.updateHmSelect([]);
       },
       updateHardFilter(n) {
         //new value of hard filter
@@ -81,19 +81,24 @@
         this.populateData();
       },
       updateHmSelect(n) {
-        //n here is the new selection object from the volcano plot
-        this.optionsSelection = [];
         this.hmGenes = n;
         this.hmGeneNames = this.getHmGeneNames(this.hmGenes);
         this.hmSummaryData = this.getHmSummaryData(this.hmGenes, this.hmGroupNames);
       },
       updateSelectedGenes(n) {
         //n here is the new selection object from the options menu
-        this.optionsSelection = n;
+        this.optionsSelectedGenes = n;
       },
-      updateHeatMapAndSelect(n) {
-        this.updateHmSelect(n);
-        this.updateSelectedGenes(n);
+      syncSelectedGenes(n, source) {
+        if (source === 'volcano') {
+          this.updateHmSelect(n)
+          this.volcSelectedGenes = n;
+          this.optionsSelectedGenes = this.volcSelectedGenes;
+        } else if (source === 'options') {
+          this.updateHmSelect(n)
+          this.optionsSelectedGenes = n;
+          this.volcSelectedGenes = this.optionsSelectedGenes;
+        }
       },
       changeData(n) {
         //n is the file name selection from the options
@@ -161,6 +166,19 @@
 
           this.hmGeneNames = this.getHmGeneNames(this.hmGenes);
           this.hmSummaryData = this.getHmSummaryData(this.hmGenes, this.hmGroupNames);
+
+          //VolcSelect & OptionsSelect should be the same
+          //Ensure that the volcSelec genes are still in the data
+          let newVolcSelectedGenes = [];
+          for (let gene in this.volcSelectedGenes) {
+            let geneName = this.volcSelectedGenes[gene].external_gene_name;
+            let geneObj = this.data.find(obj => obj.external_gene_name === geneName);
+            if (geneObj) {
+              newVolcSelectedGenes.push(geneObj);
+            }
+          }
+          this.volcSelectedGenes = newVolcSelectedGenes;
+          this.optionsSelectedGenes = this.volcSelectedGenes;
 
         } catch (error) {
           console.error('Error fetching data:', error);

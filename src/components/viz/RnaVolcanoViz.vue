@@ -76,11 +76,12 @@
                     this.drawVolc();
                 };
             },
-            selection(newVal, oldVal) {
-                if (newVal !== oldVal) {
-                    this.selectionData = newVal;
-                    this.drawVolc();
-                };
+            selection: {
+                handler(newVal) {
+                this.selectionData = newVal;
+                this.drawVolc();
+            },
+            deep: true
             },
         }
     }

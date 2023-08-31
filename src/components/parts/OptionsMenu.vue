@@ -16,8 +16,18 @@
           <v-expansion-panel-text id="gene-selection-dropdown">
               <p class="label">Search Genes</p>
               <div id="search-btn-container">
-                <input type="text" v-model="newSearchGene" id="new-search-gene-input" label="Gene name" placeholder="Search...">
-                <button class="btn btn-primary" id="add-gene-btn">+</button>
+                <input 
+                type="text" 
+                v-model="newSearchGene.external_gene_name" 
+                id="new-search-gene-input" label="Gene name" 
+                placeholder="Search...">
+
+                <button 
+                v-if="geneNameslist.includes(newSearchGene.external_gene_name)" 
+                class="btn btn-primary" 
+                id="add-gene-btn" 
+                @click="add">+</button>
+
               </div>
                 <Typeahead
                   v-model="lookupGene" 
@@ -26,13 +36,22 @@
                   match-start
                   ignore-case
                   force-select
-                  item-key="external_gene_name"></Typeahead>          
+                  force-clear
+                  item-key="external_gene_name"
+                  @update:modelValue="updateNewSearchGene"></Typeahead>          
 
               <p class="label">Selected Genes</p>
               <div class="data-selector">
                 <v-chip-group>
-                  <p class="placeholder-text" v-if="selectedGenesData.length == 0"><i>Add or select genes to display.</i></p>
-                  <v-chip v-for="gene in selectedGenesData" closable size="x-small" class="chip" :class="gene.color">
+                  <p 
+                  class="placeholder-text" 
+                  v-if="optionsSelectedGenes.length == 0"><i>Add or select genes to display.</i></p>
+                  <v-chip 
+                  v-for="gene in optionsSelectedGenes"
+                  closable 
+                  size="x-small" 
+                  class="chip" 
+                  :class="gene.color">
                   {{ gene.external_gene_name}}
                   </v-chip>
                 </v-chip-group>
@@ -107,10 +126,10 @@
         fileSelected: this.selectedFile,
         pFilter: (this.pFilterVal || 0.0).toString(),
         fcFilter: (this.fcFilterVal || 0.0).toString(),
-        selectedGenesData: this.selectedGenes,
+        optionsSelectedGenes: [],
         hardFilterData: this.hardFilter || false,
         genesData: this.genes || [],
-        newSearchGene: '',
+        newSearchGene: {},
         lookupGene: '',
         openPanels: [0],
       }
@@ -129,19 +148,37 @@
         this.$emit('hardFilterChange', this.hardFilterData);
       },
       emitSelectedGenes() {
-        this.$emit('newSelectedGenes', this.selectedGenesData);
+        this.$emit('updateSelectedGenes', this.optionsSelectedGenes, 'options');
       },
       emitClearSelection() {
         this.$emit('clearSelection');
-      }
+      },
+      updateNewSearchGene(item) {
+        if (item) {
+          this.newSearchGene = item;
+        }
+      },
+      add() {
+        if (this.newSearchGene) {
+          this.optionsSelectedGenes.push(this.newSearchGene);
+          this.emitSelectedGenes();
+
+          this.newSearchGene = {};
+          this.lookupGene = '';
+        }
+      },
     },
     watch: {
-        genes: function(newVal, oldVal) {
+        genes: {
+          handler(newVal) {
             this.genesData = newVal;
-        },
-        selectedGenes: function(newVal, oldVal) {
-            this.selectedGenesData = newVal;
-        },
+          },
+        deep: true},
+        selectedGenes: {
+          handler(newVal) {
+              this.optionsSelectedGenes = newVal;
+          },
+        deep: true},
     },
     computed: {
       geneNameslist() {
@@ -334,7 +371,7 @@
       padding: 0px 0px 2px 0px;
       width: 20px;
       height: 20px;
-      background-color: rgb(72, 103, 150);
+      background-color: rgb(25, 171, 47);
       border: none;
 
       display: flex;
@@ -344,8 +381,8 @@
     }
 
     #add-gene-btn:hover {
-      background-color: rgb(25, 171, 47);
-      color: white;
+      background-color: rgb(14, 231, 46);
+      color: black;
       cursor: pointer;
 
       transition: all 0.15s ease-in-out;
@@ -358,17 +395,20 @@
     }
 
     .chip.red {
-      background-color: red;
+      background-color: rgba(255, 0, 0, 0.8);
+      border: 1px solid red;
       color: white;
     }
 
     .chip.blue {
-      background-color: blue;
+      background-color: rgba(0, 0, 255, 0.8);
+      border: 1px solid blue;
       color: white;
     }
 
     .chip.grey {
-      background-color: grey;
+      background-color: rgba(128, 128, 128, 0.8);
+      border: 1px solid grey;
       color: white;
     }
 </style>

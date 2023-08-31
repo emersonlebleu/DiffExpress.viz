@@ -6,11 +6,11 @@
       <!-- Only Render Once there is Data -->
       <RnaVolcanoViz v-if="data && data.length && summaryData && Object.keys(summaryData).length" 
               :data="data" 
-              :selection="selectedGenes" 
+              :selection="volcSelectedGenes" 
               :summaryData="summaryData"
               :pFilterVal="pFilterVal"
               :fcFilterVal="fcFilterVal"
-              @click="emitHmSelection"/>
+              @click="emitUpdateSelectedGenes"/>
     </div>
 
   </div>
@@ -27,7 +27,7 @@
     },
     props: {
       data: Array,
-      selection: Array,
+      selectedGenes: Array,
       //summary Statistics
       summaryData: Object,
       pFilterVal: Number,
@@ -38,20 +38,23 @@
         fileSelected: this.selectedFile,
         pFilter: (this.pFilterVal || 0.0).toString(),
         fcFilter: (this.fcFilterVal || 0.0).toString(),
-        selectedGenes: this.selection,
+        volcSelectedGenes: [],
       }
     },
     methods: {
-      emitHmSelection() {
+      emitUpdateSelectedGenes() {
         //use d3 to get all of the points with the class of selected
-        let selectedPoints = d3.selectAll('.selected').data();
-        this.$emit('hmSelection', selectedPoints);
+        let selectedGenes = d3.selectAll('.selected').data();
+        this.$emit('updateSelectedGenes', selectedGenes, 'volcano');
       },
     },
     watch: {
-      selection: function(newVal, oldVal) {
-        this.selectedGenes = newVal;
+      selectedGenes: {
+        handler(newVal) {
+          this.volcSelectedGenes = newVal;
       },
+      deep: true
+    },
     },
     mounted() {
       //Nothing Now
