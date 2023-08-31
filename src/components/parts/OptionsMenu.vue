@@ -47,11 +47,13 @@
                   class="placeholder-text" 
                   v-if="optionsSelectedGenes.length == 0"><i>Add or select genes to display.</i></p>
                   <v-chip 
-                  v-for="gene in optionsSelectedGenes"
+                  v-for="(gene, index) in optionsSelectedGenes"
+                  :key="gene.external_gene_name + index"
                   closable 
                   size="x-small" 
                   class="chip" 
-                  :class="gene.color">
+                  :class="gene.color"
+                  @click:close="removeGene(gene)">
                   {{ gene.external_gene_name}}
                   </v-chip>
                 </v-chip-group>
@@ -166,6 +168,10 @@
           this.newSearchGene = {};
           this.lookupGene = '';
         }
+      },
+      removeGene(gene){
+        this.optionsSelectedGenes = this.optionsSelectedGenes.filter(theGene => theGene.external_gene_name !== gene.external_gene_name);
+        this.emitSelectedGenes();
       },
     },
     watch: {
