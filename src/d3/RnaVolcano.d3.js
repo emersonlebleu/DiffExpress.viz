@@ -110,6 +110,34 @@ export default function RnaVolcanoD3() {
         if (showLabels) {
             var selectedData = selectedPoints.data();
 
+            //add a background rec for the labels
+            svg.selectAll(null)
+            .data(selectedData)
+            .enter()
+            .append("rect")
+            .attr("x", function(d) { return x(d.log2FoldChange) + 7; })
+            .attr("y", function(d) { return y(d.negLog10Pvalue) - 20; })
+            .attr("width", function(d) { return (d["external_gene_name"].length * 5) + 12; })
+            .attr("height", 15)
+            .attr("rx", 5)
+            .attr("ry", 5)
+            .attr("fill", "whitesmoke")
+            .style("opacity", 0.75);
+
+            //small line from the point to the label
+            svg.selectAll(null)
+            .data(selectedData)
+            .enter()
+            .append("line")
+            .attr("x1", function(d) { return x(d.log2FoldChange) + 3.3; })
+            .attr("y1", function(d) { return y(d.negLog10Pvalue) - 3.3; })
+            .attr("x2", function(d) { return x(d.log2FoldChange) + 8; })
+            .attr("y2", function(d) { return y(d.negLog10Pvalue) - 8; })
+            .attr("stroke-width", .5)
+            .attr("stroke", "black")
+            .style("opacity", .6);
+
+
             svg.selectAll(null) // selectAll(null) will create an empty selection to append new elements to
             .data(selectedData)
             .enter()
@@ -118,8 +146,10 @@ export default function RnaVolcanoD3() {
             .attr("y", function(d) { return y(d.negLog10Pvalue) - 10; })
             .text(function(d) { return d["external_gene_name"]; })
             .style("fill", "black")
+            .style("font-weight", "bold")
             .style("font-size", "10px")
-            .style("font-weight", "bold");
+            .style("opacity", .95);
+
         }
 
 //--------------------------------------------------------------------------------------------Lines
