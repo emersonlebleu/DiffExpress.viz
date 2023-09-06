@@ -10,7 +10,13 @@
           <v-expansion-panel-title color="rgb(19, 52, 102)">Select File</v-expansion-panel-title>
           <v-expansion-panel-text id="file-select-container">
             <div id="file-input-wrapper">
-              <v-file-input variant="solo-filled" clearable accept=".txt, .csv, .xls, xlsx, xlsm" label="Select data file..."></v-file-input>
+              <v-file-input
+                hint="Select .txt, .csv, .xls, xlsx, or xlsm file."
+                density="compact" 
+                variant="solo-filled" 
+                clearable accept=".txt, .csv, .xls, xlsx, xlsm" 
+                label="Select data file...">
+              </v-file-input>
             </div>
           </v-expansion-panel-text>
         </v-expansion-panel>
