@@ -26,13 +26,11 @@
       props: {
         selectedGenes: Array,
         summaryData: Object,
-        selectedFile: String,
         axGenes: Array,
         axGroups: Array,
       },
       data() {
         return {
-            fileSelected: this.selectedFile,
             genes: this.axGenes || [],
             groups: this.axGroups || [],
         }

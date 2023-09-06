@@ -4,7 +4,6 @@
         :data="data" 
         :selectedGenes="volcSelectedGenes" 
         :summaryData="summaryData"
-        :selectedFile="selectedFile"
         :pFilterVal="pFilterVal"
         :fcFilterVal="fcFilterVal"
         :showSelectedLabels="showSelectedLabels"
@@ -13,7 +12,6 @@
         <RnaHeatmapCard class="data-card"
         :selectedGenes="hmGenes"
         :summaryData="hmSummaryData"
-        :selectedFile="selectedFile"
         :axGenes="hmGeneNames"
         :axGroups="hmGroupNames"/>  
       </div>
