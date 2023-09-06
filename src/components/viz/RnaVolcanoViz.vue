@@ -96,11 +96,12 @@
         width: auto;
         height: auto;
         background: none repeat scroll 0 0 #4F4F54;
-        border-radius: 8px;
+        border-radius: 5px;
         box-shadow: -3px 3px 15px #888888;
-        color: white;
+        color: rgba(255, 255, 255, 1);
+        opacity: .9;
         font: 12px sans-serif;
-        padding: 5px;
+        padding: 2px 4px;
         text-align: center;
     }
 

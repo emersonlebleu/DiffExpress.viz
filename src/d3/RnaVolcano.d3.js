@@ -368,6 +368,9 @@ export default function RnaVolcanoD3() {
                     .attr("stroke-width", 10)
                     .style("stroke", "#E6C153");
             }
+
+            //Get the tooltip and hide it
+            d3.select("#tool-tip").style("display", "none");
         }
        
         //Add the svg to the actual container
