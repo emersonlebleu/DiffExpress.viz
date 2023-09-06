@@ -1,7 +1,7 @@
 <template>
     <div class="card-tool-bar">
       
-      <div v-if="isDemo" class="label-input-container">
+      <div v-if="isDemo" class="label-input-container demo">
         <p class="label demo">Demo</p>     
       </div>
 
@@ -378,8 +378,16 @@
 
     .label.demo {
       border-radius: 3px;
-      background-color: rgb(241, 53, 57); 
-      border: 1px rgb(129, 2, 2) dashed;
+      background-color: rgb(255, 17, 21); 
+      border: 1px rgb(48, 8, 8) dashed;
+      padding: 10px 0px 10px 0px;
+      font-weight: bold;
+    }
+    .label-input-container.demo {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      opacity: 0.85;
     }
 
     option {
