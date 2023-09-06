@@ -18,7 +18,7 @@
 
       <OptionsMenu 
       class="options-menu"
-      :selectedFile="selectedFile"
+      :isDemo="isDemo"
       :pFilterVal="pFilterVal"
       :fcFilterVal="fcFilterVal"
       :hardFilter="hardFilter"
@@ -51,7 +51,8 @@
       return {
         data: [],
         summaryData: {},
-        selectedFile: 'demo',
+        isDemo: true,
+        selectedFile: '',
         pFilterVal: 0.0,
         fcFilterVal: 0.0,
         //This is the list of genes for the heatmap
@@ -106,9 +107,16 @@
         }
       },
       changeData(n) {
-        //n is the file name selection from the options
-        this.selectedFile = n;
-        this.populateData();
+        //n is the raw text of the file
+        if (n && n !== this.selectedFile) {
+          this.selectedFile = n;
+          this.isDemo = false;
+          this.populateData();
+        } else if (!n || n == '') {
+          this.selectedFile = '';
+          this.isDemo = true;
+          this.populateData();
+        }
       },
       filterPVal(n) {
         this.pFilterVal = n;
@@ -163,7 +171,7 @@
         try {
           //This is the function that populates the data array the structure of this may differ in the future depending on the context
           //that the object eventually gets situated in.
-          let outputData = await fetchData(this.selectedFile, this.pFilterVal, this.fcFilterVal, this.hardFilter);
+          let outputData = await fetchData(this.isDemo, this.pFilterVal, this.fcFilterVal, this.hardFilter, this.selectedFile);
           this.data = outputData[0];
 
           this.summaryData = outputData[1];

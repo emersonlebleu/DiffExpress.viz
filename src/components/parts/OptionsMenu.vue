@@ -1,7 +1,7 @@
 <template>
     <div class="card-tool-bar">
       
-      <div v-if="selectedFile == 'demo'" class="label-input-container">
+      <div v-if="isDemo" class="label-input-container">
         <p class="label demo">Demo</p>     
       </div>
 
@@ -10,13 +10,19 @@
           <v-expansion-panel-title color="rgb(19, 52, 102)">Select File</v-expansion-panel-title>
           <v-expansion-panel-text id="file-select-container">
             <div id="file-input-wrapper">
-              <v-file-input
-                hint="Select .txt, .csv, .xls, xlsx, or xlsm file."
-                density="compact" 
-                variant="solo-filled" 
-                clearable accept=".txt, .csv, .xls, xlsx, xlsm" 
-                label="Select data file...">
-              </v-file-input>
+              <v-form ref="form">
+                <v-file-input
+                  v-model="file"
+                  persistent-hint
+                  hint=".txt, .csv, .xls, xlsx, or xlsm file."
+                  density="compact" 
+                  variant="solo-filled" 
+                  clearable accept=".txt, .csv, .xls, xlsx, xlsm" 
+                  label="Select data file..."
+                  @change="processFile"
+                  @click:clear="clearFile">
+                </v-file-input>
+              </v-form>
             </div>
           </v-expansion-panel-text>
         </v-expansion-panel>
@@ -152,6 +158,7 @@
 
 <script>
   import { Typeahead } from 'uiv'
+  import readFile from '../../data/readFile.js';
 
   export default {
     name: 'OptionsMenu',
@@ -159,7 +166,7 @@
       Typeahead,
     },
     props: {
-      selectedFile: String,
+      isDemo: Boolean,
       pFilterVal: Number,
       fcFilterVal: Number,
       hardFilter: Boolean,
@@ -169,7 +176,6 @@
     },
     data() {
       return {
-        fileSelected: this.selectedFile,
         pFilter: (this.pFilterVal || 0.0).toString(),
         fcFilter: (this.fcFilterVal || 0.0).toString(),
         optionsSelectedGenes: [],
@@ -180,6 +186,7 @@
         openPanels: [0],
         subChartSelection: 'Heatmap',
         showLabels: this.showSelectedLabels || true,
+        file: null,
       }
     },
     methods: {
@@ -222,6 +229,18 @@
         this.optionsSelectedGenes = this.optionsSelectedGenes.filter(theGene => theGene.external_gene_name !== gene.external_gene_name);
         this.emitSelectedGenes();
       },
+      async processFile(event){
+        let file = event.target.files[0];
+
+        if (file){
+          let theFile = await readFile(file);
+          this.$emit("newfileSelected", theFile)
+        }
+      },
+      clearFile(event) {
+        this.file = null;
+        this.$emit("newfileSelected", null)
+      },
     },
     watch: {
         genes: {
@@ -240,9 +259,6 @@
         return this.genesData.map(gene => gene.external_gene_name);
       },
     },
-    mounted() {
-      //Nothing Now
-    }
   }
 </script>
 
