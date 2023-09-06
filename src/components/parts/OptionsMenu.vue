@@ -2,10 +2,18 @@
     <div class="card-tool-bar">
       
       <div v-if="selectedFile == 'demo'" class="label-input-container">
-        <p class="label">Demo</p>     
+        <p class="label demo">Demo</p>     
       </div>
 
       <v-expansion-panels v-model="openPanels" multiple>
+        <v-expansion-panel>
+          <v-expansion-panel-title color="rgb(19, 52, 102)">Select File</v-expansion-panel-title>
+          <v-expansion-panel-text id="file-select-container">
+            <div id="file-input-wrapper">
+              <v-file-input variant="solo-filled" clearable accept=".txt, .csv, .xls, xlsx, xlsm" label="Select data file..."></v-file-input>
+            </div>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
         <!-- GENE SELECTION -->
         <v-expansion-panel v-if="genesData && genesData.length">
           <v-expansion-panel-title color="rgb(19, 52, 102)">Select Genes</v-expansion-panel-title>
@@ -233,15 +241,28 @@
 </script>
 
 <style lang="css">
+    #file-select-container .v-expansion-panel-text__wrapper {
+      width: 100%;
+      margin: 15px 0px 0px 0px;
+      padding-left: 5px;
+      padding-right: 15px;
+    }
+    /* The v-field has some odd padding that makes the icon look odd changing that */
+    #file-select-container .v-field {
+      padding-right: 0%;
+    }
+
     .card-tool-bar {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items:center;
-        width: 350px;
+        max-width: 320px;
         height: 100%;
-        padding-right: 20px;
+        padding-right: 10px;
+        padding-left: 5px;
         padding-top: 1rem;
+        overflow-y: scroll;
     }
 
     .label-input-container {
@@ -330,6 +351,12 @@
         border: none;
         border-radius: 3px 3px 0 0;
         text-align: center;
+    }
+
+    .label.demo {
+      border-radius: 3px;
+      background-color: rgb(241, 53, 57); 
+      border: 1px rgb(129, 2, 2) dashed;
     }
 
     option {
