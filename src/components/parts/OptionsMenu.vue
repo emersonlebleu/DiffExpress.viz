@@ -262,6 +262,7 @@
         padding-right: 10px;
         padding-left: 5px;
         padding-top: 1rem;
+        padding-bottom: 1rem;
         overflow-y: scroll;
     }
 
