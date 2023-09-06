@@ -12,6 +12,7 @@
             <div id="file-input-wrapper">
               <v-form ref="form">
                 <v-file-input
+                  id="file-input-field"
                   v-model="file"
                   persistent-hint
                   hint=".txt, .csv, .xls, xlsx, or xlsm file."
@@ -272,6 +273,10 @@
     /* The v-field has some odd padding that makes the icon look odd changing that */
     #file-select-container .v-field {
       padding-right: 0%;
+    }
+
+    #file-input-field:hover {
+      cursor: pointer;
     }
 
     .card-tool-bar {
