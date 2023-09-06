@@ -51,7 +51,7 @@
       return {
         data: [],
         summaryData: {},
-        selectedFile: 'fish',
+        selectedFile: 'demo',
         pFilterVal: 0.0,
         fcFilterVal: 0.0,
         //This is the list of genes for the heatmap

@@ -1,12 +1,8 @@
 <template>
     <div class="card-tool-bar">
       
-      <div class="label-input-container">
-        <p class="label">Sample Data </p>
-        <select class="data-selector" v-model="fileSelected" @change="emitFileSelected">
-          <option value="fish">Fish</option>
-          <option value="mouse">Mouse</option>
-        </select>      
+      <div v-if="selectedFile == 'demo'" class="label-input-container">
+        <p class="label">Demo</p>     
       </div>
 
       <v-expansion-panels v-model="openPanels" multiple>

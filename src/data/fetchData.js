@@ -4,12 +4,9 @@ import { lab } from "d3";
 export default async function fetchData(set, pValFilter, log2FCFilter, hardFilter) {
   //The demo data selection can be mouse or fish 
   let selectedSet = null;
-  if (set == 'mouse') {
-    selectedSet = './mouseDeSeq2.txt';
-  } else if (set == 'fish') {
+  
+  if (set == 'demo') {
     selectedSet = './fishDeSeq2.txt';
-  } else {
-    selectedSet = set;
   }
 
   //Ensure that the pValFilter is a number
