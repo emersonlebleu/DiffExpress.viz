@@ -2,6 +2,7 @@
 export default async function fetchData(set, pValFilter, log2FCFilter, hardFilter, textData=undefined) {
   //The demo data selection can be mouse or fish 
   let selectedSet = null;
+  var numOfGenes = 0;
 
   if (set) {
     selectedSet = './fishDeSeq2.txt';
@@ -104,6 +105,7 @@ export default async function fetchData(set, pValFilter, log2FCFilter, hardFilte
       
     //if we get here then add the row to cleanData
     cleanData.push(data[i]);
+    numOfGenes++;
   }
 
 
@@ -152,5 +154,5 @@ export default async function fetchData(set, pValFilter, log2FCFilter, hardFilte
 
   sumStats = createSumStats(labels, cleanData);
 
-  return [dataObj, sumStats, groups];
+  return [dataObj, sumStats, groups, numOfGenes];
 }

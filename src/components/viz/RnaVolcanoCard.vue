@@ -1,5 +1,6 @@
 <template>
   <div class="rna-volc-card-container" ref="volcCardContainer">
+    <p style="font-size: smaller;">Rendering <i style="color: blue;">{{ numOfGenes }} </i> Genes</p>
     <p class="card-title">Volcano Plot</p>
 
     <div class="viz-container">
@@ -34,6 +35,7 @@
       pFilterVal: Number,
       fcFilterVal: Number,
       showSelectedLabels: Boolean,
+      numOfGenes: Number,
     },
     data() {
       return {

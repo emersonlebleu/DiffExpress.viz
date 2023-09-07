@@ -8,6 +8,7 @@
         :pFilterVal="pFilterVal"
         :fcFilterVal="fcFilterVal"
         :showSelectedLabels="showSelectedLabels"
+        :numOfGenes="numOfGenes"
         @updateSelectedGenes="syncSelectedGenes"/>
 
         <RnaHeatmapCard v-if="subChartSelection == 'Heatmap'" class="data-card"
@@ -71,6 +72,7 @@
         optionsSelectedGenes: [],
         showSelectedLabels: true,
         subChartSelection: 'Heatmap',
+        numOfGenes: 0,
       }
     },
     async mounted() {
@@ -183,6 +185,7 @@
 
           this.summaryData = outputData[1];
           this.hmGroupNames = outputData[2];
+          this.numOfGenes = outputData[3];
 
           this.hmGeneNames = this.getHmGeneNames(this.hmGenes);
           this.hmSummaryData = this.getHmSummaryData(this.hmGenes, this.hmGroupNames);
