@@ -106,13 +106,13 @@
           this.volcSelectedGenes = this.optionsSelectedGenes;
         }
       },
-      changeData(n) {
+      changeData(file, format) {
         //n is the raw text of the file
-        if (n && n !== this.selectedFile) {
-          this.selectedFile = n;
+        if (file && file !== this.selectedFile) {
+          this.selectedFile = file;
           this.isDemo = false;
           this.populateData();
-        } else if (!n || n == '') {
+        } else if (!file || file == '') {
           this.selectedFile = '';
           this.isDemo = true;
           this.populateData();

@@ -26,6 +26,15 @@
               </v-form>
             </div>
           </v-expansion-panel-text>
+          <v-overlay
+            persistent
+            scroll-strategy="block"
+            class="align-center justify-center"
+            v-model="showOverlay">
+            <HeaderSelectDialog
+              :headers="headers"
+              @closeBtnClicked="emitFileAndFormat"></HeaderSelectDialog>
+          </v-overlay>
         </v-expansion-panel>
         <!-- GENE SELECTION -->
         <v-expansion-panel v-if="genesData && genesData.length">
@@ -74,7 +83,6 @@
                   {{ gene.external_gene_name}}
                   </v-chip>
                 </v-chip-group>
-
               </div>
 
               <button id="clear-selection-btn" @click="emitClearSelection">Clear Selection</button>
@@ -158,13 +166,16 @@
 </template>
 
 <script>
-  import { Typeahead } from 'uiv'
+  import { Typeahead } from 'uiv';
   import readFile from '../../data/readFile.js';
+  import HeaderSelectDialog from './HeaderSelectDialog.vue';
+  import parseHeaders from '../../data/parseHeaders';
 
   export default {
     name: 'OptionsMenu',
     components: {
       Typeahead,
+      HeaderSelectDialog,
     },
     props: {
       isDemo: Boolean,
@@ -188,12 +199,12 @@
         subChartSelection: 'Heatmap',
         showLabels: this.showSelectedLabels || true,
         file: null,
+        fileText: null,
+        showOverlay: false,
+        headers: [],
       }
     },
     methods: {
-      emitFileSelected() {
-        this.$emit('newfileSelected', this.fileSelected)
-      },
       emitPFilter() {
         this.$emit('newPFilter', parseFloat(this.pFilter))
       },
@@ -235,12 +246,18 @@
 
         if (file){
           let theFile = await readFile(file);
-          this.$emit("newfileSelected", theFile)
+          this.showOverlay = true;
+          this.headers = parseHeaders(theFile);
+          this.fileText = theFile;
         }
       },
       clearFile(event) {
         this.file = null;
-        this.$emit("newfileSelected", null)
+        this.$emit("newfileSelected", null, null);
+      },
+      emitFileAndFormat(fileF) {
+        this.showOverlay = false;
+        this.$emit('newfileSelected', this.fileText, fileF);
       },
     },
     watch: {
