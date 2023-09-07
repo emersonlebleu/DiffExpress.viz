@@ -58,7 +58,6 @@
         </div>
 
         <div class="full-width-container">
-            <label for="groups">Group(s) Column Header(s)</label>
             <v-select
                 clearable
                 chips
@@ -140,7 +139,7 @@ export default {
             }
 
             //If there was something selected before, add it back to the headers
-            if (this.selectedFC) {
+            if (this.selectedLabel) {
                 this.internalHeaders.push(this.selectedLabel)
                 this.internalHeaders.sort()
             }
