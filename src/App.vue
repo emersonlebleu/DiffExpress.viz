@@ -1,6 +1,7 @@
 <template>
       <div class="home-chart-container">
-        <RnaVolcanoCard class="data-card" 
+        <RnaVolcanoCard class="data-card"
+        :class="subChartSelection == 'None' ? 'full-height' : 'half-height'" 
         :data="data" 
         :selectedGenes="volcSelectedGenes" 
         :summaryData="summaryData"
@@ -9,7 +10,7 @@
         :showSelectedLabels="showSelectedLabels"
         @updateSelectedGenes="syncSelectedGenes"/>
 
-        <RnaHeatmapCard class="data-card"
+        <RnaHeatmapCard v-if="subChartSelection == 'Heatmap'" class="data-card"
         :selectedGenes="hmGenes"
         :summaryData="hmSummaryData"
         :axGenes="hmGeneNames"
@@ -25,13 +26,15 @@
       :selectedGenes="optionsSelectedGenes"
       :genes="data"
       :showSelectedLabels="showSelectedLabels"
+      :subChartSelect="subChartSelection"
       @newfileSelected="changeData"
       @clearSelection="clearSelection"
       @newPFilter="filterPVal"
       @newFCFilter="filterFCVal"
       @hardFilterChange="updateHardFilter"
       @updateSelectedGenes="syncSelectedGenes"
-      @showLabelsChange="toggleShowLabels"/>
+      @showLabelsChange="toggleShowLabels"
+      @subChartSelectionChange="changeSubChart"/>
 </template>
 
 <script>
@@ -67,12 +70,16 @@
         volcSelectedGenes: [],
         optionsSelectedGenes: [],
         showSelectedLabels: true,
+        subChartSelection: 'Heatmap',
       }
     },
     async mounted() {
       this.populateData();
     },
     methods: {
+      changeSubChart(subChart) {
+        this.subChartSelection = subChart;
+      },
       toggleShowLabels(showLabels) {
         this.showSelectedLabels = showLabels;
       },

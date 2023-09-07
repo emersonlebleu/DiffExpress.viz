@@ -26,8 +26,12 @@
         mounted() {
             //no longer need condition as the chart is not rendered at all until data is loaded
             this.drawVolc();
-            //allow the chart to resize when the window resizes
-            window.addEventListener('resize', this.drawVolc);
+            var volcCard = document.getElementsByClassName('rna-volc-card-container')[0];
+            
+            const resizeObserver = new ResizeObserver(() => {
+                this.drawVolc();
+            });
+            resizeObserver.observe(volcCard);
         },
         updated() {
             this.drawVolc();

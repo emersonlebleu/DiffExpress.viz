@@ -140,7 +140,10 @@
             </div>
 
             <p class="label">Subchart Selection</p>
-            <v-radio-group density="compact" v-model="subChartSelection">
+            <v-radio-group 
+              density="compact" 
+              v-model="subChartSelection"
+              @change="emitSubChartSelection">
               <v-radio color="indigo-darken-3" value="None">
                 <template v-slot:label>
                   <div class="radio-label">No sub-chart</div>
@@ -185,6 +188,7 @@
       selectedGenes: Array,
       genes: Array,
       showSelectedLabels: Boolean,
+      subChartSelect: String,
     },
     data() {
       return {
@@ -196,7 +200,7 @@
         newSearchGene: {},
         lookupGene: '',
         openPanels: [0],
-        subChartSelection: 'Heatmap',
+        subChartSelection: this.subChartSelection || 'Heatmap',
         showLabels: this.showSelectedLabels || true,
         file: null,
         fileText: null,
@@ -258,6 +262,9 @@
       emitFileAndFormat(fileF) {
         this.showOverlay = false;
         this.$emit('newfileSelected', this.fileText, fileF);
+      },
+      emitSubChartSelection() {
+        this.$emit('subChartSelectionChange', this.subChartSelection);
       },
     },
     watch: {
