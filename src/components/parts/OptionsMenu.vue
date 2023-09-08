@@ -255,21 +255,28 @@
       parseGeneListText() {
         //Split on spaces or comma spaces or commas
         let geneList = this.cutPasteGeneList.split(/[\s,]+/);
+
         //Make the list lowercase 
         geneList = geneList.map(gene => gene.toLowerCase());
+
         //Filter out any empty strings
         geneList = geneList.filter(gene => gene !== '');
+
         //Filter out any duplicates
         geneList = geneList.filter((gene, index) => geneList.indexOf(gene) === index);
+
         //Filter out any genes that are not in the data
         geneList = geneList.filter(gene => this.geneNameslist.includes(gene));
 
-        //populate a new list with the actual genes that have the corresponding name
-        let newGeneList = [];
-        geneList.forEach(gene => {
-          let theGene = this.genesData.find(g => g.external_gene_name.toLowerCase() === gene);
-          newGeneList.push(theGene);
+        //populate a new list with the actual genes (objects) that have the corresponding name
+        //Modified for complexity using a map for the genes and their names
+        let geneMap = new Map();
+        this.genesData.forEach(g => {
+          geneMap.set(g.external_gene_name.toLowerCase(), g);
         });
+        
+        //Then map the gene list to the gene map items
+        let newGeneList = geneList.map(gene => geneMap.get(gene));
 
         //Update the selected genes add the new list
         this.optionsSelectedGenes = this.optionsSelectedGenes.concat(newGeneList);
