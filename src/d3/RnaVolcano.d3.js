@@ -20,13 +20,15 @@ export default function RnaVolcanoD3() {
 
     var selectedGenes = [];
     var showLabels = false;
+    var chartId = "";
     
     function chart(container, dataArray) {
 
         // Create the SVG container.
         const svg = d3.create("svg")
             .attr("width", width)
-            .attr("height", height);
+            .attr("height", height)
+            .attr("id", chartId);
 
         // Declare the x (horizontal position) scale.
         var x = d3.scaleLinear()
@@ -427,6 +429,11 @@ export default function RnaVolcanoD3() {
 
     chart.setShowLabels = function(showLabel) {
         showLabels = showLabel;
+        return chart;
+    }
+
+    chart.setID = function(id) {
+        chartId = id;
         return chart;
     }
     
