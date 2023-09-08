@@ -40,6 +40,25 @@
         <v-expansion-panel v-if="genesData && genesData.length">
           <v-expansion-panel-title color="rgb(19, 52, 102)">Select Genes</v-expansion-panel-title>
           <v-expansion-panel-text id="gene-selection-dropdown">
+              <p class="label">Copy Paste Gene List</p>
+
+              <div id="paste-gene-list-container">
+                <v-text-field
+                  clearable
+                  label="Paste gene list..."
+                  class="copy-paste-input" 
+                  hint="Paste list seperated by spaces '_' or comma spaces ',_'"
+                  density="compact"
+                  v-model="cutPasteGeneList">
+                </v-text-field>
+
+                <button 
+                  class="btn btn-primary"
+                  id="add-gene-list-btn"
+                  @click="parseGeneListText">+</button>
+
+              </div>
+
               <p class="label">Search Genes</p>
               <div id="search-btn-container">
                 <input 
@@ -206,6 +225,7 @@
         fileText: null,
         showOverlay: false,
         headers: [],
+        cutPasteGeneList: '',
       }
     },
     methods: {
@@ -231,6 +251,29 @@
         if (item) {
           this.newSearchGene = item;
         }
+      },
+      parseGeneListText() {
+        //Split on spaces or comma spaces or commas
+        let geneList = this.cutPasteGeneList.split(/[\s,]+/);
+        //Make the list lowercase 
+        geneList = geneList.map(gene => gene.toLowerCase());
+        //Filter out any empty strings
+        geneList = geneList.filter(gene => gene !== '');
+        //Filter out any duplicates
+        geneList = geneList.filter((gene, index) => geneList.indexOf(gene) === index);
+        //Filter out any genes that are not in the data
+        geneList = geneList.filter(gene => this.geneNameslist.includes(gene));
+
+        //populate a new list with the actual genes that have the corresponding name
+        let newGeneList = [];
+        geneList.forEach(gene => {
+          let theGene = this.genesData.find(g => g.external_gene_name.toLowerCase() === gene);
+          newGeneList.push(theGene);
+        });
+
+        //Update the selected genes add the new list
+        this.optionsSelectedGenes = this.optionsSelectedGenes.concat(newGeneList);
+        this.emitSelectedGenes();
       },
       add() {
         if (this.newSearchGene) {
@@ -288,6 +331,11 @@
 </script>
 
 <style lang="css">
+    .copy-paste-input {
+      width: 100%;
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
     #file-select-container .v-expansion-panel-text__wrapper {
       width: 100%;
       margin: 15px 0px 0px 0px;
@@ -503,6 +551,14 @@
       align-items: center;
     }
 
+    #paste-gene-list-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
     #add-gene-btn {
       padding: 0px 0px 2px 0px;
       width: 20px;
@@ -517,6 +573,28 @@
     }
 
     #add-gene-btn:hover {
+      background-color: rgb(14, 231, 46);
+      color: black;
+      cursor: pointer;
+
+      transition: all 0.15s ease-in-out;
+    }
+
+    #add-gene-list-btn {
+      padding: 0px 0px 2px 0px;
+      margin-left: 5px;
+      width: 20px;
+      height: 20px;
+      background-color: rgb(25, 171, 47);
+      border: none;
+
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #add-gene-list-btn:hover {
       background-color: rgb(14, 231, 46);
       color: black;
       cursor: pointer;
