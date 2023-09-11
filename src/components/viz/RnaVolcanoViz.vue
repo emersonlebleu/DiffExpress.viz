@@ -65,7 +65,8 @@
                     .setPvalue(this.pFilterVal)
                     .setFC(this.fcFilterVal)
                     .setShowLabels(this.showSelectedLabels)
-                    .setSelection(this.selectionData);
+                    .setSelection(this.selectionData)
+                    .setID('main-volcano-chart');
 
                 this.volcChart(container, this.data);
             },
