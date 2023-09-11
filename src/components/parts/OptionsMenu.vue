@@ -43,14 +43,15 @@
               <p class="label">Copy Paste Gene List</p>
 
               <div id="paste-gene-list-container">
-                <v-text-field
+                <v-textarea
+                  auto-grow
                   clearable
                   label="Paste gene list..."
                   class="copy-paste-input" 
                   hint="Paste list seperated by spaces '_' or comma spaces ',_'"
                   density="compact"
                   v-model="cutPasteGeneList">
-                </v-text-field>
+                </v-textarea>
 
                 <button 
                   class="btn btn-primary"
@@ -255,7 +256,7 @@
       parseGeneListText() {
         //Split on spaces or comma spaces or commas
         let geneList = this.cutPasteGeneList.split(/[\s,]+/);
-
+        
         //Make the list lowercase 
         geneList = geneList.map(gene => gene.toLowerCase());
 
@@ -274,7 +275,7 @@
         this.genesData.forEach(g => {
           geneMap.set(g.external_gene_name.toLowerCase(), g);
         });
-        
+
         //Then map the gene list to the gene map items
         let newGeneList = geneList.map(gene => geneMap.get(gene));
 
@@ -331,7 +332,9 @@
     },
     computed: {
       geneNameslist() {
-        return this.genesData.map(gene => gene.external_gene_name);
+        let theList = [];
+        theList = this.genesData.map(gene => gene.external_gene_name.toLowerCase());
+        return theList;
       },
     },
   }
