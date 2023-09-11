@@ -374,7 +374,68 @@ export default function RnaVolcanoD3() {
             //Get the tooltip and hide it
             d3.select("#tool-tip").style("display", "none");
         }
-       
+
+//--------------------------------------------------------------------------------------------Brush Zooming
+        var brushTip = svg.append("text")
+            .attr("x", (width/2))
+            .attr("y", 10)
+            .text("Brushing")
+            .style("fill", "black")
+            .style("font-size", "10px")
+            .style("font-weight", "bold")
+            .style("display", "none")
+            .attr("id", "brush-tip");
+
+        function startBrush(event) {
+            console.log("Start");
+        }
+
+        function brushing(event) {
+            console.log("brushing");
+        }
+
+        function endBrush(event) {
+            console.log("End");
+        }
+
+        var brush = d3.brush()
+            .extent([[marginLeft, marginTop], [width - marginRight, height - marginBottom]])
+            .on("start", startBrush)
+            .on("brush", brushing)
+            .on("end", endBrush)
+            .keyModifiers(true);
+
+        function enableBrush() {
+            svg.append("g")
+                .attr("class", "brush")
+                .call(brush);
+        }
+
+        function disableBrush() {
+            svg.select(".brush").remove();
+        }
+
+        function showBrushTip() {
+            brushTip.style("display", "block");
+        }
+
+        function hideBrushTip() {
+            brushTip.style("display", "none");
+        }
+
+        var shiftPressed = false;
+
+        d3.select(window)
+            .on("keydown", function(event) {
+                if (event.keyCode == 16 && !shiftPressed) {
+                    enableBrush();
+                    showBrushTip();
+                } else if (event.keyCode == 16 && shiftPressed) {
+                    disableBrush();
+                    hideBrushTip();
+                }
+            });
+
         //Add the svg to the actual container
         d3.select(container.appendChild(svg.node()));
     };
