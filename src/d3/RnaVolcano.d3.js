@@ -21,6 +21,11 @@ export default function RnaVolcanoD3() {
     var selectedGenes = [];
     var showLabels = false;
     var chartId = "";
+    var pointImportantWidth = 10;
+    var pointBaseWidth = 4;
+
+    var pointImportantScaled = pointImportantWidth;
+    var pointBaseScaled = pointBaseWidth;
     
     function chart(container, dataArray) {
 
@@ -40,39 +45,22 @@ export default function RnaVolcanoD3() {
             .domain([yMin - 10, yMax + 10])
             .range([height - marginBottom, marginTop]);
 
-        // Add the x-axis.
-        const gx = svg.append("g")
-            .attr("transform", `translate(0,${height - marginBottom})`)
-            .call(d3.axisBottom(x));
-        
-        // Add the y-axis.
-        const gy = svg.append("g")
-            .attr("transform", `translate(${marginLeft},0)`)
-            .call(d3.axisLeft(y));
+        // Clip path for the chart area.
+        svg.append("clipPath")
+            .attr("id", "chart-area-clip")
+            .append("rect")
+            .attr("x", marginLeft + 5)
+            .attr("y", marginTop)
+            .attr("width", width - marginLeft - marginRight - 5)
+            .attr("height", height - marginTop - marginBottom);
 
-        // Add the x-axis label.
-        svg.append("text")
-            .attr("text-anchor", "middle")
-            .attr("x", width / 2)
-            .attr("y", height - 2)
-            .text("Log2FC")
-            .style("fill", "black")
-            .style("font-size", "10px")
-            .style("font-weight", "bold");
-        
-        // Add the y-axis label.
-        svg.append("text")
-            .attr("text-anchor", "middle")
-            .attr("x", -height / 2)
-            .attr("y", 10)
-            .attr("transform", "rotate(-90)")
-            .text("-Log10(p-value)")
-            .style("fill", "black")
-            .style("font-size", "10px")
-            .style("font-weight", "bold");
+        // Add the group for the inner chart content.
+        let chartArea = svg.append("g")
+            .attr("id", "chart-area")
+            .attr("clip-path", "url(#chart-area-clip)");
 
         //Points
-        let points = svg.selectAll("path")
+        let points = chartArea.selectAll("path")
         //make sure the data is going to be valid for the chart
             .data(dataArray.filter(d => d.log2FoldChange != null && d.negLog10Pvalue != null && !isNaN(d.log2FoldChange) && !isNaN(d.negLog10Pvalue)))
             .enter()
@@ -80,9 +68,9 @@ export default function RnaVolcanoD3() {
             .attr("d", (d) => `M${x(d.log2FoldChange)},${y(d.negLog10Pvalue)} L${x(d.log2FoldChange)},${y(d.negLog10Pvalue)}`)
             .attr("stroke-width",function(d){
                 if (selectedGenes.includes(d["external_gene_name"])) {
-                    return 10;
+                    return pointImportantWidth;
                 } else {
-                    return 4;
+                    return pointBaseWidth;
                 }
             }) 
             .attr("stroke-linecap", "round")
@@ -108,12 +96,47 @@ export default function RnaVolcanoD3() {
         let selectedPoints = svg.selectAll(".selected");
         selectedPoints.raise();
 
+        // Add the x-axis.
+        var gx = svg.append("g")
+            .attr("transform", `translate(0,${height - marginBottom})`)
+            .call(d3.axisBottom(x));
+        
+        // Add the y-axis.
+        var gy = svg.append("g")
+            .attr("transform", `translate(${marginLeft},0)`)
+            .call(d3.axisLeft(y));
+
+        // Add the x-axis label.
+        svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("x", width / 2)
+            .attr("y", height - 2)
+            .text("Log2FC")
+            .style("fill", "black")
+            .style("font-size", "10px")
+            .style("font-weight", "bold");
+        
+        // Add the y-axis label.
+        svg.append("text")
+            .attr("text-anchor", "middle")
+            .attr("x", -height / 2)
+            .attr("y", 10)
+            .attr("transform", "rotate(-90)")
+            .text("-Log10(p-value)")
+            .style("fill", "black")
+            .style("font-size", "10px")
+            .style("font-weight", "bold");
+        
+        //Add a group for the labels, their lines, and the rects for those
+        var labelsAndLines = chartArea.append("g")
+            .attr("id", "labels");
+
         //If showLabels then add the labels to the selected points otherwise do nothing
         if (showLabels) {
             var selectedData = selectedPoints.data();
 
             //add a background rec for the labels
-            svg.selectAll(null)
+            labelsAndLines.selectAll(null)
             .data(selectedData)
             .enter()
             .append("rect")
@@ -127,7 +150,7 @@ export default function RnaVolcanoD3() {
             .style("opacity", 0.75);
 
             //small line from the point to the label
-            svg.selectAll(null)
+            labelsAndLines.selectAll(null)
             .data(selectedData)
             .enter()
             .append("line")
@@ -140,7 +163,7 @@ export default function RnaVolcanoD3() {
             .style("opacity", .6);
 
 
-            svg.selectAll(null) // selectAll(null) will create an empty selection to append new elements to
+            labelsAndLines.selectAll(null) // selectAll(null) will create an empty selection to append new elements to
             .data(selectedData)
             .enter()
             .append("text")
@@ -155,11 +178,15 @@ export default function RnaVolcanoD3() {
         }
 
 //--------------------------------------------------------------------------------------------Lines
+        // Add a group for the lines
+        var linesAndRect = chartArea.append("g")
+            .attr("id", "lines");
+
         // FC Filter Line
         // If FC is 0, then the line will be at 0 and there will only be one line and box
         if (filterFC == 0.0) {
             //Adds a box over the fc line that gives it a shaded effect
-            var fcBox = svg.append("rect")
+            var fcBox = linesAndRect.append("rect")
                 .attr("x", function() {
                     if (filterFC == 0.0) {
                         //Small offset to center the box, will change dependign on the size of the box and line
@@ -169,13 +196,13 @@ export default function RnaVolcanoD3() {
                     return x(filterFC - .15)
                 })
                 .attr("y", marginTop)
-                .attr("width", 4)
+                .attr("width", pointBaseScaled)
                 .attr("height", height - marginTop - marginBottom)
                 .attr("fill", "blue")
                 .attr("opacity", 0.3)
                 .attr("id", "fc-box");
 
-            var fcLine = svg.append("line")
+            var fcLine = linesAndRect.append("line")
                 .attr("x1", function() {
                     if (filterFC == 0.0) {
                         return x(0.0);
@@ -190,7 +217,7 @@ export default function RnaVolcanoD3() {
                     return x(filterFC);
                 })
                 .attr("y2", height - marginBottom)
-                .attr("stroke-width", 2)
+                .attr("stroke-width", pointBaseScaled/2)
                 .attr("stroke", "blue")
                 .attr("stroke-dasharray", "5,5")
                 .attr("id", "fc-line");
@@ -198,7 +225,7 @@ export default function RnaVolcanoD3() {
             //If the fc is not zero we will do lines and boxes for both the positive and negative sides
 
             //Adds a box over the fc line that gives it a shaded effect for the positive side
-            var fcBox = svg.append("rect")
+            var fcBox = linesAndRect.append("rect")
                 .attr("x", function() {
                     if (filterFC == 0.0) {
                         //Small offset to center the box, will change dependign on the size of the box and line
@@ -209,14 +236,14 @@ export default function RnaVolcanoD3() {
                 }
                 )
                 .attr("y", marginTop)
-                .attr("width", 4)
+                .attr("width", pointBaseScaled)
                 .attr("height", height - marginTop - marginBottom)
                 .attr("fill", "red")
                 .attr("opacity", 0.3)
                 .attr("id", "fc-box");
             
             // FC Filter Line Positive
-            var fcLine = svg.append("line")
+            var fcLine = linesAndRect.append("line")
                 .attr("x1", function() {
                     if (filterFC == 0.0) {
                         return x(0.0);
@@ -233,13 +260,13 @@ export default function RnaVolcanoD3() {
                 }
                 )
                 .attr("y2", height - marginBottom)
-                .attr("stroke-width", 2)
+                .attr("stroke-width", pointBaseScaled/2)
                 .attr("stroke", "red")
                 .attr("stroke-dasharray", "5,5")
                 .attr("id", "fc-line");
 
             //Adds a box over the fc line that gives it a shaded effect for the negative side
-            var fcBox2 = svg.append("rect")
+            var fcBox2 = linesAndRect.append("rect")
                 .attr("x", function() {
                     if (filterFC == 0.0) {
                         //Small offset to center the box, will change dependign on the size of the box and line
@@ -250,14 +277,14 @@ export default function RnaVolcanoD3() {
                 }
                 )
                 .attr("y", marginTop)
-                .attr("width", 4)
+                .attr("width", pointBaseScaled)
                 .attr("height", height - marginTop - marginBottom)
                 .attr("fill", "blue")
                 .attr("opacity", 0.3)
                 .attr("id", "fc-box");
 
             // FC Filter Line Negative
-            var fcLine2 = svg.append("line")
+            var fcLine2 = linesAndRect.append("line")
                 .attr("x1", function() {
                     if (filterFC == 0.0) {
                         return x(0.0);
@@ -274,14 +301,14 @@ export default function RnaVolcanoD3() {
                 }
                 )
                 .attr("y2", height - marginBottom)
-                .attr("stroke-width", 2)
+                .attr("stroke-width", pointBaseScaled/2)
                 .attr("stroke", "blue")
                 .attr("stroke-dasharray", "5,5")
                 .attr("id", "fc-line");
         }
 
         //Adds a box over the pvalue line that gives it a shaded effect
-        var pValBox = svg.append("rect")
+        var pValBox = linesAndRect.append("rect")
             .attr("x", marginLeft)
             .attr("y", function() {
                 if (filterPValue == 0.0) {
@@ -292,13 +319,13 @@ export default function RnaVolcanoD3() {
                 return y(-Math.log10(filterPValue) + 1.75)
             })
             .attr("width", width - marginLeft - marginRight)
-            .attr("height", 4)
+            .attr("height", pointBaseScaled)
             .attr("fill", "green")
             .attr("opacity", 0.3)
             .attr("id", "pval-box");
 
         // pValue Filter Line
-        var pValLine = svg.append("line")
+        var pValLine = linesAndRect.append("line")
         .attr("x1", marginLeft)
         .attr("y1", function() {
             if (filterPValue == 0.0) {
@@ -313,7 +340,7 @@ export default function RnaVolcanoD3() {
             }
             return y(-Math.log10(filterPValue));
         })
-        .attr("stroke-width", 2)
+        .attr("stroke-width", pointBaseScaled/2)
         .attr("stroke", "green")
         .attr("stroke-dasharray", "5,5")
         .attr("id", "pval-line");
@@ -324,7 +351,7 @@ export default function RnaVolcanoD3() {
             let classes = point.attr("class");
 
             if ((!classes || !point.attr("class").includes("selected")) && !(selectedGenes.includes(d["external_gene_name"]))) {
-                point.attr("stroke-width", 10);
+                point.attr("stroke-width", pointImportantScaled);
                 point.style("stroke", "#92140C");
             } 
             //get the tooltip element
@@ -347,7 +374,7 @@ export default function RnaVolcanoD3() {
             if ((classes && point.attr("class").includes("selected")) || selectedGenes.includes(d["external_gene_name"])) {
                 //do nothing
             } else {
-                point.attr("stroke-width", 4);
+                point.attr("stroke-width", pointBaseScaled);
                 point.style("stroke", (d) => d["color"]);
             }
 
@@ -364,10 +391,10 @@ export default function RnaVolcanoD3() {
             if (classes && point.attr("class").includes("selected")) {
                 point.classed("selected", false)
                     .style("stroke", (d) => d["color"])
-                    .attr("stroke-width", 4);
+                    .attr("stroke-width", pointBaseScaled);
             } else {
                 point.classed("selected", true) 
-                    .attr("stroke-width", 10)
+                    .attr("stroke-width", pointImportantScaled)
                     .style("stroke", "#E6C153");
             }
 
@@ -375,64 +402,112 @@ export default function RnaVolcanoD3() {
             d3.select("#tool-tip").style("display", "none");
         }
 
-//--------------------------------------------------------------------------------------------Brush Zooming
-        var brushTip = svg.append("text")
-            .attr("x", (width/2))
-            .attr("y", 10)
-            .text("Brushing")
-            .style("fill", "black")
-            .style("font-size", "10px")
-            .style("font-weight", "bold")
-            .style("display", "none")
-            .attr("id", "brush-tip");
+//-------------------------------------------------------------------------------------------- Zooming
+        var zoom = d3.zoom()
+            .scaleExtent([1, 20])
+            .on("zoom", zoomed);
 
-        function startBrush(event) {
-            console.log("Start");
+        function zoomed(event) {
+            points.attr("transform", event.transform);
+            linesAndRect.attr("transform", event.transform);
+            labelsAndLines.attr("transform", event.transform);
+
+            //scale the labels
+            labelsAndLines.selectAll("text").style("font-size", (10 / event.transform.k).toString() + "px");
+
+            //Scale the little lines that connect the labels to the points
+            labelsAndLines.selectAll("line").attr("stroke-width", .5 / event.transform.k);
+
+            //Scale the boxes
+            labelsAndLines.selectAll("rect").attr("width", function(d) { return ((d["external_gene_name"].length/event.transform.k) * 6) + (12 / event.transform.k); });
+            labelsAndLines.selectAll("rect").attr("height", 15 / event.transform.k);
+            labelsAndLines.selectAll("rect").attr("rx", 5 / event.transform.k);
+            labelsAndLines.selectAll("rect").attr("ry", 5 / event.transform.k);
+            
+            //position the boxes and lines
+            labelsAndLines.selectAll("rect").attr("x", function(d) { return x(d.log2FoldChange) + 7 / event.transform.k; });
+            labelsAndLines.selectAll("rect").attr("y", function(d) { return y(d.negLog10Pvalue) - 20 / event.transform.k; });
+
+            labelsAndLines.selectAll("line").attr("x1", function(d) { return x(d.log2FoldChange) + 3.3 / event.transform.k; });
+            labelsAndLines.selectAll("line").attr("y1", function(d) { return y(d.negLog10Pvalue) - 3.3 / event.transform.k; });
+            labelsAndLines.selectAll("line").attr("x2", function(d) { return x(d.log2FoldChange) + 8 / event.transform.k; });
+            labelsAndLines.selectAll("line").attr("y2", function(d) { return y(d.negLog10Pvalue) - 8 / event.transform.k; });
+
+            labelsAndLines.selectAll("text").attr("x", function(d) { return x(d.log2FoldChange) + 10 / event.transform.k; });
+            labelsAndLines.selectAll("text").attr("y", function(d) { return y(d.negLog10Pvalue) - 10 / event.transform.k; });
+
+            // Rescale the x and y axis
+            gx.call(d3.axisBottom(x).scale(event.transform.rescaleX(x)));
+            gy.call(d3.axisLeft(y).scale(event.transform.rescaleY(y)));
+
+
+            points.attr("stroke-width", function(d) {
+                if (selectedGenes.includes(d["external_gene_name"])) {
+                    return pointImportantWidth / event.transform.k;
+                } else {
+                    return pointBaseWidth / event.transform.k;
+                }
+            });
+
+            linesAndRect.selectAll("line").attr("stroke-width", (pointBaseWidth/2) / event.transform.k);
+            linesAndRect.selectAll("rect").attr("width", pointBaseWidth / event.transform.k);
+            
+            //Pvalue box is different than the other two because it goes horizontally
+            pValBox.attr("height", pointBaseWidth / event.transform.k);
+            pValBox.attr("width", width - marginLeft - marginRight);
+
+
+            pointImportantScaled = pointImportantWidth / event.transform.k;
+            pointBaseScaled = pointBaseWidth / event.transform.k;
         }
 
-        function brushing(event) {
-            console.log("brushing");
+        function enableZoom() {
+            svg.call(zoom);
         }
 
-        function endBrush(event) {
-            console.log("End");
+        function disableZoom() {
+            svg.on(".zoom", null);
         }
 
-        var brush = d3.brush()
-            .extent([[marginLeft, marginTop], [width - marginRight, height - marginBottom]])
-            .on("start", startBrush)
-            .on("brush", brushing)
-            .on("end", endBrush)
-            .keyModifiers(true);
-
-        function enableBrush() {
-            svg.append("g")
-                .attr("class", "brush")
-                .call(brush);
+        function showZoomTip() {
+            d3.select("#brush-tip").style("display", "block");
         }
 
-        function disableBrush() {
-            svg.select(".brush").remove();
+        function hideZoomTip() {
+            d3.select("#brush-tip").style("display", "none");
         }
 
-        function showBrushTip() {
-            brushTip.style("display", "block");
+        function reset() {
+            svg.transition()
+                .duration(750)
+                .call(zoom.transform, d3.zoomIdentity);
+
+            points.attr("stroke-width", function(d) {
+                if (selectedGenes.includes(d["external_gene_name"])) {
+                    return pointImportantWidth;
+                } else {
+                    return pointBaseWidth;
+                }
+            }
+            );
+
+            linesAndRect.selectAll("line").attr("stroke-width", pointBaseWidth/2);
+            linesAndRect.selectAll("rect").attr("width", pointBaseWidth);
         }
 
-        function hideBrushTip() {
-            brushTip.style("display", "none");
-        }
-
-        var shiftPressed = false;
+        var zoomActive = false;
 
         d3.select(window)
             .on("keydown", function(event) {
-                if (event.keyCode == 16 && !shiftPressed) {
-                    enableBrush();
-                    showBrushTip();
-                } else if (event.keyCode == 16 && shiftPressed) {
-                    disableBrush();
-                    hideBrushTip();
+                if (event.keyCode == 16 && !zoomActive) {
+                    enableZoom();
+                    showZoomTip();
+                    zoomActive = true;
+                } else if (event.keyCode == 16 && zoomActive) {
+                    disableZoom();
+                    hideZoomTip();
+                    reset();
+                    zoomActive = false;
                 }
             });
 
