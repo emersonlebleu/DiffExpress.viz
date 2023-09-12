@@ -186,19 +186,25 @@ export default function RnaVolcanoD3() {
         // If FC is 0, then the line will be at 0 and there will only be one line and box
         if (filterFC == 0.0) {
             //Adds a box over the fc line that gives it a shaded effect
-            var fcBox = linesAndRect.append("rect")
-                .attr("x", function() {
+            var fcBox = linesAndRect.append("line")
+                .attr("x1", function() {
                     if (filterFC == 0.0) {
                         //Small offset to center the box, will change dependign on the size of the box and line
-                        return x(0.0 - .15);
+                        return x(0.0);
                     }
                     //Small offset to center the box, will change dependign on the size of the box and line
-                    return x(filterFC - .15)
+                    return x(filterFC)
                 })
                 .attr("y", marginTop)
-                .attr("width", pointBaseScaled)
-                .attr("height", height - marginTop - marginBottom)
-                .attr("fill", "blue")
+                .attr("x2", function() {
+                    if (filterFC == 0.0) {
+                        return x(0.0);
+                    }
+                    return x(filterFC)
+                })
+                .attr("y2", height - marginBottom)
+                .attr("stroke-width", pointBaseScaled/2)
+                .attr("stroke", "blue")
                 .attr("opacity", 0.3)
                 .attr("id", "fc-box");
 
@@ -225,22 +231,27 @@ export default function RnaVolcanoD3() {
             //If the fc is not zero we will do lines and boxes for both the positive and negative sides
 
             //Adds a box over the fc line that gives it a shaded effect for the positive side
-            var fcBox = linesAndRect.append("rect")
-                .attr("x", function() {
-                    if (filterFC == 0.0) {
-                        //Small offset to center the box, will change dependign on the size of the box and line
-                        return x(0.0 - .1);
-                    }
+            var fcBox = linesAndRect.append("line")
+            .attr("x1", function() {
+                if (filterFC == 0.0) {
                     //Small offset to center the box, will change dependign on the size of the box and line
-                    return x(filterFC - .1)
+                    return x(0.0);
                 }
-                )
-                .attr("y", marginTop)
-                .attr("width", pointBaseScaled)
-                .attr("height", height - marginTop - marginBottom)
-                .attr("fill", "red")
-                .attr("opacity", 0.3)
-                .attr("id", "fc-box");
+                //Small offset to center the box, will change dependign on the size of the box and line
+                return x(filterFC)
+            })
+            .attr("y", marginTop)
+            .attr("x2", function() {
+                if (filterFC == 0.0) {
+                    return x(0.0);
+                }
+                return x(filterFC)
+            })
+            .attr("y2", height - marginBottom)
+            .attr("stroke-width", pointBaseScaled/2)
+            .attr("stroke", "red")
+            .attr("opacity", 0.3)
+            .attr("id", "fc-box-positive");
             
             // FC Filter Line Positive
             var fcLine = linesAndRect.append("line")
@@ -263,25 +274,30 @@ export default function RnaVolcanoD3() {
                 .attr("stroke-width", pointBaseScaled/2)
                 .attr("stroke", "red")
                 .attr("stroke-dasharray", "5,5")
-                .attr("id", "fc-line");
+                .attr("id", "fc-line-positive");
 
             //Adds a box over the fc line that gives it a shaded effect for the negative side
-            var fcBox2 = linesAndRect.append("rect")
-                .attr("x", function() {
+            var fcBox2 = linesAndRect.append("line")
+                .attr("x1", function() {
                     if (filterFC == 0.0) {
                         //Small offset to center the box, will change dependign on the size of the box and line
-                        return x(0.0 - .1);
+                        return x(0.0);
                     }
                     //Small offset to center the box, will change dependign on the size of the box and line
-                    return x(-filterFC - .1)
-                }
-                )
+                    return x(-filterFC)
+                })
                 .attr("y", marginTop)
-                .attr("width", pointBaseScaled)
-                .attr("height", height - marginTop - marginBottom)
-                .attr("fill", "blue")
+                .attr("x2", function() {
+                    if (filterFC == 0.0) {
+                        return x(0.0);
+                    }
+                    return x(-filterFC)
+                })
+                .attr("y2", height - marginBottom)
+                .attr("stroke-width", pointBaseScaled/2)
+                .attr("stroke", "blue")
                 .attr("opacity", 0.3)
-                .attr("id", "fc-box");
+                .attr("id", "fc-box-negative");
 
             // FC Filter Line Negative
             var fcLine2 = linesAndRect.append("line")
@@ -304,23 +320,29 @@ export default function RnaVolcanoD3() {
                 .attr("stroke-width", pointBaseScaled/2)
                 .attr("stroke", "blue")
                 .attr("stroke-dasharray", "5,5")
-                .attr("id", "fc-line");
+                .attr("id", "fc-line-negative");
         }
 
         //Adds a box over the pvalue line that gives it a shaded effect
-        var pValBox = linesAndRect.append("rect")
-            .attr("x", marginLeft)
-            .attr("y", function() {
+        var pValBox = linesAndRect.append("line")
+            .attr("x1", marginLeft)
+            .attr("y1", function() {
                 if (filterPValue == 0.0) {
                     //Small offset to center the box, will change dependign on the size of the box and line
-                    return y(0.0 + 1.75);
+                    return y(0.0);
                 }
                 //Small offset to center the box, will change dependign on the size of the box and line
-                return y(-Math.log10(filterPValue) + 1.75)
+                return y(-Math.log10(filterPValue))
             })
-            .attr("width", width - marginLeft - marginRight)
-            .attr("height", pointBaseScaled)
-            .attr("fill", "green")
+            .attr("x2", width - marginRight)
+            .attr("y2", function() {
+                if (filterPValue == 0.0) {
+                    return y(0.0);
+                }
+                return y(-Math.log10(filterPValue))
+            })
+            .attr("stroke-width", pointBaseScaled/2)
+            .attr("stroke", "green")
             .attr("opacity", 0.3)
             .attr("id", "pval-box");
 
