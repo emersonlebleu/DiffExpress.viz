@@ -26,7 +26,7 @@ export default function RnaVolcanoD3() {
 
     var pointImportantScaled = pointImportantWidth;
     var pointBaseScaled = pointBaseWidth;
-    
+  
     function chart(container, dataArray) {
 
         // Create the SVG container.
@@ -425,6 +425,10 @@ export default function RnaVolcanoD3() {
         }
 
 //-------------------------------------------------------------------------------------------- Zooming
+        //Ensure that the zoom variables are reset if the chart is reset
+        d3.select("zoom-tip").style("display", "none");
+        var zoomActive = false;
+
         var zoom = d3.zoom()
             .scaleExtent([1, 20])
             .on("zoom", zoomed);
@@ -492,11 +496,11 @@ export default function RnaVolcanoD3() {
         }
 
         function showZoomTip() {
-            d3.select("#brush-tip").style("display", "block");
+            d3.select("#zoom-tip").style("display", "block");
         }
 
         function hideZoomTip() {
-            d3.select("#brush-tip").style("display", "none");
+            d3.select("#zoom-tip").style("display", "none");
         }
 
         function reset() {
@@ -516,8 +520,6 @@ export default function RnaVolcanoD3() {
             linesAndRect.selectAll("line").attr("stroke-width", pointBaseWidth/2);
             linesAndRect.selectAll("rect").attr("width", pointBaseWidth);
         }
-
-        var zoomActive = false;
 
         d3.select(window)
             .on("keydown", function(event) {

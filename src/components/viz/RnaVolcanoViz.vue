@@ -1,5 +1,5 @@
 <template>
-    <div id="brush-tip">Zoom enabled.</div>
+    <div id="zoom-tip">Zoom enabled.</div>
     <div ref="volcano" id="chart-container" @click="handleClick"></div>
     <div id="tool-tip"></div>
 </template>
@@ -70,6 +70,7 @@
                     .setID('main-volcano-chart');
 
                 this.volcChart(container, this.data);
+
             },
             handleClick(event){
                 this.$emit('click', event);
@@ -116,7 +117,7 @@
         height: 100%;
     }
 
-    #brush-tip {
+    #zoom-tip {
         position: absolute;
         left: 50%;
         display: none;
