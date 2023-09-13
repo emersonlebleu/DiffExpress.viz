@@ -1,5 +1,22 @@
 <template>
       <div class="home-chart-container">
+
+        <div id="volc-tips">
+          ?
+          <v-tooltip
+              max-width="300"
+              id="volcano-instructions"
+              activator="parent"
+              location="bottom">
+            <ul>
+              <br>
+              <li>Click points to select them and show their labels.</li>
+              <li>Press shift to toggle zooming and panning.</li>
+              <li>Use filters and options in the right side bar to filter data and highlight/select genes.</li>
+            </ul>
+          </v-tooltip>
+        </div>
+
         <RnaVolcanoCard class="data-card"
         :class="subChartSelection == 'None' ? 'full-height' : 'half-height'" 
         :data="data" 
@@ -225,6 +242,20 @@
     margin-right: 5%;
     
     padding: 1em;
+    position: relative;
+  }
+  #volc-tips {
+    position: absolute;
+    top: 0;
+    right: -2em;
+    margin: 1em;
+    padding: 0.05em .5em;
+    background-color: #f5f5f5;
+    border-radius: 50%;
+    border: 1px solid #d2cdcd;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
   }
 
 </style>
