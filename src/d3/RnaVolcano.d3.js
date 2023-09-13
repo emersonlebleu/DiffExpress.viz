@@ -389,7 +389,7 @@ export default function RnaVolcanoD3() {
                 .style("display", "block")
                 //move it to the current location of the data point
                 .style("left", (event.pageX + 10) + "px")  // 10 pixel offset to right
-                .style("top", (event.pageY - (tip.node().offsetHeight/2)) + "px");
+                .style("top", (event.pageY - (tip.node().offsetHeight/1.75)) + "px");
         }
         
         function handleMouseLeave(event, d) {
