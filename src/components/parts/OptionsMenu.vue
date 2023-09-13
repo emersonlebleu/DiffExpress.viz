@@ -213,7 +213,7 @@
         genesData: this.genes || [],
         newSearchGene: {},
         lookupGene: '',
-        openPanels: [0],
+        openPanels: [0, 1],
         subChartSelection: this.subChartSelection || 'Heatmap',
         showLabels: this.showSelectedLabels || true,
         file: null,
@@ -588,7 +588,7 @@
     }
 
     #add-gene-list-btn {
-      padding: 0px 0px 2px 0px;
+      padding: 0px 5px 2px 5px;
       margin-left: 5px;
       width: 20px;
       height: 20px;
