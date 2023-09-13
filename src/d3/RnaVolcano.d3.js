@@ -382,10 +382,9 @@ export default function RnaVolcanoD3() {
             tip.text(d["external_gene_name"])
             //move it to the current location of the data point
                 .style("left", (event.pageX + 10) + "px")  // 10 pixel offset to right
-                .style("top", (event.pageY - 28) + "px")   // 28 pixel offset upwards, you can adjust
+                .style("top", (event.pageY - 20) + "px")   // 28 pixel offset upwards, you can adjust
             //set the visibility of the tooltip to visible
                 .style("display", "block");
-
         }
         
         function handleMouseLeave(event, d) {

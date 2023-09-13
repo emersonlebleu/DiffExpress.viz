@@ -1,5 +1,6 @@
 <template>
-  <div class="rna-volc-card-container" ref="volcCardContainer">
+  <div id="rna-volc-card-container" ref="volcCardContainer">
+    <div id="zoom-tip">zooming enabled</div>
     <v-btn id="export-volcano-btn" @click="exportVolcano" color="rgb(19, 52, 102)" size="x-small">Export Plot</v-btn>
     <p style="font-size: smaller;">Rendering <i style="color: blue;">{{ numOfGenes }} </i> Genes</p>
     <p class="card-title">Volcano Plot</p>
@@ -123,12 +124,13 @@
 </script>
 
 <style scoped>
-  .rna-volc-card-container {     
+  #rna-volc-card-container {     
     /* flex */
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      position: relative;
 
       width: 100%;
       height: 50%;
@@ -141,10 +143,10 @@
       box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
     }
 
-  .rna-volc-card-container.half-height {
+  #rna-volc-card-container.half-height {
     height: 50%;
   }
-  .rna-volc-card-container.full-height {
+  #rna-volc-card-container.full-height {
     height: 100%;
   }
 
@@ -153,10 +155,15 @@
     transform: translateY(1em);
   }
 
+  #export-volcano-btn:hover {
+    background-color: rgb(37, 84, 154) !important;
+  }
+
   .card-title {
     margin-bottom: 1em;
     font-weight: bold;
     text-align: center;
+    transform: translateY(-1em);
 
     width: 100%;
   }
@@ -165,6 +172,22 @@
     width: 100%;
     min-height: 85%;
   }
+
+  #zoom-tip {
+        position: absolute;
+        right: 20%;
+        top: 14%;
+        width: fit-content;
+        display: none;
+        background-color:#003bfe;
+        border-radius: 2px;
+        /* box-shadow: -3px 3px 15px #888888; */
+        color: rgba(255, 255, 255, 1);
+        opacity: .9;
+        font: 12px sans-serif;
+        padding: 4px 10px;
+        text-align: center;
+    }
 
   @media screen and (max-width: 610px) {
 

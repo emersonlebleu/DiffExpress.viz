@@ -1,5 +1,4 @@
 <template>
-    <div id="zoom-tip">zooming enabled</div>
     <div ref="volcano" id="chart-container" @click="handleClick"></div>
     <div id="tool-tip"></div>
 </template>
@@ -27,7 +26,7 @@
         mounted() {
             //no longer need condition as the chart is not rendered at all until data is loaded
             this.drawVolc();
-            var volcCard = document.getElementsByClassName('rna-volc-card-container')[0];
+            var volcCard = document.getElementById('rna-volc-card-container');
             
             const resizeObserver = new ResizeObserver(() => {
                 this.drawVolc();
@@ -99,7 +98,7 @@
 
 <style scoped>
     #tool-tip{
-        position: absolute;
+        position: fixed;
         display: none;
         width: auto;
         height: auto;
@@ -116,21 +115,6 @@
     #chart-container {
         width: 100%;
         height: 100%;
-    }
-
-    #zoom-tip {
-        position: absolute;
-        left: 60%;
-        display: none;
-        width: fit-content;
-        background: none repeat scroll 0 0 #4F4F54;
-        border-radius: 5px;
-        box-shadow: -3px 3px 15px #888888;
-        color: rgba(255, 255, 255, 1);
-        opacity: .9;
-        font: 12px sans-serif;
-        padding: 2px 4px;
-        text-align: center;
     }
 
 </style>
