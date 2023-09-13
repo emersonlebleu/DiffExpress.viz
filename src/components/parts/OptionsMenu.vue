@@ -100,7 +100,7 @@
                   class="chip" 
                   :class="gene.color"
                   @click:close="removeGene(gene)">
-                  {{ gene.external_gene_name}}
+                  {{ gene.external_gene_name.toLowerCase() }}
                   </v-chip>
                 </v-chip-group>
               </div>
@@ -269,6 +269,9 @@
         //Filter out any genes that are not in the data
         geneList = geneList.filter(gene => this.geneNameslist.includes(gene));
 
+        //Filter out any genes already in the selected genes
+        geneList = geneList.filter(gene => !this.optionsSelectedGenes.map(g => g.external_gene_name.toLowerCase()).includes(gene));
+
         //populate a new list with the actual genes (objects) that have the corresponding name
         //Modified for complexity using a map for the genes and their names
         let geneMap = new Map();
@@ -293,7 +296,7 @@
         }
       },
       removeGene(gene){
-        this.optionsSelectedGenes = this.optionsSelectedGenes.filter(theGene => theGene.external_gene_name !== gene.external_gene_name);
+        this.optionsSelectedGenes = this.optionsSelectedGenes.filter(theGene => theGene.external_gene_name.toLowerCase() !== gene.external_gene_name.toLowerCase());
         this.emitSelectedGenes();
       },
       async processFile(event){
