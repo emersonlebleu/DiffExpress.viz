@@ -1,5 +1,5 @@
 <template>
-    <div id="zoom-tip">Zoom enabled.</div>
+    <div id="zoom-tip">zooming enabled</div>
     <div ref="volcano" id="chart-container" @click="handleClick"></div>
     <div id="tool-tip"></div>
 </template>
@@ -43,6 +43,7 @@
         methods: {
             drawVolc() {
                 let container = this.$refs.volcano;
+                d3.select("#zoom-tip").style("display", "none");
 
                 if (this.volcChart) {
                     //clear container
@@ -119,7 +120,7 @@
 
     #zoom-tip {
         position: absolute;
-        left: 50%;
+        left: 60%;
         display: none;
         width: fit-content;
         background: none repeat scroll 0 0 #4F4F54;

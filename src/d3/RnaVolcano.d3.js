@@ -426,7 +426,6 @@ export default function RnaVolcanoD3() {
 
 //-------------------------------------------------------------------------------------------- Zooming
         //Ensure that the zoom variables are reset if the chart is reset
-        d3.select("zoom-tip").style("display", "none");
         var zoomActive = false;
 
         var zoom = d3.zoom()
