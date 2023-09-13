@@ -49,10 +49,10 @@ export default function RnaVolcanoD3() {
         svg.append("clipPath")
             .attr("id", "chart-area-clip")
             .append("rect")
-            .attr("x", marginLeft + 5)
-            .attr("y", marginTop)
-            .attr("width", width - marginLeft - marginRight - 5)
-            .attr("height", height - marginTop - marginBottom);
+            .attr("x", marginLeft)
+            .attr("y", marginTop - 10)
+            .attr("width", width - marginLeft - marginRight)
+            .attr("height", height - marginTop - marginBottom + 10);
 
         // Add the group for the inner chart content.
         let chartArea = svg.append("g")
@@ -379,7 +379,12 @@ export default function RnaVolcanoD3() {
             //get the tooltip element
             let tip = d3.select("#tool-tip");
             //set the text of the tooltip
-            tip.text(d["external_gene_name"])
+            tip.html(function() {
+                //return each element in d as a line
+                return Object.keys(d).map(function(key) {
+                    return "<strong>" + key + "</strong>: " + d[key];
+                }).join("<br>");
+                })
             //move it to the current location of the data point
                 .style("left", (event.pageX + 10) + "px")  // 10 pixel offset to right
                 .style("top", (event.pageY - 20) + "px")   // 28 pixel offset upwards, you can adjust

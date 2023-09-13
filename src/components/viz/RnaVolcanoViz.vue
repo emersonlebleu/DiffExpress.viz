@@ -109,7 +109,7 @@
         opacity: .9;
         font: 12px sans-serif;
         padding: 2px 4px;
-        text-align: center;
+        text-align: left;
     }
 
     #chart-container {
