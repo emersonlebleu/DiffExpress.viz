@@ -26,7 +26,7 @@
         mounted() {
             //no longer need condition as the chart is not rendered at all until data is loaded
             this.drawVolc();
-            var volcCard = document.getElementsByClassName('rna-volc-card-container')[0];
+            var volcCard = document.getElementById('rna-volc-card-container');
             
             const resizeObserver = new ResizeObserver(() => {
                 this.drawVolc();
@@ -42,6 +42,7 @@
         methods: {
             drawVolc() {
                 let container = this.$refs.volcano;
+                d3.select("#zoom-tip").style("display", "none");
 
                 if (this.volcChart) {
                     //clear container
@@ -69,6 +70,7 @@
                     .setID('main-volcano-chart');
 
                 this.volcChart(container, this.data);
+
             },
             handleClick(event){
                 this.$emit('click', event);
@@ -96,7 +98,7 @@
 
 <style scoped>
     #tool-tip{
-        position: absolute;
+        position: fixed;
         display: none;
         width: auto;
         height: auto;
