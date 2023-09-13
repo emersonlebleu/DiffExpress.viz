@@ -52,7 +52,8 @@
                     .setXValues(this.axGenes)
                     .setHeight(height)
                     .setWidth(width)
-                    .setSelection(this.selection);
+                    .setSelection(this.selection)
+                    .setId('heatmap-chart');
 
                 this.hmChart(container, this.selectedGenes, norms);
             },

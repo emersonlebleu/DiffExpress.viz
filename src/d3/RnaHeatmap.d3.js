@@ -15,6 +15,7 @@ export default function RnaHeatmapD3() {
     var marginLeft = 40;
 
     var selectedGene = "All";
+    var chartId = "";
     
     function chart(container, dataArray, norms) {
         var min = norms[0];
@@ -26,7 +27,8 @@ export default function RnaHeatmapD3() {
         // Create the SVG container.
         const svg = d3.create("svg")
             .attr("width", width)
-            .attr("height", height);
+            .attr("height", height)
+            .attr("id", chartId);
 
         //Declare the y (vertical position) scale.
         var y = d3.scaleBand()
@@ -127,6 +129,11 @@ export default function RnaHeatmapD3() {
 
     chart.setSelection = function(newSelection) {
         selectedGene = newSelection;
+        return chart;
+    }
+
+    chart.setId = function(newId) {
+        chartId = newId;
         return chart;
     }
     

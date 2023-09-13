@@ -1,5 +1,6 @@
 <template>
     <div class="rna-hm-card-container" ref="hmCardContainer">
+        <v-btn id="export-heatmap-btn" @click="exportHeatmap" color="rgb(19, 52, 102)" size="x-small">Export Plot</v-btn>
         <p class="card-title" v-if="selectedGenes && selectedGenes.length && summaryData && Object.keys(summaryData).length">Heatmap</p>
   
         <div class="viz-container">
@@ -36,7 +37,62 @@
         }
       },
       methods: {
-        //Nothing now
+        exportHeatmap() {
+          //grab the heatmap (main)
+          let heatmap = document.getElementById('heatmap-chart');
+          
+          //serialize the svg
+          let svgDataString = new XMLSerializer().serializeToString(heatmap);
+
+          //make a url to use
+          let svgBlob = new Blob([svgDataString], {type: "image/svg+xml;charset=utf-8"});
+          let svgUrl = URL.createObjectURL(svgBlob);
+
+          //create an image
+          let image = new Image();
+          image.src = svgUrl;
+
+          //Create a scaling factor: because the image is kind of bad quality
+          let scaleFactor = 2;
+          let margin = 10;
+
+          image.onload = function() {
+            //create a canvas
+            let canvas = document.createElement('canvas');
+            canvas.width = (image.width * scaleFactor) + 2*margin;
+            canvas.height = (image.height * scaleFactor) + 2*margin;
+
+            let context = canvas.getContext('2d');
+
+            //Draw a white background because the chart doesn't have a fill
+            context.fillStyle = 'white';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            //Scale before drawing
+            context.scale(scaleFactor, scaleFactor);
+            context.drawImage(image, margin, 0);
+
+            //create a png
+            let png = canvas.toDataURL('image/png');
+
+            //create a download link
+            let downloadLink = document.createElement('a');
+            downloadLink.download = 'volcano.png';
+            downloadLink.href = png;
+            
+            //Add click and remove
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+
+            //clean up blob
+            URL.revokeObjectURL(svgUrl);
+          }
+          image.onerror = function() {
+              // Handle errors
+              console.error("An error occurred while loading the image.");
+          };
+        }
       },
       watch: {
         axGenes: function(newVal, oldVal) {
@@ -95,5 +151,14 @@
         font-weight: bold;
 
         height: 100%;
+    }
+
+    #export-heatmap-btn {
+      align-self: flex-end;
+      transform: translateY(2em);
+    }
+
+    #export-heatmap-btn:hover {
+      background-color: rgb(37, 84, 154) !important;
     }
   </style>
