@@ -57,7 +57,6 @@ export default function RnaHeatmapD3() {
             .call(d3.axisLeft(y));
 
         
-        
         for (let item of dataArray) {
             for (let group of yValues) {
                 svg.append("rect")
@@ -87,7 +86,18 @@ export default function RnaHeatmapD3() {
 
                             return `rgba(0, 0, 225, ${alpha})`;
                         }
-                    })
+                    });
+                
+                //Append text to the heatmap get the number at the group and gene intersection
+                svg.append("text")
+                    .attr("x", x(item.external_gene_name))
+                    .attr("y", y(group))
+                    .attr("dx", x.bandwidth() / 2)
+                    .attr("dy", y.bandwidth() / 2)
+                    .attr("text-anchor", "middle")
+                    .attr("alignment-baseline", "middle")
+                    .attr("font-size", "10px")
+                    .text(parseFloat(item[group]).toFixed(2));
             }  
         }
 
