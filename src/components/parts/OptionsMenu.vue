@@ -68,8 +68,7 @@
                 id="new-search-gene-input" label="Gene name" 
                 placeholder="Search...">
 
-                <button 
-                v-if="geneNameslist.includes(newSearchGene.external_gene_name)" 
+                <button
                 class="btn btn-primary" 
                 id="add-gene-btn" 
                 @click="add">+</button>
