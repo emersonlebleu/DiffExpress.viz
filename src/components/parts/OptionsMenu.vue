@@ -165,17 +165,12 @@
               @change="emitSubChartSelection">
               <v-radio color="indigo-darken-3" value="None">
                 <template v-slot:label>
-                  <div class="radio-label">No sub-chart</div>
+                  <div class="radio-label">Volcano Only</div>
                 </template>
               </v-radio>
               <v-radio color="indigo-darken-3" value="Heatmap">
                 <template v-slot:label>
-                  <div class="radio-label">View heatmap of selection</div>
-                </template>
-              </v-radio>
-              <v-radio color="indigo-darken-3" value="Minimap">
-                <template v-slot:label>
-                  <div class="radio-label">Explore with zoom-map</div>
+                  <div class="radio-label">Volcano & Heatmap</div>
                 </template>
               </v-radio>
             </v-radio-group>

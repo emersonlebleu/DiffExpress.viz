@@ -385,11 +385,11 @@ export default function RnaVolcanoD3() {
                     return "<strong>" + key + "</strong>: " + d[key];
                 }).join("<br>");
                 })
-            //move it to the current location of the data point
-                .style("left", (event.pageX + 10) + "px")  // 10 pixel offset to right
-                .style("top", (event.pageY - 20) + "px")   // 28 pixel offset upwards, you can adjust
             //set the visibility of the tooltip to visible
-                .style("display", "block");
+                .style("display", "block")
+                //move it to the current location of the data point
+                .style("left", (event.pageX + 10) + "px")  // 10 pixel offset to right
+                .style("top", (event.pageY - (tip.node().offsetHeight/2)) + "px");
         }
         
         function handleMouseLeave(event, d) {
