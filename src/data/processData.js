@@ -1,12 +1,11 @@
 
-export default async function fetchData(set, pValFilter, log2FCFilter, hardFilter, textData=undefined) {
-  //The demo data selection can be mouse or fish 
-  let selectedSet = null;
+export default async function processData(set, pValFilter, log2FCFilter, hardFilter, textData=undefined, fileFormatObj=undefined) {
+  var selectedSet = null;
   var numOfGenes = 0;
+
 
   if (set) {
     selectedSet = './fishDeSeq2.txt';
-
     try {
       //get the data from the file if data is not provided by the application
       var response = await fetch(selectedSet);

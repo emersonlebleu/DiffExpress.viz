@@ -59,7 +59,7 @@
   import RnaVolcanoCard from './components/viz/RnaVolcanoCard.vue';
   import RnaHeatmapCard from './components/viz/RnaHeatmapCard.vue';
   import OptionsMenu from './components/parts/OptionsMenu.vue';
-  import fetchData from './data/fetchData.js';
+  import processData from './data/processData.js';
   
   export default {
     name: 'App',
@@ -90,6 +90,7 @@
         showSelectedLabels: true,
         subChartSelection: 'Heatmap',
         numOfGenes: 0,
+        fileFormat: {},
       }
     },
     async mounted() {
@@ -133,8 +134,10 @@
         }
       },
       changeData(file, format) {
+        console.log(format)
         //n is the raw text of the file
-        if (file && file !== this.selectedFile) {
+        if (file && format && file !== this.selectedFile) {
+          this.fileFormat = format;
           this.selectedFile = file;
           this.isDemo = false;
           this.populateData();
@@ -197,7 +200,7 @@
         try {
           //This is the function that populates the data array the structure of this may differ in the future depending on the context
           //that the object eventually gets situated in.
-          let outputData = await fetchData(this.isDemo, this.pFilterVal, this.fcFilterVal, this.hardFilter, this.selectedFile);
+          let outputData = await processData(this.isDemo, this.pFilterVal, this.fcFilterVal, this.hardFilter, this.selectedFile);
           this.data = outputData[0];
 
           this.summaryData = outputData[1];
