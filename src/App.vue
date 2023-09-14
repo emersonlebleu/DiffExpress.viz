@@ -200,7 +200,7 @@
         try {
           //This is the function that populates the data array the structure of this may differ in the future depending on the context
           //that the object eventually gets situated in.
-          let outputData = await processData(this.isDemo, this.pFilterVal, this.fcFilterVal, this.hardFilter, this.selectedFile);
+          let outputData = await processData(this.isDemo, this.pFilterVal, this.fcFilterVal, this.hardFilter, this.selectedFile, this.fileFormat);
           this.data = outputData[0];
 
           this.summaryData = outputData[1];

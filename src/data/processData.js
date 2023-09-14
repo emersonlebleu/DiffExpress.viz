@@ -1,14 +1,17 @@
 
-export default async function processData(set, pValFilter, log2FCFilter, hardFilter, textData=undefined, fileFormatObj=undefined) {
-  var selectedSet = null;
+export default async function processData(isDemo, pValFilter, log2FCFilter, hardFilter, textData=undefined, fileFormatObj=undefined) {
+  //Variables
   var numOfGenes = 0;
+  var selectedSet = './fishDeSeq2.txt';
 
+  //Ensure that the pValFilter is a number
+  let pValFilterNum = parseFloat(pValFilter);
+  let log2FCFilterNum = parseFloat(log2FCFilter);
 
-  if (set) {
-    selectedSet = './fishDeSeq2.txt';
+  if (isDemo) {
     try {
       //get the data from the file if data is not provided by the application
-      var response = await fetch(selectedSet);
+      let response = await fetch(selectedSet);
       var fileContent = await response.text();
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -19,14 +22,9 @@ export default async function processData(set, pValFilter, log2FCFilter, hardFil
       //Throw an error if there is no data
       throw new Error('No data provided');
     } else {
-      fileContent = textData;
+      var fileContent = textData;
     }
   }
-
-  //Ensure that the pValFilter is a number
-  let pValFilterNum = parseFloat(pValFilter);
-  let log2FCFilterNum = parseFloat(log2FCFilter);
-
 
   //Split everything by row so raw data is an array of rows not yet split by tab
   let rawdata = fileContent.split('\n');
