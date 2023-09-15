@@ -40,11 +40,12 @@
       :isDemo="isDemo"
       :pFilterVal="pFilterVal"
       :fcFilterVal="fcFilterVal"
-      :hardFilter="hardFilter"
+      :hardFilterPVal="hardFilterPV"
       :selectedGenes="optionsSelectedGenes"
       :genes="diffGeneList"
       :showSelectedLabels="showSelectedLabels"
       :subChartSelect="subChartSelection"
+      :hardFilterFoldChange="hardFilterFC"
       @newfileSelected="changeData"
       @clearSelection="clearSelection"
       @newPFilter="filterPVal"
@@ -84,13 +85,14 @@
         hmGroupNames: [],
         //This is the summary data for the heatmap colors to use
         hmSummaryData: {},
-        hardFilter: false,
+        hardFilterPV: false,
         volcSelectedGenes: [],
         optionsSelectedGenes: [],
         showSelectedLabels: true,
         subChartSelection: 'Heatmap',
         numOfGenes: 0,
         fileFormat: {},
+        hardFilterFC: false,
       }
     },
     async mounted() {
@@ -108,9 +110,10 @@
         this.volcSelectedGenes = [];
         this.updateHmSelect([]);
       },
-      updateHardFilter(n) {
+      updateHardFilter(pv, fc) {
         //new value of hard filter
-        this.hardFilter = n;
+        this.hardFilterPV = pv;
+        this.hardFilterFC = fc;
         this.populateData();
       },
       updateHmSelect(n) {
@@ -199,7 +202,7 @@
         try {
           //This is the function that populates the data array the structure of this may differ in the future depending on the context
           //that the object eventually gets situated in.
-          let outputData = await processData(this.isDemo, this.pFilterVal, this.fcFilterVal, this.hardFilter, this.selectedFile, this.fileFormat);
+          let outputData = await processData(this.isDemo, this.pFilterVal, this.fcFilterVal, this.hardFilterPV, this.hardFilterFC, this.selectedFile, this.fileFormat);
           this.diffGeneList = outputData[0];
 
           this.summaryData = outputData[1];

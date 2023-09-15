@@ -1,6 +1,6 @@
 import DiffGene from "../models/DiffGene";
 
-export default async function processData(isDemo, pValFilter, log2FCFilter, hardFilter, textData=null, fileFormatObj=null) {
+export default async function processData(isDemo, pValFilter, log2FCFilter, hardFilterPV, hardFilterFC, textData=null, fileFormatObj=null) {
   //Variables
   var numOfGenes = 0;
   var selectedSet = './fishDeSeq2.txt';
@@ -68,7 +68,7 @@ export default async function processData(isDemo, pValFilter, log2FCFilter, hard
       //Get the maps for the locations of the labels and groups in the data
       [headers, labelIndexes, labels, groupIndexes, groups, updatedFileFormatObj] = getLabelAndGroupMaps(headers, updatedFileFormatObj);
       //Filter the data, clean the data, and get the number of genes
-      [finalDiffGenesList, numOfGenes, dataColMap] = cleanAndFilterData(data, labelIndexes, labels, groupIndexes, groups, updatedFileFormatObj, splitChar, pValFilterNum, log2FCFilterNum, hardFilter);
+      [finalDiffGenesList, numOfGenes, dataColMap] = cleanAndFilterData(data, labelIndexes, labels, groupIndexes, groups, updatedFileFormatObj, splitChar, pValFilterNum, log2FCFilterNum, hardFilterPV, hardFilterFC);
     } else {
     if (!textData) {
       //Throw an error if there is no data
@@ -80,7 +80,7 @@ export default async function processData(isDemo, pValFilter, log2FCFilter, hard
       //Get the maps for the locations of the labels and groups in the data
       [headers, labelIndexes, labels, groupIndexes, groups, updatedFileFormatObj] = getLabelAndGroupMaps(headers, updatedFileFormatObj);
       //Filter the data, clean the data, and get the number of genes
-      [finalDiffGenesList, numOfGenes, dataColMap] = cleanAndFilterData(data, labelIndexes, labels, groupIndexes, groups, updatedFileFormatObj, splitChar, pValFilterNum, log2FCFilterNum, hardFilter);
+      [finalDiffGenesList, numOfGenes, dataColMap] = cleanAndFilterData(data, labelIndexes, labels, groupIndexes, groups, updatedFileFormatObj, splitChar, pValFilterNum, log2FCFilterNum, hardFilterPV, hardFilterFC);
     }
   }
 
@@ -160,7 +160,7 @@ function getLabelAndGroupMaps(headers, fileFormatObj) {
 }
 
 //Function cleans the data of rows where essential data is missing
-function cleanAndFilterData(data, labelMap, labelNames, groupMap, groupNames, fileFormatObj, splitChar, pValFilterNum, log2FCFilterNum, hardFilter) {
+function cleanAndFilterData(data, labelMap, labelNames, groupMap, groupNames, fileFormatObj, splitChar, pValFilterNum, log2FCFilterNum, hardFilterPVal, hardFilterFoldChange) {
   let pValueAlreadyLog10 = fileFormatObj.pValueLog10;
   let foldChangeAlreadyLog2 = fileFormatObj.foldChangeLog2;
 
@@ -238,14 +238,16 @@ function cleanAndFilterData(data, labelMap, labelNames, groupMap, groupNames, fi
     }
 
     //FILTER BASED ON THE PVALUE AND FOLD CHANGE AND THE CUT OFFS------------------------------------------------------------------------------------------------
-    if (pValFilterNum == 0 && hardFilter) {
-      if (data[i][foldChangeI] < log2FCFilterNum && data[i][foldChangeI] > -log2FCFilterNum) {
+    if (hardFilterFoldChange && data[i][foldChangeI] < log2FCFilterNum && data[i][foldChangeI] > -log2FCFilterNum) {
+      //Don't add this row
+      continue;
+    }
+
+    if (pValFilterNum != 0) {
+      if (hardFilterPVal && data[i][pvalueIOriginal] > pValFilterNum) {
         //Don't add this row
         continue;
       }
-    } else if ((data[i][pvalueIOriginal] > pValFilterNum || data[i][foldChangeI] < log2FCFilterNum && data[i][foldChangeI] > -log2FCFilterNum) && hardFilter) {
-      //Don't add this row
-      continue;
     }
 
     //Update the data map push the data to each column in the map
