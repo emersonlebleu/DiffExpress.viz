@@ -60,7 +60,6 @@ export default function RnaHeatmapD3() {
         
         for (let item of selectedGenesArray) {
             for (let group of yValues) {
-                console.log(item);
                 svg.append("rect")
                     .attr("x", x(item.geneName))
                     .attr("y", y(group))
@@ -99,7 +98,7 @@ export default function RnaHeatmapD3() {
                     .attr("text-anchor", "middle")
                     .attr("alignment-baseline", "middle")
                     .attr("font-size", "10px")
-                    .text(parseFloat(item[group]).toFixed(2));
+                    .text(parseFloat(item.groupDataObj[group]).toFixed(2));
             }  
         }
 
