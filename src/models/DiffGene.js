@@ -6,12 +6,13 @@ class DiffGene {
      * @param {Object} [groupDataObj={}]
      * @param {Object} [otherDataObj={}]
      */
-    constructor(pValue, log2FoldChange, geneName, groupDataObj={}, otherDataObj={}) {
+    constructor(pValue, log2FoldChange, geneName, color, groupDataObj={}, otherDataObj={}) {
         this.pValue = pValue;
         this.log2FoldChange = log2FoldChange;
         this.geneName = geneName;
         this.groupDataObj = groupDataObj;
         this.otherDataObj = otherDataObj;
+        this.color = color;
     }
     //getters
     /**
@@ -44,6 +45,12 @@ class DiffGene {
     getOtherDataObj() {
         return this.otherDataObj;
     }
+    /**
+     * @returns {string} color
+     */
+    getColor() {
+        return this.color;
+    }
 
     //setters
     setPValue(pValue) {
@@ -60,6 +67,9 @@ class DiffGene {
     }
     setOtherDataObj(otherDataObj) {
         this.otherDataObj = otherDataObj;
+    }
+    setColor(color) {
+        this.color = color;
     }
 }
 
