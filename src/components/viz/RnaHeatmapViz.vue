@@ -11,7 +11,6 @@
         name: 'RnaHeatmapViz',
         props: {
             selectedGenes: Array,
-            selection: Array,
             summaryData: Object,
             axGenes: Array,
             axGroups: Array,
@@ -52,7 +51,6 @@
                     .setXValues(this.axGenes)
                     .setHeight(height)
                     .setWidth(width)
-                    .setSelection(this.selection)
                     .setId('heatmap-chart');
 
                 this.hmChart(container, this.selectedGenes, norms);

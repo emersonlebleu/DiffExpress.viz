@@ -19,7 +19,7 @@
 
         <RnaVolcanoCard class="data-card"
         :class="subChartSelection == 'None' ? 'full-height' : 'half-height'" 
-        :data="data" 
+        :data="diffGeneList" 
         :selectedGenes="volcSelectedGenes" 
         :summaryData="summaryData"
         :pFilterVal="pFilterVal"
@@ -42,7 +42,7 @@
       :fcFilterVal="fcFilterVal"
       :hardFilter="hardFilter"
       :selectedGenes="optionsSelectedGenes"
-      :genes="data"
+      :genes="diffGeneList"
       :showSelectedLabels="showSelectedLabels"
       :subChartSelect="subChartSelection"
       @newfileSelected="changeData"
@@ -59,7 +59,7 @@
   import RnaVolcanoCard from './components/viz/RnaVolcanoCard.vue';
   import RnaHeatmapCard from './components/viz/RnaHeatmapCard.vue';
   import OptionsMenu from './components/parts/OptionsMenu.vue';
-  import fetchData from './data/fetchData.js';
+  import processData from './data/processData.js';
   
   export default {
     name: 'App',
@@ -70,7 +70,7 @@
     }, 
     data() {
       return {
-        data: [],
+        diffGeneList: [],
         summaryData: {},
         isDemo: true,
         selectedFile: '',
@@ -90,6 +90,7 @@
         showSelectedLabels: true,
         subChartSelection: 'Heatmap',
         numOfGenes: 0,
+        fileFormat: {},
       }
     },
     async mounted() {
@@ -134,7 +135,8 @@
       },
       changeData(file, format) {
         //n is the raw text of the file
-        if (file && file !== this.selectedFile) {
+        if (file && format && file !== this.selectedFile) {
+          this.fileFormat = format;
           this.selectedFile = file;
           this.isDemo = false;
           this.populateData();
@@ -153,13 +155,13 @@
         this.populateData();
       },
       getHmGeneNames(hmGenes){
-        let genes = [];
+        let geneNames = [];
         //go through the data and get the group names & gene names as two lists
         for (let dataObj of hmGenes) {
           //get the gene names add to names list
-          genes.push(dataObj.external_gene_name)
+          geneNames.push(dataObj.geneName)
         }
-        return genes;
+        return geneNames;
       },
       getHmSummaryData(data, groupNames) {
         //Used to get summary data that is reflective of the scale of the selected hm data
@@ -168,11 +170,11 @@
         for (let i = 0; i < groupNames.length; i++) {
             let label = groupNames[i];
 
-            function createColumn(label, dataObj) {
+            function createColumn(label, geneList) {
               let column = [];
-              for (let data of dataObj) {
-                  if (!isNaN(parseFloat(data[label]))) {
-                    column.push(parseFloat(data[label]))
+              for (let diffGene of geneList) {
+                  if (!isNaN(parseFloat(diffGene.groupDataObj[label]))) {
+                    column.push(parseFloat(diffGene.groupDataObj[label]))
                   } 
               }
               return column;
@@ -197,8 +199,8 @@
         try {
           //This is the function that populates the data array the structure of this may differ in the future depending on the context
           //that the object eventually gets situated in.
-          let outputData = await fetchData(this.isDemo, this.pFilterVal, this.fcFilterVal, this.hardFilter, this.selectedFile);
-          this.data = outputData[0];
+          let outputData = await processData(this.isDemo, this.pFilterVal, this.fcFilterVal, this.hardFilter, this.selectedFile, this.fileFormat);
+          this.diffGeneList = outputData[0];
 
           this.summaryData = outputData[1];
           this.hmGroupNames = outputData[2];
@@ -210,9 +212,9 @@
           //VolcSelect & OptionsSelect should be the same
           //Ensure that the volcSelec genes are still in the data
           let newVolcSelectedGenes = [];
-          for (let gene in this.volcSelectedGenes) {
-            let geneName = this.volcSelectedGenes[gene].external_gene_name;
-            let geneObj = this.data.find(obj => obj.external_gene_name === geneName);
+          for (let diffGene in this.volcSelectedGenes) {
+            let geneName = diffGene.geneName;
+            let geneObj = this.diffGeneList.find(obj => obj.geneName === geneName);
             if (geneObj) {
               newVolcSelectedGenes.push(geneObj);
             }

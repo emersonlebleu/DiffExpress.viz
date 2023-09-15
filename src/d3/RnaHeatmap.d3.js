@@ -14,10 +14,9 @@ export default function RnaHeatmapD3() {
     var marginBottom = 30;
     var marginLeft = 40;
 
-    var selectedGene = "All";
     var chartId = "";
     
-    function chart(container, dataArray, norms) {
+    function chart(container, selectedGenesArray, norms) {
         var min = norms[0];
         var max = norms[1];
         //log transform the min and max
@@ -59,17 +58,17 @@ export default function RnaHeatmapD3() {
             .call(d3.axisLeft(y));
 
         
-        for (let item of dataArray) {
+        for (let item of selectedGenesArray) {
             for (let group of yValues) {
                 svg.append("rect")
-                    .attr("x", x(item.external_gene_name))
+                    .attr("x", x(item.geneName))
                     .attr("y", y(group))
                     .attr("width", x.bandwidth())
                     .attr("height", y.bandwidth())
                     .style("fill", function() {
                         if (item.log2FoldChange > 0) {
                             //do a natural log transform on the data because it varries so widely
-                            let value = Math.log(item[group] + 1);//need the 1 so that the log of 0 is not undefined
+                            let value = Math.log(item.groupDataObj[group] + 1);//need the 1 so that the log of 0 is not undefined
 
                             //min max normalization
                             let alpha = (value - min) / (max - min);
@@ -79,7 +78,7 @@ export default function RnaHeatmapD3() {
                             return `rgba(225, 0, 0, ${alpha})`;
                         } else {
                             //do a natural log transform on the data because it varries so widely
-                            let value = Math.log(item[group] + 1); 
+                            let value = Math.log(item.groupDataObj[group] + 1); 
 
                             //min max normalization
                             let alpha = (value - min) / (max - min);
@@ -92,14 +91,14 @@ export default function RnaHeatmapD3() {
                 
                 //Append text to the heatmap get the number at the group and gene intersection
                 svg.append("text")
-                    .attr("x", x(item.external_gene_name))
+                    .attr("x", x(item.geneName))
                     .attr("y", y(group))
                     .attr("dx", x.bandwidth() / 2)
                     .attr("dy", y.bandwidth() / 2)
                     .attr("text-anchor", "middle")
                     .attr("alignment-baseline", "middle")
                     .attr("font-size", "10px")
-                    .text(parseFloat(item[group]).toFixed(2));
+                    .text(parseFloat(item.groupDataObj[group]).toFixed(2));
             }  
         }
 
@@ -124,11 +123,6 @@ export default function RnaHeatmapD3() {
 
     chart.setHeight = function(newHeight) {
         height = newHeight;
-        return chart;
-    }
-
-    chart.setSelection = function(newSelection) {
-        selectedGene = newSelection;
         return chart;
     }
 
