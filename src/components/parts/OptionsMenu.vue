@@ -159,7 +159,6 @@
 
             <p class="label">Show Labels On Select</p>
             <div class="data-selector checkbox">
-                <!-- TODO Add show labels data and emit function for it -->
                 <input type="checkbox" v-model="showLabels" @change="emitShowLablesChange">
             </div>
 
@@ -168,16 +167,19 @@
               density="compact" 
               v-model="subChartSelection"
               @change="emitSubChartSelection">
+
               <v-radio color="indigo-darken-3" value="None">
                 <template v-slot:label>
                   <div class="radio-label">Volcano Only</div>
                 </template>
               </v-radio>
+
               <v-radio color="indigo-darken-3" value="Heatmap">
                 <template v-slot:label>
                   <div class="radio-label">Volcano & Heatmap</div>
                 </template>
               </v-radio>
+              
             </v-radio-group>
 
           </v-expansion-panel-text>

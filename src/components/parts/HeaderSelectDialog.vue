@@ -66,21 +66,39 @@
         </div>
 
         <div class="full-width-container">
-            <v-select
-                persistent-hint
-                clearable
-                chips
-                id="groups"
-                density="compact"
-                v-model="fileFormat.groups"
-                :items="internalHeaders"
-                multiple
-                hint="If none are selected heatmap will not be shown."
-                label="Select group column headers">
-            </v-select>
-        </div>
+            <div class="select-container">
+                <v-select
+                    persistent-hint
+                    clearable
+                    chips
+                    id="groups"
+                    density="compact"
+                    v-model="fileFormat.groups"
+                    :items="internalHeaders"
+                    multiple
+                    hint="If none are selected heatmap will not be shown."
+                    label="Select group column headers">
+                </v-select>
+            </div>
 
-        <v-btn id="done-btn" @click="emitClicked" :disabled="!fileFormat.pValue || !fileFormat.foldChange || !fileFormat.labelColumn || fileFormat.groups.length == 0 ? true : false">DONE</v-btn>
+            <div class="tip-container">
+                <div id="group-tips">
+                    ?
+                    <v-tooltip
+                        max-width="250"
+                        id="group-column-instructions"
+                        activator="parent"
+                        location="bottom">
+                        <br>
+                        <ul>
+                            <li>If your data has time point or group labels, select those column names here.</li>
+                            <li>These labels will be used to identify the groups for the heatmap y-axis.</li>
+                        </ul>
+                    </v-tooltip>
+                </div>  
+            </div>
+        </div>
+        <v-btn id="done-btn" @click="emitClicked" :disabled="!fileFormat.pValue || !fileFormat.foldChange || !fileFormat.labelColumn ? true : false">DONE</v-btn>
     </v-card>
 </template>
 
@@ -210,8 +228,8 @@ export default {
     .full-width-container {
         width: 100%;
         display: flex;
-        flex-direction: column;
-        justify-content: center;
+        flex-direction: row;
+        justify-content: start;
         align-content: center;
     }
     .select-checkbox-container {
@@ -222,6 +240,27 @@ export default {
     }
     .half-width-select-container {
         width: 50%;
+    }
+
+    .select-container {
+        width: 95%;
+    }
+
+    .tip-container {
+        width: 5%;
+    }
+
+    #group-tips {
+        width: 1.5em;
+        height: 1.5em;
+        margin-left: 5px;
+        text-align: center;
+        background-color: #f5f5f5;
+        border-radius: 50%;
+        border: 1px solid #d2cdcd;
+        font-size: 1em;
+        font-weight: bold;
+        cursor: pointer;
     }
 
     #log-2 {
