@@ -37,12 +37,12 @@ export default function RnaVolcanoD3() {
 
         // Declare the x (horizontal position) scale.
         var x = d3.scaleLinear()
-            .domain([xMin - 10, xMax + 10])
+            .domain([xMin - 1, xMax + 1])
             .range([marginLeft, width - marginRight]);
         
         // Declare the y (vertical position) scale.
         var y = d3.scaleLinear()
-            .domain([yMin - 10, yMax + 10])
+            .domain([yMin - 2, yMax + 2])
             .range([height - marginBottom, marginTop]);
 
         // Clip path for the chart area.
