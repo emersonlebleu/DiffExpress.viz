@@ -113,9 +113,9 @@
           <v-expansion-panel-title color="rgb(19, 52, 102)">Data Filters</v-expansion-panel-title>
           <v-expansion-panel-text id="filter-selection-dropdown">
 
-            <p class="label">Hard Filter</p>
+            <p class="label">Hard Filter: P-Value</p>
             <div class="data-selector checkbox">
-                <input type="checkbox" v-model="hardFilterData" @change="emitHardFilterChange">
+                <input type="checkbox" v-model="hardFilterPV" @change="emitHardFilterChange">
             </div>
 
             <p class="label">Filter P </p>
@@ -130,6 +130,11 @@
               <option value="0.0000001">.0000001</option>
               <option value="0.0000001">.00000001</option>
             </select>
+
+            <p class="label">Hard Filter: Fold Change</p>
+            <div class="data-selector checkbox">
+                <input type="checkbox" v-model="hardFilterFC" @change="emitHardFilterChange">
+            </div>
 
             <p class="label">Filter FC </p>
             <select class="data-selector" v-model="fcFilter" @change="emitFCFilter">
@@ -198,18 +203,19 @@
       isDemo: Boolean,
       pFilterVal: Number,
       fcFilterVal: Number,
-      hardFilter: Boolean,
+      hardFilterPVal: Boolean,
       selectedGenes: Array,
       genes: Array,
       showSelectedLabels: Boolean,
       subChartSelect: String,
+      hardFilterFoldChange: Boolean,
     },
     data() {
       return {
         pFilter: (this.pFilterVal || 0.0).toString(),
         fcFilter: (this.fcFilterVal || 0.0).toString(),
         optionsSelectedGenes: [],
-        hardFilterData: this.hardFilter || false,
+        hardFilterPV: this.hardFilterPVal || false,
         genesData: this.genes || [],
         newSearchGene: {},
         lookupGene: '',
@@ -221,6 +227,7 @@
         showOverlay: false,
         headers: [],
         cutPasteGeneList: '',
+        hardFilterFC: this.hardFilterFoldChange || false,
       }
     },
     methods: {
@@ -231,7 +238,7 @@
         this.$emit('newFCFilter', parseFloat(this.fcFilter))
       },
       emitHardFilterChange() {
-        this.$emit('hardFilterChange', this.hardFilterData);
+        this.$emit('hardFilterChange', this.hardFilterPV, this.hardFilterFC);
       },
       emitSelectedGenes() {
         this.$emit('updateSelectedGenes', this.optionsSelectedGenes, 'options');
