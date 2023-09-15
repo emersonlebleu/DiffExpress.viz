@@ -67,6 +67,7 @@
 
         <div class="full-width-container">
             <v-select
+                persistent-hint
                 clearable
                 chips
                 id="groups"
@@ -74,11 +75,12 @@
                 v-model="fileFormat.groups"
                 :items="internalHeaders"
                 multiple
+                hint="If none are selected heatmap will not be shown."
                 label="Select group column headers">
             </v-select>
         </div>
 
-        <v-btn @click="emitClicked" :disabled="!fileFormat.pValue || !fileFormat.foldChange || !fileFormat.labelColumn || fileFormat.groups.length == 0 ? true : false">DONE</v-btn>
+        <v-btn id="done-btn" @click="emitClicked" :disabled="!fileFormat.pValue || !fileFormat.foldChange || !fileFormat.labelColumn || fileFormat.groups.length == 0 ? true : false">DONE</v-btn>
     </v-card>
 </template>
 
@@ -229,5 +231,8 @@ export default {
     #log-10 {
         display: inline; 
         width: 45%;
+    }
+    #done-btn {
+        margin-top: 20px;
     }
 </style>
