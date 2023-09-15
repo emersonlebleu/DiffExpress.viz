@@ -2,29 +2,34 @@
     <v-card id="header-select-card">
         <h4>Header Selection Dialog</h4>
 
-        <div class="half-width-container">
-        <v-select
-            clearable
-            chips
-            id="p-value"
-            density="compact"
-            v-model="fileFormat.pValue"
-            :items="internalHeaders"
-            label="p-value column"
-            @update:modelValue="p_valColumnSelected"
-            @click:clear="p_valCleared"></v-select>
+        <div class="select-checkbox-container">
+            <div class="half-width-select-container">
+                <v-select
+                clearable
+                chips
+                id="p-value"
+                density="compact"
+                v-model="fileFormat.pValue"
+                :items="internalHeaders"
+                label="p-value column"
+                @update:modelValue="p_valColumnSelected"
+                @click:clear="p_valCleared"></v-select>
+            </div>
 
-            <v-checkbox
+            <div id="log-10">
+                <v-checkbox
                 id="log-10"
                 color="blue"
                 v-model="fileFormat.pValueLog10"
                 label="p-value is log10"
                 hide-details
-            ></v-checkbox>
+                ></v-checkbox>
+            </div>
         </div>
 
-        <div class="half-width-container">
-            <v-select
+        <div class="select-checkbox-container">
+            <div class="half-width-select-container">
+                <v-select
                 clearable
                 chips
                 id="fc"
@@ -34,14 +39,17 @@
                 label="fold change column"
                 @update:modelValue="fcColumnSelected"
                 @click:clear="fcCleared"></v-select>
-            
-            <v-checkbox
+            </div>
+
+            <div id="log-2">
+                <v-checkbox
                 id="log-2"
                 color="blue"
                 v-model="fileFormat.foldChangeLog2"
                 label="fold change is log2"
                 hide-details
-            ></v-checkbox>
+                ></v-checkbox>
+            </div>
         </div>
 
         <div class="half-width-container">
@@ -204,10 +212,22 @@ export default {
         justify-content: center;
         align-content: center;
     }
-    .half-width-container {
-        width: 60%;
-        flex-direction: column;
-        justify-content: center;
-        align-content: center;
+    .select-checkbox-container {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+    }
+    .half-width-select-container {
+        width: 50%;
+    }
+
+    #log-2 {
+        display: inline;
+        width: 45%;
+    }
+    #log-10 {
+        display: inline; 
+        width: 45%;
     }
 </style>
