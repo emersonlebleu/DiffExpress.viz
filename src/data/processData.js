@@ -112,9 +112,6 @@ function getLabelAndGroupMaps(headers, fileFormatObj) {
   let labelNames = [];
   let labelIndexes = {};
 
-  //Add color to the labels
-  theHeaders.push('color')
-
   //If the pvalue is not log10 then add the -log10(pvalue) to the labels
   if (!fileFormatObj.pValueLog10) {
     theHeaders.push('__pvalue_log10');
@@ -135,6 +132,9 @@ function getLabelAndGroupMaps(headers, fileFormatObj) {
     updatedFileFormatObj['originalFoldChange'] = fileFormatObj['foldChange']; //I want to ensure that the log2(fold change) is always the same column
     updatedFileFormatObj.foldChange = '__FC_log2';
   }
+
+  //Add color to the labels
+  theHeaders.push('color')
 
   //Get use the group names to get the indexes of the groups in the headers
   groupNames = updatedFileFormatObj.groups;
@@ -200,30 +200,6 @@ function cleanAndFilterData(data, labelMap, labelNames, groupMap, groupNames, fi
       continue;
     }
 
-    //Add the color to the rows
-    if (pValFilterNum == 0) {
-      //if pvalue is above 0 then check fold change and assign color
-      if (data[i][foldChangeI] > 0) {
-        if (data[i][foldChangeI] > 0 && data[i][foldChangeI] > log2FCFilterNum) {
-          data[i].push("red");
-        } else if (data[i][foldChangeI] < 0 && data[i][foldChangeI] < -log2FCFilterNum) {
-          data[i].push("blue");
-          } else {
-        data[i].push("grey");
-        }
-      } else {
-        //if pvalue is below or at 0 then assign grey
-        data[i].push("grey");
-      }
-    //otherwise if pvalue is a normal number then check the fold change and pval to assign color
-    } else if (data[i][foldChangeI] > 0 && data[i][foldChangeI] > log2FCFilterNum && data[i][pvalueIOriginal] < pValFilterNum) {
-      data[i].push("red");
-    } else if (data[i][foldChangeI] < 0 && data[i][foldChangeI] < -log2FCFilterNum && data[i][pvalueIOriginal] < pValFilterNum) {
-      data[i].push("blue");
-    } else {
-      data[i].push("grey");
-    }
-
     if (!fileFormatObj.pValueLog10) {
       //Add the -log10(pvalue) to the row
       data[i].push(-Math.log10(data[i][pvalueIOriginal]));
@@ -238,6 +214,27 @@ function cleanAndFilterData(data, labelMap, labelNames, groupMap, groupNames, fi
     } else {
       //Add the log2(fold change) to the row
       data[i].push(data[i][foldChangeIOriginal]);
+    }
+
+    //Add the color to the rows
+    if (pValFilterNum == 0) {
+      //If the pValue filter is zero only look at FC for color
+      if ((data[i][foldChangeI] > 0 && data[i][foldChangeI] > log2FCFilterNum) || (data[i][foldChangeI] < 0 && data[i][foldChangeI] < -log2FCFilterNum)) {
+        if (data[i][foldChangeI] > 0) {
+          data[i].push("red");
+        } else {
+          data[i].push("blue");
+        }
+      } else {
+        data[i].push("grey");
+      } 
+    //otherwise if pvalue is a normal number then check the fold change and pval to assign color
+    } else if (data[i][foldChangeI] > 0 && data[i][foldChangeI] > log2FCFilterNum && data[i][pvalueIOriginal] < pValFilterNum) {
+      data[i].push("red");
+    } else if (data[i][foldChangeI] < 0 && data[i][foldChangeI] < -log2FCFilterNum && data[i][pvalueIOriginal] < pValFilterNum) {
+      data[i].push("blue");
+    } else {
+      data[i].push("grey");
     }
 
     //FILTER BASED ON THE PVALUE AND FOLD CHANGE AND THE CUT OFFS------------------------------------------------------------------------------------------------

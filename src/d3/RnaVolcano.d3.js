@@ -78,7 +78,6 @@ export default function RnaVolcanoD3() {
                 if (selectedGenes.includes(d["geneName"])) {
                     return "#E6C153";
                 } else {
-                    console.log(d["color"]);
                     return d["color"];
                 }
             })
