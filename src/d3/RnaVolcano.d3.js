@@ -62,10 +62,10 @@ export default function RnaVolcanoD3() {
         //Points
         let points = chartArea.selectAll("path")
         //make sure the data is going to be valid for the chart
-            .data(dataArray.filter(d => d.log2FoldChange != null && d.negLog10Pvalue != null && !isNaN(d.log2FoldChange) && !isNaN(d.negLog10Pvalue)))
+            .data(dataArray.filter(d => d.log2FoldChange != null && d.pValue != null && !isNaN(d.log2FoldChange) && !isNaN(d.pValue)))
             .enter()
             .append("path") // Use <path> instead of <line>
-            .attr("d", (d) => `M${x(d.log2FoldChange)},${y(d.negLog10Pvalue)} L${x(d.log2FoldChange)},${y(d.negLog10Pvalue)}`)
+            .attr("d", (d) => `M${x(d.log2FoldChange)},${y(d.pValue)} L${x(d.log2FoldChange)},${y(d.pValue)}`)
             .attr("stroke-width",function(d){
                 if (selectedGenes.includes(d["geneName"])) {
                     return pointImportantWidth;
@@ -78,7 +78,7 @@ export default function RnaVolcanoD3() {
                 if (selectedGenes.includes(d["geneName"])) {
                     return "#E6C153";
                 } else {
-
+                    console.log(d["color"]);
                     return d["color"];
                 }
             })
@@ -141,7 +141,7 @@ export default function RnaVolcanoD3() {
             .enter()
             .append("rect")
             .attr("x", function(d) { return x(d.log2FoldChange) + 7; })
-            .attr("y", function(d) { return y(d.negLog10Pvalue) - 20; })
+            .attr("y", function(d) { return y(d.pValue) - 20; })
             .attr("width", function(d) { return (d["geneName"].length * 5) + 12; })
             .attr("height", 15)
             .attr("rx", 5)
@@ -155,9 +155,9 @@ export default function RnaVolcanoD3() {
             .enter()
             .append("line")
             .attr("x1", function(d) { return x(d.log2FoldChange) + 3.3; })
-            .attr("y1", function(d) { return y(d.negLog10Pvalue) - 3.3; })
+            .attr("y1", function(d) { return y(d.pValue) - 3.3; })
             .attr("x2", function(d) { return x(d.log2FoldChange) + 8; })
-            .attr("y2", function(d) { return y(d.negLog10Pvalue) - 8; })
+            .attr("y2", function(d) { return y(d.pValue) - 8; })
             .attr("stroke-width", .5)
             .attr("stroke", "black")
             .style("opacity", .6);
@@ -168,7 +168,7 @@ export default function RnaVolcanoD3() {
             .enter()
             .append("text")
             .attr("x", function(d) { return x(d.log2FoldChange) + 10; })
-            .attr("y", function(d) { return y(d.negLog10Pvalue) - 10; })
+            .attr("y", function(d) { return y(d.pValue) - 10; })
             .text(function(d) { return d["geneName"]; })
             .style("fill", "black")
             .style("font-weight", "bold")
@@ -455,15 +455,15 @@ export default function RnaVolcanoD3() {
             
             //position the boxes and lines
             labelsAndLines.selectAll("rect").attr("x", function(d) { return x(d.log2FoldChange) + 7 / event.transform.k; });
-            labelsAndLines.selectAll("rect").attr("y", function(d) { return y(d.negLog10Pvalue) - 20 / event.transform.k; });
+            labelsAndLines.selectAll("rect").attr("y", function(d) { return y(d.pValue) - 20 / event.transform.k; });
 
             labelsAndLines.selectAll("line").attr("x1", function(d) { return x(d.log2FoldChange) + 3.3 / event.transform.k; });
-            labelsAndLines.selectAll("line").attr("y1", function(d) { return y(d.negLog10Pvalue) - 3.3 / event.transform.k; });
+            labelsAndLines.selectAll("line").attr("y1", function(d) { return y(d.pValue) - 3.3 / event.transform.k; });
             labelsAndLines.selectAll("line").attr("x2", function(d) { return x(d.log2FoldChange) + 8 / event.transform.k; });
-            labelsAndLines.selectAll("line").attr("y2", function(d) { return y(d.negLog10Pvalue) - 8 / event.transform.k; });
+            labelsAndLines.selectAll("line").attr("y2", function(d) { return y(d.pValue) - 8 / event.transform.k; });
 
             labelsAndLines.selectAll("text").attr("x", function(d) { return x(d.log2FoldChange) + 10 / event.transform.k; });
-            labelsAndLines.selectAll("text").attr("y", function(d) { return y(d.negLog10Pvalue) - 10 / event.transform.k; });
+            labelsAndLines.selectAll("text").attr("y", function(d) { return y(d.pValue) - 10 / event.transform.k; });
 
             // Rescale the x and y axis
             gx.call(d3.axisBottom(x).scale(event.transform.rescaleX(x)));

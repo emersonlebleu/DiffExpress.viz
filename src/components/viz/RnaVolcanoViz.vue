@@ -49,9 +49,8 @@
                     d3.select(container).selectAll("*").remove();
                 }
                 
-                console.log(this.summaryData);
-                let xMin = this.summaryData.log2FoldChange.range[0];
-                let xMax = this.summaryData.log2FoldChange.range[1];
+                let xMin = this.summaryData.__FC_log2.range[0];
+                let xMax = this.summaryData.__FC_log2.range[1];
                 let yMin = this.summaryData.__pvalue_log10.range[0];
                 let yMax = this.summaryData.__pvalue_log10.range[1];
                 let width = container.clientWidth;

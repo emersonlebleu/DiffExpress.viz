@@ -134,7 +134,6 @@
         }
       },
       changeData(file, format) {
-        console.log(format)
         //n is the raw text of the file
         if (file && format && file !== this.selectedFile) {
           this.fileFormat = format;
