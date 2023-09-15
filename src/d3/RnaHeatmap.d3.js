@@ -16,7 +16,7 @@ export default function RnaHeatmapD3() {
 
     var chartId = "";
     
-    function chart(container, dataArray, norms) {
+    function chart(container, selectedGenesArray, norms) {
         var min = norms[0];
         var max = norms[1];
         //log transform the min and max
@@ -58,8 +58,9 @@ export default function RnaHeatmapD3() {
             .call(d3.axisLeft(y));
 
         
-        for (let item of dataArray) {
+        for (let item of selectedGenesArray) {
             for (let group of yValues) {
+                console.log(item);
                 svg.append("rect")
                     .attr("x", x(item.geneName))
                     .attr("y", y(group))
@@ -68,7 +69,7 @@ export default function RnaHeatmapD3() {
                     .style("fill", function() {
                         if (item.log2FoldChange > 0) {
                             //do a natural log transform on the data because it varries so widely
-                            let value = Math.log(item[group] + 1);//need the 1 so that the log of 0 is not undefined
+                            let value = Math.log(item.groupDataObj[group] + 1);//need the 1 so that the log of 0 is not undefined
 
                             //min max normalization
                             let alpha = (value - min) / (max - min);
@@ -78,7 +79,7 @@ export default function RnaHeatmapD3() {
                             return `rgba(225, 0, 0, ${alpha})`;
                         } else {
                             //do a natural log transform on the data because it varries so widely
-                            let value = Math.log(item[group] + 1); 
+                            let value = Math.log(item.groupDataObj[group] + 1); 
 
                             //min max normalization
                             let alpha = (value - min) / (max - min);
