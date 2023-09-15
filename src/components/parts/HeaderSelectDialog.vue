@@ -18,7 +18,7 @@
 
             <div id="log-10">
                 <v-checkbox
-                id="log-10"
+                id="log-10-cb"
                 color="blue"
                 v-model="fileFormat.pValueLog10"
                 label="p-value is log10"
@@ -43,7 +43,7 @@
 
             <div id="log-2">
                 <v-checkbox
-                id="log-2"
+                id="log-2-cb"
                 color="blue"
                 v-model="fileFormat.foldChangeLog2"
                 label="fold change is log2"
