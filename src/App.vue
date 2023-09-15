@@ -19,7 +19,7 @@
 
         <RnaVolcanoCard class="data-card"
         :class="subChartSelection == 'None' ? 'full-height' : 'half-height'" 
-        :data="data" 
+        :data="diffGeneList" 
         :selectedGenes="volcSelectedGenes" 
         :summaryData="summaryData"
         :pFilterVal="pFilterVal"
@@ -42,7 +42,7 @@
       :fcFilterVal="fcFilterVal"
       :hardFilter="hardFilter"
       :selectedGenes="optionsSelectedGenes"
-      :genes="data"
+      :genes="diffGeneList"
       :showSelectedLabels="showSelectedLabels"
       :subChartSelect="subChartSelection"
       @newfileSelected="changeData"
@@ -70,7 +70,7 @@
     }, 
     data() {
       return {
-        data: [],
+        diffGeneList: [],
         summaryData: {},
         isDemo: true,
         selectedFile: '',
@@ -160,7 +160,7 @@
         //go through the data and get the group names & gene names as two lists
         for (let dataObj of hmGenes) {
           //get the gene names add to names list
-          genes.push(dataObj.external_gene_name)
+          genes.push(dataObj.geneName)
         }
         return genes;
       },
@@ -201,7 +201,7 @@
           //This is the function that populates the data array the structure of this may differ in the future depending on the context
           //that the object eventually gets situated in.
           let outputData = await processData(this.isDemo, this.pFilterVal, this.fcFilterVal, this.hardFilter, this.selectedFile, this.fileFormat);
-          this.data = outputData[0];
+          this.diffGeneList = outputData[0];
 
           this.summaryData = outputData[1];
           this.hmGroupNames = outputData[2];
@@ -213,9 +213,9 @@
           //VolcSelect & OptionsSelect should be the same
           //Ensure that the volcSelec genes are still in the data
           let newVolcSelectedGenes = [];
-          for (let gene in this.volcSelectedGenes) {
-            let geneName = this.volcSelectedGenes[gene].external_gene_name;
-            let geneObj = this.data.find(obj => obj.external_gene_name === geneName);
+          for (let diffGene in this.volcSelectedGenes) {
+            let geneName = this.volcSelectedGenes[diffGene].geneName; //ERROR HERE why am I accessing this like this....? should be diffGene.geneName only...
+            let geneObj = this.diffGeneList.find(obj => obj.geneName === geneName);
             if (geneObj) {
               newVolcSelectedGenes.push(geneObj);
             }

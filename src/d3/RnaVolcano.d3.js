@@ -67,7 +67,7 @@ export default function RnaVolcanoD3() {
             .append("path") // Use <path> instead of <line>
             .attr("d", (d) => `M${x(d.log2FoldChange)},${y(d.negLog10Pvalue)} L${x(d.log2FoldChange)},${y(d.negLog10Pvalue)}`)
             .attr("stroke-width",function(d){
-                if (selectedGenes.includes(d["external_gene_name"])) {
+                if (selectedGenes.includes(d["geneName"])) {
                     return pointImportantWidth;
                 } else {
                     return pointBaseWidth;
@@ -75,7 +75,7 @@ export default function RnaVolcanoD3() {
             }) 
             .attr("stroke-linecap", "round")
             .style("stroke", function(d){
-                if (selectedGenes.includes(d["external_gene_name"])) {
+                if (selectedGenes.includes(d["geneName"])) {
                     return "#E6C153";
                 } else {
 
@@ -83,7 +83,7 @@ export default function RnaVolcanoD3() {
                 }
             })
             .classed("selected", function(d){
-                if (selectedGenes.includes(d["external_gene_name"])) {
+                if (selectedGenes.includes(d["geneName"])) {
                     return true;
                 } else {
                     return false;
@@ -142,7 +142,7 @@ export default function RnaVolcanoD3() {
             .append("rect")
             .attr("x", function(d) { return x(d.log2FoldChange) + 7; })
             .attr("y", function(d) { return y(d.negLog10Pvalue) - 20; })
-            .attr("width", function(d) { return (d["external_gene_name"].length * 5) + 12; })
+            .attr("width", function(d) { return (d["geneName"].length * 5) + 12; })
             .attr("height", 15)
             .attr("rx", 5)
             .attr("ry", 5)
@@ -169,7 +169,7 @@ export default function RnaVolcanoD3() {
             .append("text")
             .attr("x", function(d) { return x(d.log2FoldChange) + 10; })
             .attr("y", function(d) { return y(d.negLog10Pvalue) - 10; })
-            .text(function(d) { return d["external_gene_name"]; })
+            .text(function(d) { return d["geneName"]; })
             .style("fill", "black")
             .style("font-weight", "bold")
             .style("font-size", "10px")
@@ -372,7 +372,7 @@ export default function RnaVolcanoD3() {
             let point = d3.select(this);
             let classes = point.attr("class");
 
-            if ((!classes || !point.attr("class").includes("selected")) && !(selectedGenes.includes(d["external_gene_name"]))) {
+            if ((!classes || !point.attr("class").includes("selected")) && !(selectedGenes.includes(d["geneName"]))) {
                 point.attr("stroke-width", pointImportantScaled);
                 point.style("stroke", "#92140C");
             } 
@@ -397,7 +397,7 @@ export default function RnaVolcanoD3() {
             let point = d3.select(this);
             let classes = point.attr("class");
 
-            if ((classes && point.attr("class").includes("selected")) || selectedGenes.includes(d["external_gene_name"])) {
+            if ((classes && point.attr("class").includes("selected")) || selectedGenes.includes(d["geneName"])) {
                 //do nothing
             } else {
                 point.attr("stroke-width", pointBaseScaled);
@@ -448,7 +448,7 @@ export default function RnaVolcanoD3() {
             labelsAndLines.selectAll("line").attr("stroke-width", .5 / event.transform.k);
 
             //Scale the boxes
-            labelsAndLines.selectAll("rect").attr("width", function(d) { return ((d["external_gene_name"].length/event.transform.k) * 6) + (12 / event.transform.k); });
+            labelsAndLines.selectAll("rect").attr("width", function(d) { return ((d["geneName"].length/event.transform.k) * 6) + (12 / event.transform.k); });
             labelsAndLines.selectAll("rect").attr("height", 15 / event.transform.k);
             labelsAndLines.selectAll("rect").attr("rx", 5 / event.transform.k);
             labelsAndLines.selectAll("rect").attr("ry", 5 / event.transform.k);
@@ -471,7 +471,7 @@ export default function RnaVolcanoD3() {
 
 
             points.attr("stroke-width", function(d) {
-                if (selectedGenes.includes(d["external_gene_name"])) {
+                if (selectedGenes.includes(d["geneName"])) {
                     return pointImportantWidth / event.transform.k;
                 } else {
                     return pointBaseWidth / event.transform.k;
@@ -512,7 +512,7 @@ export default function RnaVolcanoD3() {
                 .call(zoom.transform, d3.zoomIdentity);
 
             points.attr("stroke-width", function(d) {
-                if (selectedGenes.includes(d["external_gene_name"])) {
+                if (selectedGenes.includes(d["geneName"])) {
                     return pointImportantWidth;
                 } else {
                     return pointBaseWidth;
@@ -575,7 +575,7 @@ export default function RnaVolcanoD3() {
     chart.setSelection = function(newSelection) {
         selectedGenes = [];
         for (let gene of newSelection) {
-            selectedGenes.push(gene["external_gene_name"]);
+            selectedGenes.push(gene["geneName"]);
         }
         return chart;
     }

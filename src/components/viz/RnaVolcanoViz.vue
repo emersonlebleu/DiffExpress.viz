@@ -49,10 +49,11 @@
                     d3.select(container).selectAll("*").remove();
                 }
                 
+                console.log(this.summaryData);
                 let xMin = this.summaryData.log2FoldChange.range[0];
                 let xMax = this.summaryData.log2FoldChange.range[1];
-                let yMin = this.summaryData.negLog10Pvalue.range[0];
-                let yMax = this.summaryData.negLog10Pvalue.range[1];
+                let yMin = this.summaryData.__pvalue_log10.range[0];
+                let yMax = this.summaryData.__pvalue_log10.range[1];
                 let width = container.clientWidth;
                 let height = container.clientHeight;
 

@@ -69,7 +69,7 @@ export default async function processData(isDemo, pValFilter, log2FCFilter, hard
       [headers, labelIndexes, labels, groupIndexes, groups, updatedFileFormatObj] = getLabelAndGroupMaps(headers, updatedFileFormatObj);
       //Filter the data, clean the data, and get the number of genes
       [finalDiffGenesList, numOfGenes, dataColMap] = cleanAndFilterData(data, labelIndexes, labels, groupIndexes, groups, updatedFileFormatObj, splitChar, pValFilterNum, log2FCFilterNum, hardFilter);
-  } else {
+    } else {
     if (!textData) {
       //Throw an error if there is no data
       throw new Error('No data provided');
@@ -117,19 +117,23 @@ function getLabelAndGroupMaps(headers, fileFormatObj) {
 
   //If the pvalue is not log10 then add the -log10(pvalue) to the labels
   if (!fileFormatObj.pValueLog10) {
-    theHeaders.push('__pvalue-log10');
+    theHeaders.push('__pvalue_log10');
     updatedFileFormatObj['originalPValue'] = fileFormatObj['pValue'];
-    updatedFileFormatObj.pValue = '__pvalue-log10';
+    updatedFileFormatObj.pValue = '__pvalue_log10';
   } else {
-    updatedFileFormatObj['__pvalue-log10'] = fileFormatObj['pValue']; //I want to ensure that the log10(pvalue) is always the same column
+    theHeaders.push('__pvalue_log10');
+    updatedFileFormatObj['originalPValue'] = fileFormatObj['pValue']; //I want to ensure that the log10(pvalue) is always the same column
+    updatedFileFormatObj.pValue = '__pvalue_log10';
   }
   //If the fold change is not log2 then add the log2(fold change) to the labels 
   if (!fileFormatObj.foldChangeLog2) {
-    theHeaders.push('__FC-log2');
+    theHeaders.push('__FC_log2');
     updatedFileFormatObj['originalFoldChange'] = fileFormatObj['foldChange'];
-    updatedFileFormatObj.foldChange = '__FC-log2';
+    updatedFileFormatObj.foldChange = '__FC_log2';
   } else {
-    updatedFileFormatObj['__FC-log2'] = fileFormatObj['foldChange']; //I want to ensure that the log2(fold change) is always the same column
+    theHeaders.push('__FC_log2');
+    updatedFileFormatObj['originalFoldChange'] = fileFormatObj['foldChange']; //I want to ensure that the log2(fold change) is always the same column
+    updatedFileFormatObj.foldChange = '__FC_log2';
   }
 
   //Get use the group names to get the indexes of the groups in the headers
@@ -160,23 +164,13 @@ function cleanAndFilterData(data, labelMap, labelNames, groupMap, groupNames, fi
   let pValueAlreadyLog10 = fileFormatObj.pValueLog10;
   let foldChangeAlreadyLog2 = fileFormatObj.foldChangeLog2;
 
-  //Will need both the original pvalue and fold change if they are not already log10 and log2 respectively if not both should be the same
-  if (!pValueAlreadyLog10) {
-    var pvalueIOriginal = labelMap[fileFormatObj.originalPValue];
-    var pvalueI = labelMap[fileFormatObj.pValue];
-  } else {
-    var pvalueIOriginal = labelMap[fileFormatObj.pValue];
-    var pvalueI = labelMap[fileFormatObj.pValue];
-  }
+  //Will need both the original pvalue and fold change
+  var pvalueIOriginal = labelMap[fileFormatObj.originalPValue];
+  var pvalueI = labelMap[fileFormatObj.pValue];
 
-  if (!foldChangeAlreadyLog2) {
-    var foldChangeIOriginal = labelMap[fileFormatObj.originalFoldChange];
-    var foldChangeI = labelMap[fileFormatObj.foldChange];
-  } else {
-    var foldChangeIOriginal = labelMap[fileFormatObj.foldChange];
-    var foldChangeI = labelMap[fileFormatObj.foldChange];
-  }
-
+  var foldChangeIOriginal = labelMap[fileFormatObj.originalFoldChange];
+  var foldChangeI = labelMap[fileFormatObj.foldChange];
+ 
   let diffGeneList = [];
   let numGenes = 0;
   let dataColMap = {};
@@ -209,10 +203,10 @@ function cleanAndFilterData(data, labelMap, labelNames, groupMap, groupNames, fi
     //Add the color to the rows
     if (pValFilterNum == 0) {
       //if pvalue is above 0 then check fold change and assign color
-      if (data[i][foldChangeIOriginal] > 0) {
-        if (data[i][foldChangeIOriginal] > 0 && data[i][foldChangeIOriginal] > log2FCFilterNum) {
+      if (data[i][foldChangeI] > 0) {
+        if (data[i][foldChangeI] > 0 && data[i][foldChangeI] > log2FCFilterNum) {
           data[i].push("red");
-        } else if (data[i][foldChangeIOriginal] < 0 && data[i][foldChangeIOriginal] < -log2FCFilterNum) {
+        } else if (data[i][foldChangeI] < 0 && data[i][foldChangeI] < -log2FCFilterNum) {
           data[i].push("blue");
           } else {
         data[i].push("grey");
@@ -222,9 +216,9 @@ function cleanAndFilterData(data, labelMap, labelNames, groupMap, groupNames, fi
         data[i].push("grey");
       }
     //otherwise if pvalue is a normal number then check the fold change and pval to assign color
-    } else if (data[i][foldChangeIOriginal] > 0 && data[i][foldChangeIOriginal] > log2FCFilterNum && data[i][pvalueIOriginal] < pValFilterNum) {
+    } else if (data[i][foldChangeI] > 0 && data[i][foldChangeI] > log2FCFilterNum && data[i][pvalueIOriginal] < pValFilterNum) {
       data[i].push("red");
-    } else if (data[i][foldChangeIOriginal] < 0 && data[i][foldChangeIOriginal] < -log2FCFilterNum && data[i][pvalueIOriginal] < pValFilterNum) {
+    } else if (data[i][foldChangeI] < 0 && data[i][foldChangeI] < -log2FCFilterNum && data[i][pvalueIOriginal] < pValFilterNum) {
       data[i].push("blue");
     } else {
       data[i].push("grey");
@@ -233,11 +227,17 @@ function cleanAndFilterData(data, labelMap, labelNames, groupMap, groupNames, fi
     if (!fileFormatObj.pValueLog10) {
       //Add the -log10(pvalue) to the row
       data[i].push(-Math.log10(data[i][pvalueIOriginal]));
+    } else {
+      //Add the -log10(pvalue) to the row
+      data[i].push(data[i][pvalueIOriginal]);
     }
 
     if (!fileFormatObj.foldChangeLog2) {
       //Add the log2(fold change) to the row
       data[i].push(Math.log2(data[i][foldChangeIOriginal]));
+    } else {
+      //Add the log2(fold change) to the row
+      data[i].push(data[i][foldChangeIOriginal]);
     }
 
     //FILTER BASED ON THE PVALUE AND FOLD CHANGE AND THE CUT OFFS------------------------------------------------------------------------------------------------

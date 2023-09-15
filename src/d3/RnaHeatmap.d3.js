@@ -62,7 +62,7 @@ export default function RnaHeatmapD3() {
         for (let item of dataArray) {
             for (let group of yValues) {
                 svg.append("rect")
-                    .attr("x", x(item.external_gene_name))
+                    .attr("x", x(item.geneName))
                     .attr("y", y(group))
                     .attr("width", x.bandwidth())
                     .attr("height", y.bandwidth())
@@ -92,7 +92,7 @@ export default function RnaHeatmapD3() {
                 
                 //Append text to the heatmap get the number at the group and gene intersection
                 svg.append("text")
-                    .attr("x", x(item.external_gene_name))
+                    .attr("x", x(item.geneName))
                     .attr("y", y(group))
                     .attr("dx", x.bandwidth() / 2)
                     .attr("dy", y.bandwidth() / 2)

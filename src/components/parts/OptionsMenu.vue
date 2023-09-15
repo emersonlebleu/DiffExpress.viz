@@ -64,7 +64,7 @@
               <div id="search-btn-container">
                 <input 
                 type="text" 
-                v-model="newSearchGene.external_gene_name" 
+                v-model="newSearchGene.geneName" 
                 id="new-search-gene-input" label="Gene name" 
                 placeholder="Search...">
 
@@ -82,7 +82,7 @@
                   ignore-case
                   force-select
                   force-clear
-                  item-key="external_gene_name"
+                  item-key="geneName"
                   @update:modelValue="updateNewSearchGene"></Typeahead>          
 
               <p class="label">Selected Genes</p>
@@ -93,13 +93,13 @@
                   v-if="optionsSelectedGenes.length == 0"><i>Add or select genes to display.</i></p>
                   <v-chip 
                   v-for="(gene, index) in optionsSelectedGenes"
-                  :key="gene.external_gene_name + index"
+                  :key="gene.geneName + index"
                   closable 
                   size="x-small" 
                   class="chip" 
                   :class="gene.color"
                   @click:close="removeGene(gene)">
-                  {{ gene.external_gene_name.toLowerCase() }}
+                  {{ gene.geneName }}
                   </v-chip>
                 </v-chip-group>
               </div>
@@ -264,13 +264,13 @@
         geneList = geneList.filter(gene => this.geneNameslist.includes(gene));
 
         //Filter out any genes already in the selected genes
-        geneList = geneList.filter(gene => !this.optionsSelectedGenes.map(g => g.external_gene_name.toLowerCase()).includes(gene));
+        geneList = geneList.filter(gene => !this.optionsSelectedGenes.map(g => g.geneName).includes(gene));
 
         //populate a new list with the actual genes (objects) that have the corresponding name
         //Modified for complexity using a map for the genes and their names
         let geneMap = new Map();
         this.genesData.forEach(g => {
-          geneMap.set(g.external_gene_name.toLowerCase(), g);
+          geneMap.set(g.geneName, g);
         });
 
         //Then map the gene list to the gene map items
@@ -290,7 +290,7 @@
         }
       },
       removeGene(gene){
-        this.optionsSelectedGenes = this.optionsSelectedGenes.filter(theGene => theGene.external_gene_name.toLowerCase() !== gene.external_gene_name.toLowerCase());
+        this.optionsSelectedGenes = this.optionsSelectedGenes.filter(theGene => theGene.geneName !== gene.geneName);
         this.emitSelectedGenes();
       },
       async processFile(event){
@@ -330,7 +330,7 @@
     computed: {
       geneNameslist() {
         let theList = [];
-        theList = this.genesData.map(gene => gene.external_gene_name.toLowerCase());
+        theList = this.genesData.map(gene => gene.geneName);
         return theList;
       },
     },
