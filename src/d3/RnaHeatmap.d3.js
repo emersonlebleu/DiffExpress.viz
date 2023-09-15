@@ -14,7 +14,6 @@ export default function RnaHeatmapD3() {
     var marginBottom = 30;
     var marginLeft = 40;
 
-    var selectedGene = "All";
     var chartId = "";
     
     function chart(container, dataArray, norms) {
@@ -124,11 +123,6 @@ export default function RnaHeatmapD3() {
 
     chart.setHeight = function(newHeight) {
         height = newHeight;
-        return chart;
-    }
-
-    chart.setSelection = function(newSelection) {
-        selectedGene = newSelection;
         return chart;
     }
 

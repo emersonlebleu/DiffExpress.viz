@@ -155,13 +155,13 @@
         this.populateData();
       },
       getHmGeneNames(hmGenes){
-        let genes = [];
+        let geneNames = [];
         //go through the data and get the group names & gene names as two lists
         for (let dataObj of hmGenes) {
           //get the gene names add to names list
-          genes.push(dataObj.geneName)
+          geneNames.push(dataObj.geneName)
         }
-        return genes;
+        return geneNames;
       },
       getHmSummaryData(data, groupNames) {
         //Used to get summary data that is reflective of the scale of the selected hm data
@@ -170,11 +170,11 @@
         for (let i = 0; i < groupNames.length; i++) {
             let label = groupNames[i];
 
-            function createColumn(label, dataObj) {
+            function createColumn(label, geneList) {
               let column = [];
-              for (let data of dataObj) {
-                  if (!isNaN(parseFloat(data[label]))) {
-                    column.push(parseFloat(data[label]))
+              for (let diffGene of geneList) {
+                  if (!isNaN(parseFloat(diffGene.groupDataObj[label]))) {
+                    column.push(parseFloat(diffGene.groupDataObj[label]))
                   } 
               }
               return column;
@@ -213,7 +213,7 @@
           //Ensure that the volcSelec genes are still in the data
           let newVolcSelectedGenes = [];
           for (let diffGene in this.volcSelectedGenes) {
-            let geneName = this.volcSelectedGenes[diffGene].geneName; //ERROR HERE why am I accessing this like this....? should be diffGene.geneName only...
+            let geneName = diffGene.geneName;
             let geneObj = this.diffGeneList.find(obj => obj.geneName === geneName);
             if (geneObj) {
               newVolcSelectedGenes.push(geneObj);
