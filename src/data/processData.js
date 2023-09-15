@@ -285,7 +285,7 @@ function createDiffGene(dataRow, labelMap, labelNames, groupMap, groupNames, fil
   //Set the pvalue, log2FoldChange, and geneName
   diffGene.setPValue(dataRow[labelMap[fileFormatObj.pValue]]);
   diffGene.setLog2FoldChange(dataRow[labelMap[fileFormatObj.foldChange]]);
-  diffGene.setGeneName(dataRow[labelMap[fileFormatObj.labelColumn]]);
+  diffGene.setGeneName(dataRow[labelMap[fileFormatObj.labelColumn]].toLowerCase());
   diffGene.setColor(dataRow[labelMap['color']]);
 
   //set the group data object
