@@ -46,6 +46,7 @@
       :showSelectedLabels="showSelectedLabels"
       :subChartSelect="subChartSelection"
       :hardFilterFoldChange="hardFilterFC"
+      :hmGroupNamesPresent="hmGroupNames.length > 0"
       @newfileSelected="changeData"
       @clearSelection="clearSelection"
       @newPFilter="filterPVal"
@@ -99,6 +100,26 @@
       this.populateData();
     },
     methods: {
+      resetState() {
+        this.diffGeneList = [];
+        this.summaryData = {};
+        this.isDemo = true;
+        this.selectedFile = '';
+        this.pFilterVal = 0.0;
+        this.fcFilterVal = 0.0;
+        this.hmGenes = [];
+        this.hmGeneNames = [];
+        this.hmGroupNames = [];
+        this.hmSummaryData = {};
+        this.hardFilterPV = false;
+        this.volcSelectedGenes = [];
+        this.optionsSelectedGenes = [];
+        this.showSelectedLabels = true;
+        this.subChartSelection = 'Heatmap';
+        this.numOfGenes = 0;
+        this.fileFormat = {};
+        this.hardFilterFC = false;
+      },
       changeSubChart(subChart) {
         this.subChartSelection = subChart;
       },
@@ -139,11 +160,13 @@
       changeData(file, format) {
         //n is the raw text of the file
         if (file && format && file !== this.selectedFile) {
+          this.resetState();
           this.fileFormat = format;
           this.selectedFile = file;
           this.isDemo = false;
           this.populateData();
         } else if (!file || file == '') {
+          this.resetState();
           this.selectedFile = '';
           this.isDemo = true;
           this.populateData();
@@ -203,14 +226,16 @@
           //This is the function that populates the data array the structure of this may differ in the future depending on the context
           //that the object eventually gets situated in.
           let outputData = await processData(this.isDemo, this.pFilterVal, this.fcFilterVal, this.hardFilterPV, this.hardFilterFC, this.selectedFile, this.fileFormat);
-          this.diffGeneList = outputData[0];
 
-          this.summaryData = outputData[1];
-          this.hmGroupNames = outputData[2];
-          this.numOfGenes = outputData[3];
+          [this.diffGeneList, this.summaryData, this.hmGroupNames, this.numOfGenes] = outputData;
 
           this.hmGeneNames = this.getHmGeneNames(this.hmGenes);
           this.hmSummaryData = this.getHmSummaryData(this.hmGenes, this.hmGroupNames);
+
+          //If there are no group names then the heatmap options should be removed
+          if (this.hmGroupNames.length == 0) {
+            this.subChartSelection = 'None';
+          }
 
           //VolcSelect & OptionsSelect should be the same
           //Ensure that the volcSelec genes are still in the data

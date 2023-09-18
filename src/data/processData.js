@@ -21,6 +21,7 @@ export default async function processData(isDemo, pValFilter, log2FCFilter, hard
 
   var finalDiffGenesList = [];
   var dataColMap = {};
+  var fileContent = '';
 
   //Default file format object for default data
   var defaultFileFormatObj = {
@@ -35,7 +36,7 @@ export default async function processData(isDemo, pValFilter, log2FCFilter, hard
 
   var updatedFileFormatObj = {};
   if (!isDemo) {
-    updatedFileFormatObj = fileFormatObj;
+    updatedFileFormatObj = JSON.parse(JSON.stringify(fileFormatObj)); //create a copy just so that we know we arent changing the original
   } else {
     updatedFileFormatObj = defaultFileFormatObj;
   }
@@ -58,7 +59,7 @@ export default async function processData(isDemo, pValFilter, log2FCFilter, hard
     try {
       //get the data from the file if data is not provided by the application
       let response = await fetch(selectedSet);
-      var fileContent = await response.text();
+      fileContent = await response.text();
     } catch (error) {
       console.error('Error fetching data:', error);
       return [];
@@ -68,13 +69,13 @@ export default async function processData(isDemo, pValFilter, log2FCFilter, hard
       //Get the maps for the locations of the labels and groups in the data
       [headers, labelIndexes, labels, groupIndexes, groups, updatedFileFormatObj] = getLabelAndGroupMaps(headers, updatedFileFormatObj);
       //Filter the data, clean the data, and get the number of genes
-      [finalDiffGenesList, numOfGenes, dataColMap] = cleanAndFilterData(data, labelIndexes, labels, groupIndexes, groups, updatedFileFormatObj, splitChar, pValFilterNum, log2FCFilterNum, hardFilterPV, hardFilterFC);
+      [finalDiffGenesList, numOfGenes, dataColMap, updatedFileFormatObj] = cleanAndFilterData(data, labelIndexes, labels, groupIndexes, groups, updatedFileFormatObj, splitChar, pValFilterNum, log2FCFilterNum, hardFilterPV, hardFilterFC);
     } else {
     if (!textData) {
       //Throw an error if there is no data
       throw new Error('No data provided');
     } else {
-      var fileContent = textData;
+      fileContent = textData;
       //Split the data into the headers and the data
       [data, headers] = splitDataFromHeaders(fileContent, splitChar);
       //Get the maps for the locations of the labels and groups in the data
@@ -106,38 +107,26 @@ function getLabelAndGroupMaps(headers, fileFormatObj) {
   //We are going to modify the headers so we need to make a copy of them
   let theHeaders = headers;
   //If we need to change the fileFormatObject to update the fold change or pvalue column
-  let updatedFileFormatObj = fileFormatObj;
+  let innerFileFormatObj = JSON.parse(JSON.stringify(fileFormatObj)); //create a copy just so that we know we arent changing the original
   let groupNames = [];
   let groupIndexes = {};
   let labelNames = [];
   let labelIndexes = {};
 
-  //If the pvalue is not log10 then add the -log10(pvalue) to the labels
-  if (!fileFormatObj.pValueLog10) {
-    theHeaders.push('__pvalue_log10');
-    updatedFileFormatObj['originalPValue'] = fileFormatObj['pValue'];
-    updatedFileFormatObj.pValue = '__pvalue_log10';
-  } else {
-    theHeaders.push('__pvalue_log10');
-    updatedFileFormatObj['originalPValue'] = fileFormatObj['pValue']; //I want to ensure that the log10(pvalue) is always the same column
-    updatedFileFormatObj.pValue = '__pvalue_log10';
-  }
-  //If the fold change is not log2 then add the log2(fold change) to the labels 
-  if (!fileFormatObj.foldChangeLog2) {
-    theHeaders.push('__FC_log2');
-    updatedFileFormatObj['originalFoldChange'] = fileFormatObj['foldChange'];
-    updatedFileFormatObj.foldChange = '__FC_log2';
-  } else {
-    theHeaders.push('__FC_log2');
-    updatedFileFormatObj['originalFoldChange'] = fileFormatObj['foldChange']; //I want to ensure that the log2(fold change) is always the same column
-    updatedFileFormatObj.foldChange = '__FC_log2';
-  }
+  //Add the log 10 pvalue and log 2 fold change to the headers make a new file format opject with "originalPValue" and "originalFoldChange"
+  theHeaders.push('__pvalue_log10');
+  innerFileFormatObj['originalPValue'] = fileFormatObj['pValue'];
+  innerFileFormatObj.pValue = '__pvalue_log10';
+
+  theHeaders.push('__FC_log2');
+  innerFileFormatObj['originalFoldChange'] = fileFormatObj['foldChange'];
+  innerFileFormatObj.foldChange = '__FC_log2';
 
   //Add color to the labels
   theHeaders.push('color')
 
   //Get use the group names to get the indexes of the groups in the headers
-  groupNames = updatedFileFormatObj.groups;
+  groupNames = innerFileFormatObj.groups;
   for (let i = 0; i < groupNames.length; i++) {
     //Get the index of the group name in the headers
     let index = headers.indexOf(groupNames[i]);
@@ -156,18 +145,13 @@ function getLabelAndGroupMaps(headers, fileFormatObj) {
   }
 
   //New labels structure should be [labels..., color, pvalue-log10, FC-log2] or [labels..., color, pvalue-log10] or [labels..., color, FC-log2] or [labels..., color]
-  return [theHeaders, labelIndexes, labelNames, groupIndexes, groupNames, updatedFileFormatObj];
+  return [theHeaders, labelIndexes, labelNames, groupIndexes, groupNames, innerFileFormatObj];
 }
 
 //Function cleans the data of rows where essential data is missing
 function cleanAndFilterData(data, labelMap, labelNames, groupMap, groupNames, fileFormatObj, splitChar, pValFilterNum, log2FCFilterNum, hardFilterPVal, hardFilterFoldChange) {
-  let pValueAlreadyLog10 = fileFormatObj.pValueLog10;
-  let foldChangeAlreadyLog2 = fileFormatObj.foldChangeLog2;
-
   //Will need both the original pvalue and fold change
   var pvalueIOriginal = labelMap[fileFormatObj.originalPValue];
-  var pvalueI = labelMap[fileFormatObj.pValue];
-
   var foldChangeIOriginal = labelMap[fileFormatObj.originalFoldChange];
   var foldChangeI = labelMap[fileFormatObj.foldChange];
  
@@ -186,19 +170,6 @@ function cleanAndFilterData(data, labelMap, labelNames, groupMap, groupNames, fi
   for (let i = 0; i < data.length; i++) {
     //Choosing to split the data here rather than another function because the data is large and want to iterate over it the least amount of times possible
     data[i] = data[i].split(splitChar); 
-
-    //CLEAN UP BASED ON THE PVALUE AND FOLD CHANGE FIRST------------------------------------------------------------------------------------------------
-    //if there is no pvalue or it is 0 then remove the row from data
-    if (isNaN(parseFloat(data[i][pvalueIOriginal])) || data[i][pvalueIOriginal] == '' || data[i][pvalueIOriginal] == 0) {
-      //Don't add this row
-      continue;
-    }
-
-    //if there is no log2FoldChange then remove the row from data
-    if (isNaN(parseFloat(data[i][foldChangeIOriginal])) || data[i][foldChangeIOriginal] == '') {
-      //Don't add this row
-      continue;
-    }
 
     if (!fileFormatObj.pValueLog10) {
       //Add the -log10(pvalue) to the row
@@ -237,6 +208,20 @@ function cleanAndFilterData(data, labelMap, labelNames, groupMap, groupNames, fi
       data[i].push("grey");
     }
 
+    //CLEAN UP BASED ON THE PVALUE AND FOLD CHANGE FIRST------------------------------------------------------------------------------------------------
+    //if there is no pvalue or it is 0 then remove the row from data
+    
+    if (isNaN(parseFloat(data[i][pvalueIOriginal])) || data[i][pvalueIOriginal] == '' || data[i][pvalueIOriginal] == 0) {
+      //Don't add this row
+      continue;
+    }
+
+    //if there is no log2FoldChange then remove the row from data
+    if (isNaN(parseFloat(data[i][foldChangeIOriginal])) || data[i][foldChangeIOriginal] == '') {
+      //Don't add this row
+      continue;
+    }
+
     //FILTER BASED ON THE PVALUE AND FOLD CHANGE AND THE CUT OFFS------------------------------------------------------------------------------------------------
     if (hardFilterFoldChange && data[i][foldChangeI] < log2FCFilterNum && data[i][foldChangeI] > -log2FCFilterNum) {
       //Don't add this row
@@ -271,6 +256,8 @@ function cleanAndFilterData(data, labelMap, labelNames, groupMap, groupNames, fi
     diffGeneList.push(diffGene);
     numGenes++;
   }
+
+
   return [diffGeneList, numGenes, dataColMap];
 }
 

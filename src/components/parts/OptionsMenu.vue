@@ -174,12 +174,12 @@
                 </template>
               </v-radio>
 
-              <v-radio color="indigo-darken-3" value="Heatmap">
+              <v-radio v-if="hmGroupNamesPresent" color="indigo-darken-3" value="Heatmap">
                 <template v-slot:label>
                   <div class="radio-label">Volcano & Heatmap</div>
                 </template>
               </v-radio>
-              
+
             </v-radio-group>
 
           </v-expansion-panel-text>
@@ -211,6 +211,7 @@
       showSelectedLabels: Boolean,
       subChartSelect: String,
       hardFilterFoldChange: Boolean,
+      hmGroupNamesPresent: Boolean,
     },
     data() {
       return {
@@ -255,6 +256,23 @@
         if (item) {
           this.newSearchGene = item;
         }
+      },
+      resetState() {
+        this.pFilter = '0';
+        this.fcFilter = '0';
+        this.optionsSelectedGenes = [];
+        this.hardFilterPV = false;
+        this.hardFilterFC = false;
+        this.newSearchGene = {};
+        this.lookupGene = '';
+        this.openPanels = [0, 1];
+        this.subChartSelection = 'Heatmap';
+        this.showLabels = true;
+        this.file = null;
+        this.fileText = null;
+        this.showOverlay = false;
+        this.headers = [];
+        this.cutPasteGeneList = '';
       },
       parseGeneListText() {
         //Split on spaces or comma spaces or commas
@@ -319,6 +337,7 @@
       emitFileAndFormat(fileF) {
         this.showOverlay = false;
         this.$emit('newfileSelected', this.fileText, fileF);
+        this.resetState();
       },
       emitSubChartSelection() {
         this.$emit('subChartSelectionChange', this.subChartSelection);
@@ -335,6 +354,10 @@
               this.optionsSelectedGenes = newVal;
           },
         deep: true},
+        subChartSelect: {
+          handler(newVal) {
+            this.subChartSelection = newVal;
+          }},
     },
     computed: {
       geneNameslist() {
