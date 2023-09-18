@@ -26,7 +26,11 @@ export default function RnaVolcanoD3() {
 
     var pointImportantScaled = pointImportantWidth;
     var pointBaseScaled = pointBaseWidth;
-  
+
+    //Zoom Variables
+    var zoomActive = false;
+    var zoomTransform = null;
+
     function chart(container, dataArray) {
 
         // Create the SVG container.
@@ -447,12 +451,20 @@ export default function RnaVolcanoD3() {
         }
 
 //-------------------------------------------------------------------------------------------- Zooming
-        //Ensure that the zoom variables are reset if the chart is reset
-        var zoomActive = false;
-
+        //If there is a zoomTransform then apply it and turn on zoom
         var zoom = d3.zoom()
             .scaleExtent([1, 20])
             .on("zoom", zoomed);
+
+        if (zoomTransform != null && zoomActive) {
+            svg.call(zoom.transform, zoomTransform);
+            enableZoom();
+        } else {
+            disableZoom();
+            hideZoomTip();
+            reset();
+            zoomActive = false;
+        }
 
         function zoomed(event) {
             points.attr("transform", event.transform);
@@ -506,14 +518,22 @@ export default function RnaVolcanoD3() {
 
             pointImportantScaled = pointImportantWidth / event.transform.k;
             pointBaseScaled = pointBaseWidth / event.transform.k;
+
+            //Update the zoom transform
+            zoomTransform = event.transform;
         }
 
         function enableZoom() {
             svg.call(zoom);
+            showZoomTip();
+            zoomActive = true;
         }
 
         function disableZoom() {
             svg.on(".zoom", null);
+            hideZoomTip();
+            reset();
+            zoomActive = false;
         }
 
         function showZoomTip() {
@@ -528,6 +548,8 @@ export default function RnaVolcanoD3() {
             svg.transition()
                 .duration(750)
                 .call(zoom.transform, d3.zoomIdentity);
+            
+            zoomTransform = null;
 
             points.attr("stroke-width", function(d) {
                 if (selectedGenes.includes(d["geneName"])) {
@@ -546,13 +568,8 @@ export default function RnaVolcanoD3() {
             .on("keydown", function(event) {
                 if (event.keyCode == 16 && !zoomActive) {
                     enableZoom();
-                    showZoomTip();
-                    zoomActive = true;
                 } else if (event.keyCode == 16 && zoomActive) {
                     disableZoom();
-                    hideZoomTip();
-                    reset();
-                    zoomActive = false;
                 }
             });
 
@@ -616,6 +633,24 @@ export default function RnaVolcanoD3() {
     chart.setID = function(id) {
         chartId = id;
         return chart;
+    }
+
+    chart.setZoomActive = function(active) {
+        zoomActive = active;
+        return chart;
+    }
+
+    chart.setZoomTransform = function(transform) {
+        zoomTransform = transform;
+        return chart;
+    }
+
+    chart.getZoomActive = function() {
+        return zoomActive;
+    }
+
+    chart.getZoomTransform = function() {
+        return zoomTransform;
     }
     
     // Returns the chart function....

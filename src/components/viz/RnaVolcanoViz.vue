@@ -21,6 +21,8 @@
             return {
                 volcChart: null,
                 selectionData: this.selection,
+                zoomTransform: null,
+                zoomActive: false,
             }
         },
         mounted() {
@@ -48,6 +50,9 @@
                 d3.select("#zoom-tip").style("display", "none");
 
                 if (this.volcChart) {
+                    this.zoomTransform = this.volcChart.getZoomTransform();
+                    this.zoomActive = this.volcChart.getZoomActive();
+
                     //clear container
                     d3.select(container).selectAll("*").remove();
                 }
@@ -73,7 +78,9 @@
                     .setFC(this.fcFilterVal)
                     .setShowLabels(this.showSelectedLabels)
                     .setSelection(this.selectionData)
-                    .setID('main-volcano-chart');
+                    .setID('main-volcano-chart')
+                    .setZoomTransform(this.zoomTransform)
+                    .setZoomActive(this.zoomActive);
 
                     this.volcChart(container, this.data);
                 }
