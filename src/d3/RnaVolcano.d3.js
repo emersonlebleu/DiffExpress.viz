@@ -106,24 +106,45 @@ export default function RnaVolcanoD3() {
             .call(d3.axisLeft(y));
 
         // Add the x-axis label.
-        svg.append("text")
+        const mainText = svg.append("text")
             .attr("text-anchor", "middle")
             .attr("x", width / 2)
             .attr("y", height - 2)
-            .text("Log2FC")
+            .text("Fold Change log")
             .style("fill", "black")
             .style("font-size", "10px")
             .style("font-weight", "bold");
+    
+        const subText = svg.append("text")
+            .attr("text-anchor", "start")
+            .attr("x", width / 2 + ("Fold Change log".length * 3) - 3) // Adjust position based on main text
+            .attr("y", height - 3)
+            .attr("dy", "3")  // Adjust for subscript
+            .text("2")
+            .style("fill", "black")
+            .style("font-size", "8px")  // Smaller font size for subscript
+            .style("font-weight", "bold");
         
         // Add the y-axis label.
-        svg.append("text")
+        const mainTextY = svg.append("text")
             .attr("text-anchor", "middle")
             .attr("x", -height / 2)
             .attr("y", 10)
             .attr("transform", "rotate(-90)")
-            .text("-Log10(p-value)")
+            .text("P-value -log")
             .style("fill", "black")
             .style("font-size", "10px")
+            .style("font-weight", "bold");
+    
+        const subTextY = svg.append("text")
+            .attr("text-anchor", "start")
+            .attr("x", -height / 2 + ("P-value -log".length * 3) - 3)  // Adjust position based on main text
+            .attr("y", 10)
+            .attr("dy", "3")  // Adjust for subscript
+            .attr("transform", "rotate(-90)")
+            .text("10")
+            .style("fill", "black")
+            .style("font-size", "8px")  // Smaller font size for subscript
             .style("font-weight", "bold");
         
         //Add a group for the labels, their lines, and the rects for those
@@ -380,7 +401,7 @@ export default function RnaVolcanoD3() {
             //set the text of the tooltip
             tip.html(function() {
                 //return d .pValue, log2FoldChange, and geneName
-                return "<b>Name: </b>" + d["geneName"] + "<br/>" + "<b>Log2FC: </b>" + d["log2FoldChange"] + "<br/>" + "<b>P-Value: </b>" + d["pValue"];
+                return "<b>Name: &nbsp;</b>" + d["geneName"] + "<br/>" + "<b>Fold Change log<sub>2</sub>: &nbsp;</b>" + d["log2FoldChange"] + "<br/>" + "<b>P-value: &nbsp;</b>" + d["pValueOriginal"] + "<br/>" + "<b>P-value -log<sub>10</sub>: &nbsp;</b>" + d["pValue"];
                 })
             //set the visibility of the tooltip to visible
                 .style("display", "block")
