@@ -100,7 +100,7 @@
       this.populateData();
     },
     methods: {
-      resetState() {
+      resetState(){
         this.diffGeneList = [];
         this.summaryData = {};
         this.isDemo = true;
@@ -240,7 +240,7 @@
           //VolcSelect & OptionsSelect should be the same
           //Ensure that the volcSelec genes are still in the data
           let newVolcSelectedGenes = [];
-          for (let diffGene in this.volcSelectedGenes) {
+          for (let diffGene of this.volcSelectedGenes) {
             let geneName = diffGene.geneName;
             let geneObj = this.diffGeneList.find(obj => obj.geneName === geneName);
             if (geneObj) {

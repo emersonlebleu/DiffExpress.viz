@@ -234,6 +234,12 @@
       }
     },
     methods: {
+      resetOptions() {
+        this.pFilter = '0';
+        this.fcFilter = '0';
+        this.hardFilterPV = false;
+        this.hardFilterFC = false;
+      },
       emitPFilter() {
         this.$emit('newPFilter', parseFloat(this.pFilter))
       },
@@ -256,23 +262,6 @@
         if (item) {
           this.newSearchGene = item;
         }
-      },
-      resetState() {
-        this.pFilter = '0';
-        this.fcFilter = '0';
-        this.optionsSelectedGenes = [];
-        this.hardFilterPV = false;
-        this.hardFilterFC = false;
-        this.newSearchGene = {};
-        this.lookupGene = '';
-        this.openPanels = [0, 1];
-        this.subChartSelection = 'Heatmap';
-        this.showLabels = true;
-        this.file = null;
-        this.fileText = null;
-        this.showOverlay = false;
-        this.headers = [];
-        this.cutPasteGeneList = '';
       },
       parseGeneListText() {
         //Split on spaces or comma spaces or commas
@@ -337,7 +326,7 @@
       emitFileAndFormat(fileF) {
         this.showOverlay = false;
         this.$emit('newfileSelected', this.fileText, fileF);
-        this.resetState();
+        this.resetOptions();
       },
       emitSubChartSelection() {
         this.$emit('subChartSelectionChange', this.subChartSelection);
