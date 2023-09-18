@@ -11,7 +11,7 @@
                 density="compact"
                 v-model="fileFormat.pValue"
                 :items="internalHeaders"
-                label="p-value column"
+                label="Select p-value column"
                 @update:modelValue="p_valColumnSelected"
                 @click:clear="p_valCleared"></v-select>
             </div>
@@ -21,9 +21,12 @@
                 id="log-10-cb"
                 color="blue"
                 v-model="fileFormat.pValueLog10"
-                label="p-value is log10"
                 hide-details
-                ></v-checkbox>
+                >
+                <template v-slot:label>
+                    <div>p-value is -log<sub>10</sub></div>
+                </template>
+                </v-checkbox>
             </div>
         </div>
 
@@ -36,7 +39,7 @@
                 density="compact"
                 v-model="fileFormat.foldChange"
                 :items="internalHeaders"
-                label="fold change column"
+                label="Select fold change column"
                 @update:modelValue="fcColumnSelected"
                 @click:clear="fcCleared"></v-select>
             </div>
@@ -46,9 +49,12 @@
                 id="log-2-cb"
                 color="blue"
                 v-model="fileFormat.foldChangeLog2"
-                label="fold change is log2"
                 hide-details
-                ></v-checkbox>
+                >
+                <template v-slot:label>
+                    <div>fold change is log<sub>2</sub></div>
+                </template>
+                </v-checkbox>
             </div>
         </div>
 
@@ -60,7 +66,7 @@
                 density="compact"
                 v-model="fileFormat.labelColumn"
                 :items="internalHeaders"
-                label="label / name column"
+                label="Select label / name column"
                 @update:modelValue="labelColumnSelected"
                 @click:clear="labelCleared"></v-select>
         </div>
@@ -77,7 +83,7 @@
                     :items="internalHeaders"
                     multiple
                     hint="If none are selected heatmap will not be shown."
-                    label="Select group column headers">
+                    label="Select group columns headers">
                 </v-select>
             </div>
 
@@ -239,7 +245,7 @@ export default {
         justify-content: start;
     }
     .half-width-select-container {
-        width: 50%;
+        width: 60%;
     }
 
     .select-container {
@@ -265,11 +271,11 @@ export default {
 
     #log-2 {
         display: inline;
-        width: 45%;
+        width: 40%;
     }
     #log-10 {
         display: inline; 
-        width: 45%;
+        width: 40%;
     }
     #done-btn {
         margin-top: 20px;
