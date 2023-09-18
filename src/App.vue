@@ -232,6 +232,11 @@
           this.hmGeneNames = this.getHmGeneNames(this.hmGenes);
           this.hmSummaryData = this.getHmSummaryData(this.hmGenes, this.hmGroupNames);
 
+          //If there are no group names then the heatmap options should be removed
+          if (this.hmGroupNames.length == 0) {
+            this.subChartSelection = 'None';
+          }
+
           //VolcSelect & OptionsSelect should be the same
           //Ensure that the volcSelec genes are still in the data
           let newVolcSelectedGenes = [];

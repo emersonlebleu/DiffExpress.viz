@@ -152,7 +152,6 @@ function getLabelAndGroupMaps(headers, fileFormatObj) {
 function cleanAndFilterData(data, labelMap, labelNames, groupMap, groupNames, fileFormatObj, splitChar, pValFilterNum, log2FCFilterNum, hardFilterPVal, hardFilterFoldChange) {
   //Will need both the original pvalue and fold change
   var pvalueIOriginal = labelMap[fileFormatObj.originalPValue];
-  console.log(fileFormatObj)
   var foldChangeIOriginal = labelMap[fileFormatObj.originalFoldChange];
   var foldChangeI = labelMap[fileFormatObj.foldChange];
  
