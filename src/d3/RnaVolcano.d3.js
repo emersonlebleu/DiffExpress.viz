@@ -379,10 +379,8 @@ export default function RnaVolcanoD3() {
             let tip = d3.select("#tool-tip");
             //set the text of the tooltip
             tip.html(function() {
-                //return each element in d as a line
-                return Object.keys(d).map(function(key) {
-                    return "<strong>" + key + "</strong>: " + d[key];
-                }).join("<br>");
+                //return d .pValue, log2FoldChange, and geneName
+                return "<b>Name: </b>" + d["geneName"] + "<br/>" + "<b>Log2FC: </b>" + d["log2FoldChange"] + "<br/>" + "<b>P-Value: </b>" + d["pValue"];
                 })
             //set the visibility of the tooltip to visible
                 .style("display", "block")
