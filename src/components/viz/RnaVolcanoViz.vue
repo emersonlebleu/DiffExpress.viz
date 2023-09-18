@@ -24,14 +24,16 @@
             }
         },
         mounted() {
-            //no longer need condition as the chart is not rendered at all until data is loaded
-            this.drawVolc();
             var volcCard = document.getElementById('rna-volc-card-container');
             
             const resizeObserver = new ResizeObserver(() => {
                 this.drawVolc();
             });
+
             resizeObserver.observe(volcCard);
+
+            //no longer need condition as the chart is not rendered at all until data is loaded
+            this.drawVolc();
         },
         updated() {
             this.drawVolc();
@@ -42,6 +44,7 @@
         methods: {
             drawVolc() {
                 let container = this.$refs.volcano;
+
                 d3.select("#zoom-tip").style("display", "none");
 
                 if (this.volcChart) {
@@ -53,10 +56,13 @@
                 let xMax = this.summaryData.__FC_log2.range[1];
                 let yMin = this.summaryData.__pvalue_log10.range[0];
                 let yMax = this.summaryData.__pvalue_log10.range[1];
-                let width = container.clientWidth;
-                let height = container.clientHeight;
 
-                this.volcChart = RnaVolcanoD3()
+                //Not going to draw the chart until there is actually a container to draw it in
+                if (container != null) {
+                    var width = container.clientWidth;
+                    var height = container.clientHeight;
+
+                    this.volcChart = RnaVolcanoD3()
                     .setXMin(xMin)
                     .setXMax(xMax)
                     .setYMin(yMin)
@@ -69,8 +75,8 @@
                     .setSelection(this.selectionData)
                     .setID('main-volcano-chart');
 
-                this.volcChart(container, this.data);
-
+                    this.volcChart(container, this.data);
+                }
             },
             handleClick(event){
                 this.$emit('click', event);

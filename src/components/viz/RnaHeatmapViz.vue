@@ -43,17 +43,19 @@
                 
                 let norms = this.getNorms(this.summaryData);
 
-                let width = container.clientWidth;
-                let height = container.clientHeight;
+                if (container != null) {
+                    let width = container.clientWidth;
+                    let height = container.clientHeight;
 
-                this.hmChart = RnaHeatmapD3()
-                    .setYValues(this.axGroups)
-                    .setXValues(this.axGenes)
-                    .setHeight(height)
-                    .setWidth(width)
-                    .setId('heatmap-chart');
+                    this.hmChart = RnaHeatmapD3()
+                        .setYValues(this.axGroups)
+                        .setXValues(this.axGenes)
+                        .setHeight(height)
+                        .setWidth(width)
+                        .setId('heatmap-chart');
 
-                this.hmChart(container, this.selectedGenes, norms);
+                    this.hmChart(container, this.selectedGenes, norms);
+                }
             },
             getNorms(sumData) {
                 let norms = [];
