@@ -94,6 +94,8 @@
         numOfGenes: 0,
         fileFormat: {},
         hardFilterFC: false,
+        mosaicLink: null, 
+        mosaicGeneList: null,
       }
     },
     async mounted() {
