@@ -1,4 +1,10 @@
+/**
+ * Gene App hooks in with this
+ *  if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 && self.sampleId && self.paramSource) {
+      self.launchedFromHub = true;
 
+      So basically it looks in local storage and if it finds a token, it assumes it was launched from mosaic we dont need sample id but will need projectId
+ */
 export default class MosaicSession {
   constructor(clientApplicationId) {
     this.url = null;
@@ -19,7 +25,7 @@ export default class MosaicSession {
 
       self.promiseGetCurrentUser()
       .then(function(data) {
-        self.user = data;
+        self.user = data; // get the user and store that here as part of our session object
       })
       .catch(function(error) {
         console.log(error)
