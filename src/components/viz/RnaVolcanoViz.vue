@@ -47,8 +47,6 @@
             drawVolc() {
                 let container = this.$refs.volcano;
 
-                d3.select("#zoom-tip").style("display", "none");
-
                 if (this.volcChart) {
                     this.zoomTransform = this.volcChart.getZoomTransform();
                     this.zoomActive = this.volcChart.getZoomActive();

@@ -1,6 +1,6 @@
 <template>
   <div id="rna-volc-card-container" ref="volcCardContainer">
-    <div id="zoom-tip">zooming enabled</div>
+    <div id="zoom-tip"><b>Zoom/Pan OFF</b> <br> <i>&lt;shift&gt; to toggle ON</i></div>
     <v-btn id="export-volcano-btn" @click="exportVolcano" color="rgb(19, 52, 102)" size="x-small">Export Plot</v-btn>
     <p style="font-size: smaller;">Rendering <i style="color: blue;">{{ numOfGenes }} </i> Genes</p>
     <p class="card-title">Volcano Plot</p>
@@ -175,14 +175,14 @@
 
   #zoom-tip {
         position: absolute;
-        right: 20%;
+        right: 10%;
         top: 14%;
         width: fit-content;
-        display: none;
-        background-color:#003bfe;
-        border-radius: 2px;
+        display: block;
+        background-color:#cbcbcbc1;
+        border-radius: 7px;
         /* box-shadow: -3px 3px 15px #888888; */
-        color: rgba(255, 255, 255, 1);
+        color: rgb(0, 0, 0);
         opacity: .9;
         font: 12px sans-serif;
         padding: 4px 10px;
