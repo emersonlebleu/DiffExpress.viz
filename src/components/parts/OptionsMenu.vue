@@ -453,6 +453,9 @@
       border: #ced4da 1px solid;
       border-radius: 3px;
       margin: 3px 0px 3px 0px;
+      cursor: pointer;
+      -webkit-appearance: menulist;
+      appearance: menulist;
     }
 
     #filter-selection-dropdown .data-selector.checkbox {
