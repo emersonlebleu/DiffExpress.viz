@@ -2,7 +2,7 @@
     <div class="card-tool-bar">
       
       <div v-if="isDemo" class="label-input-container demo">
-        <p class="label demo">Demo</p>     
+        <p class="label demo">*Showing Demo Data</p>     
       </div>
 
       <v-expansion-panels v-model="openPanels" multiple>
