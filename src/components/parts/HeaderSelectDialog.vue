@@ -113,6 +113,7 @@ export default {
     name: 'HeaderSelectDialog',
     props: {
         headers: Array,
+        fileExt: String,
     },
     data() {
         return {
@@ -123,6 +124,7 @@ export default {
                 foldChangeLog2: true,
                 labelColumn: null,
                 groups: [],
+                fileExtension: this.fileExt,
             },
             internalHeaders: this.headers.sort(),
             selectedPValue: null,

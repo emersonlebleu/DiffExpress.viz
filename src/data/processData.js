@@ -30,7 +30,7 @@ export default async function processData(isDemo, pValFilter, log2FCFilter, hard
     "foldChange": "log2FoldChange",
     "foldChangeLog2": true,
     "labelColumn": "external_gene_name",
-    "fileType": ".txt",
+    "fileType": "txt",
     "groups": ["24hpf", "36hpf", "48hpf", "60hpf", "72hpf"],
   }
 
@@ -43,11 +43,14 @@ export default async function processData(isDemo, pValFilter, log2FCFilter, hard
 
   var splitChar = '\t';
 
-  switch (updatedFileFormatObj.fileType) {
-    case '.txt':
+  switch (updatedFileFormatObj.fileExtension) {
+    case 'txt':
       splitChar = '\t';
       break;
-    case '.csv':
+    case 'tsv':
+      splitChar = '\t';
+      break;
+    case 'csv':
       splitChar = ',';
       break;
     default:

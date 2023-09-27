@@ -15,10 +15,10 @@
                   id="file-input-field"
                   v-model="file"
                   persistent-hint
-                  hint=".txt, .csv, .xls, xlsx, or xlsm file."
+                  hint=".txt *tab separated, .tsv, or .csv"
                   density="compact" 
                   variant="solo-filled" 
-                  clearable accept=".txt, .csv, .xls, xlsx, xlsm" 
+                  clearable accept=".txt, .csv, .tsv" 
                   label="Select data file..."
                   @change="processFile"
                   @click:clear="clearFile">
@@ -33,6 +33,7 @@
             v-model="showOverlay">
             <HeaderSelectDialog
               :headers="headers"
+              :fileExt="fileExt"
               @closeBtnClicked="emitFileAndFormat"></HeaderSelectDialog>
           </v-overlay>
         </v-expansion-panel>
@@ -227,6 +228,7 @@
         showLabels: this.showSelectedLabels || true,
         file: null,
         fileText: null,
+        fileExt: null,
         showOverlay: false,
         headers: [],
         cutPasteGeneList: '',
@@ -311,11 +313,13 @@
       },
       async processFile(event){
         let file = event.target.files[0];
+        let ext = file.name.split('.').pop();
+        this.fileExt = ext;
 
         if (file){
           let theFile = await readFile(file);
           this.showOverlay = true;
-          this.headers = parseHeaders(theFile);
+          this.headers = parseHeaders(theFile, this.fileExt);
           this.fileText = theFile;
         }
       },
