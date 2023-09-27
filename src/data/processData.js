@@ -30,7 +30,7 @@ export default async function processData(isDemo, pValFilter, log2FCFilter, hard
     "foldChange": "log2FoldChange",
     "foldChangeLog2": true,
     "labelColumn": "external_gene_name",
-    "fileType": "txt",
+    "fileExtension": "txt",
     "groups": ["24hpf", "36hpf", "48hpf", "60hpf", "72hpf"],
   }
 
@@ -94,8 +94,11 @@ export default async function processData(isDemo, pValFilter, log2FCFilter, hard
 }
 
 function splitDataFromHeaders(data, delimeter) {
+  //find any \r and remove them
+  let rawdata = data.replace(/\r\n/g, '\n');
+  rawdata = rawdata.replace(/\r/g, '\n');
   //Split everything by row so raw data is an array of rows not yet split by the splitChar
-  let rawdata = data.split("\n");
+  rawdata = rawdata.split('\n');
 
   //Just the data without the labels into data
   let justData = rawdata.slice(1);
