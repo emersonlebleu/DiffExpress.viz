@@ -213,6 +213,7 @@
       subChartSelect: String,
       hardFilterFoldChange: Boolean,
       hmGroupNamesPresent: Boolean,
+      showOverlayFromParent: Boolean,
     },
     data() {
       return {
@@ -229,7 +230,7 @@
         file: null,
         fileText: null,
         fileExt: null,
-        showOverlay: false,
+        showOverlay: this.showOverlayFromParent,
         headers: [],
         cutPasteGeneList: '',
         hardFilterFC: this.hardFilterFoldChange || false,

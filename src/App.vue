@@ -47,6 +47,7 @@
       :subChartSelect="subChartSelection"
       :hardFilterFoldChange="hardFilterFC"
       :hmGroupNamesPresent="hmGroupNames.length > 0"
+      :showOverlayFromParent="showOverlay"
       @newfileSelected="changeData"
       @clearSelection="clearSelection"
       @newPFilter="filterPVal"
@@ -62,6 +63,7 @@
   import RnaHeatmapCard from './components/viz/RnaHeatmapCard.vue';
   import OptionsMenu from './components/parts/OptionsMenu.vue';
   import processData from './data/processData.js';
+  import MosaicSession from './models/MosaicSession.js'
   
   export default {
     name: 'App',
@@ -94,14 +96,55 @@
         numOfGenes: 0,
         fileFormat: {},
         hardFilterFC: false,
+
+        urlParams: null,
         mosaicLink: null, 
         mosaicGeneList: null,
+        mosaicProjectId: null,
+        
+        showOverlay: false, //To be used if loading from mosaic which requires an auto show of the overlay on load
       }
     },
     async mounted() {
-      this.populateData();
+      this.init();
+    },
+    created(){
+      //grab the url params and store the token in local storage
+      this.urlParams = new URLSearchParams(window.location.search);
+      if (this.urlParams.get('access_token')){
+        localStorage.setItem('mosaic-iobio-tkn', this.urlParams.get('access_token'));
+      }
     },
     methods: {
+      async init() {
+        if (localStorage.getItem('mosaic-iobio-tkn') && localStorage.getItem('mosaic-iobio-tkn').length > 0) {
+          //Get all the parameters from the url
+          let projectId = this.urlParams.get('project_id');
+          let geneList = this.urlParams.get('gene_list');
+          let tokenType = this.urlParams.get('token_type');
+          let source = this.urlParams.get('source');
+
+          let clientAppNum = 15;
+          let file_id = 102877;
+
+          //make a new session
+          let session = new MosaicSession(clientAppNum);
+          session.promiseInit(source, projectId, tokenType, geneList);
+          //get the file from the project
+          let fileURL = await session.promiseGetSignedUrlForFile(projectId, file_id);
+          //read the fileContent from the signed url
+          
+
+          //get the extension of the file
+          //parse the file headers
+          //open dialog to select the file headers
+          
+          //jump to normal data flow with the file, headers, and format
+          this.populateData();
+        } else {
+          this.populateData();
+        }
+      },
       resetState(){
         this.diffGeneList = [];
         this.summaryData = {};

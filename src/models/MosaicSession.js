@@ -1,28 +1,38 @@
-/**
- * Gene App hooks in with this
- *  if (localStorage.getItem('hub-iobio-tkn') && localStorage.getItem('hub-iobio-tkn').length > 0 && self.sampleId && self.paramSource) {
-      self.launchedFromHub = true;
+import $ from 'jquery';
 
-      So basically it looks in local storage and if it finds a token, it assumes it was launched from mosaic we dont need sample id but will need projectId
- */
 export default class MosaicSession {
-  constructor(clientApplicationId) {
+  constructor(client_application_id) {
+    this.client_application_id = client_application_id;
     this.url = null;
     this.apiVersion =  '/api/v1';
-    this.client_application_id = clientApplicationId,
+
     this.user = null;
-    this.fileTypes = "diffExp"; //NOTE: will be whatever it is in mosaic in terms of file name; api indicates this should be a list of strings but there is only one type we would like to get
+
     this.experiment_id = null;
+    this.project = null;
+    this.geneSet = null;
+
+    this.fileTypes = "diffExp"; //NOTE: will be whatever it is in mosaic in terms of file name; api indicates this should be a list of strings but there is only one type we would like to get
+
+    this.theFile = null;
+    this.theFileType = null;
+    this.tokenType = null;
+
+    this.authorizationString = null;
   }
 
-  promiseInit(source, projectId, experimentId, geneSetId) {
+  promiseInit(source, projectId, tokenType, experimentId=null, geneSetId=null, fileID=null) {
     let self = this;
+    self.tokenType = tokenType;
     self.api = source + self.apiVersion;
     self.experiment_id = experimentId;
+    self.project_id = projectId;
 
+    self.authorizationString = tokenType + " " + localStorage.getItem('mosaic-iobio-tkn');
+    
     return new Promise((resolve, reject) => {
-      let geneSet = null;
 
+      //USER
       self.promiseGetCurrentUser()
       .then(function(data) {
         self.user = data; // get the user and store that here as part of our session object
@@ -32,25 +42,17 @@ export default class MosaicSession {
         reject(error)
       })
 
+      //PROJECT
       self.promiseGetProject(projectId)
       .then(function(data) {
         self.project = data;
-        return self.promiseGetFilesForProject(projectId)
+        return self.promiseGetFilesForProject(projectId, fileID);
+      })
+      .catch(function(error) {
+        console.log(error)
+        reject(error)
       })
 
-
-      self.promiseGetClientApplication()
-      .then(function() {
-        if (geneSetId) {
-          return self.promiseGetGeneSet(projectId, geneSetId)
-        } else {
-          return Promise.resolve(null);
-        }
-      })
-      .then(function(data) {
-        geneSet = data;
-
-      })
     })
   }
 
@@ -77,22 +79,10 @@ export default class MosaicSession {
       type: 'GET',
       contentType: 'application/json',
       headers: {
-        Authorization: localStorage.getItem('hub-iobio-tkn'),
+        Authorization: self.authorizationString,
       },
     });
   } 
-
-  promiseGetClientApplication() {
-    let self = this;
-
-    return new Promise(function(resolve, reject) {
-      if(self.client_application_id){
-      resolve();
-    }
-      else{
-        reject("Cannot find Mosaic client_application for gene");
-      }})
-  }
 
   promiseGetProject(project_id) {
     let self = this;
@@ -115,7 +105,7 @@ export default class MosaicSession {
         type: 'GET',
         contentType: 'application/json',
         headers: {
-            'Authorization': localStorage.getItem('hub-iobio-tkn')
+            Authorization: self.authorizationString,
         }
     });
   }
@@ -135,43 +125,69 @@ export default class MosaicSession {
       })
   }
 
-
   getFilesForProject(project_id) {
       let self = this;
       return $.ajax({
-          url: self.api +  '/projects/' + project_id + '/files' + '?file_types=' + self.fileTypes,
+          url: self.api +  '/projects/' + project_id + '/files',
           type: 'GET',
           contentType: 'application/json',
           headers: {
-              'Authorization': localStorage.getItem('hub-iobio-tkn')
+              Authorization: self.authorizationString,
           }
       });
   }
 
-  promiseGetSignedUrlForFile(project_id, sample_id, file) {
+  promiseGetFileForDiffExp(project_id) {
+    let self = this;
+    return new Promise((resolve,reject) => {
+      self.getFileForDiffExp(project_id)
+      .done(response => {
+        resolve(response);
+      })
+      .fail(error => {
+        let errorMsg = self.getErrorMessage(error);
+        console.log("Unable to get files for project " + project_id + " error: " + errorMsg);
+        reject(errorMsg);
+      })
+    })
+  }
+  //Not used yet until we have a file type to grab
+  getFileForDiffExp(project_id) {
+    let self = this;
+    return $.ajax({
+      url: self.api +  '/projects/' + project_id + '/files' + '?file_types=' + self.fileTypes,
+      type: 'GET',
+      contentType: 'application/json',
+      headers: {
+        Authorization: self.authorizationString,
+      }
+    });
+  }
+
+  promiseGetSignedUrlForFile(project_id, fileId) {
     let self = this;
     return new Promise((resolve, reject) => {
-      self.getSignedUrlForFile(project_id, sample_id, file)
+      self.getSignedUrlForFile(project_id, fileId)
       .done(file => {
         resolve(file);
       })
       .fail(error => {
         let errorMsg = self.getErrorMessage(error);
-        let msg = "Could not get signed url for file_id  " + file.id + " error: " + errorMsg;
+        let msg = "Could not get signed url for file_id  " + fileId+ " error: " + errorMsg;
         console.log(msg)
         reject(msg);
       })
     })
   }
 
-  getSignedUrlForFile (project_id, sample_id, file) {
+  getSignedUrlForFile (project_id, fileId) {
     let self = this;
     return $.ajax({
-      url: self.api +  '/projects/' + project_id + '/files/' + file.id + '/url',
+      url: self.api +  '/projects/' + project_id + '/files/' + fileId+ '/url',
       type: 'GET',
       contentType: 'application/json',
       headers: {
-        'Authorization': localStorage.getItem('hub-iobio-tkn')
+        Authorization: self.authorizationString,
       }
     });
   }
@@ -194,7 +210,7 @@ export default class MosaicSession {
 
   }
 
-  getGeneSet(projectId, geneSetId) {
+  async getGeneSet(projectId, geneSetId) {
     let self = this;
 
     return $.ajax({
@@ -202,7 +218,7 @@ export default class MosaicSession {
       type: 'GET',
       contentType: 'application/json',
       headers: {
-        Authorization: localStorage.getItem('hub-iobio-tkn'),
+        Authorization: self.authorizationString,
       },
     });
   }
