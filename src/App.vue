@@ -120,7 +120,7 @@
         if (localStorage.getItem('mosaic-iobio-tkn') && localStorage.getItem('mosaic-iobio-tkn').length > 0) {
           //Get all the parameters from the url
           let projectId = Number(this.urlParams.get('project_id'));
-          let geneList = this.urlParams.get('gene_list');
+          let geneListId = this.urlParams.get('gene_list');
           let tokenType = this.urlParams.get('token_type');
           let source = this.urlParams.get('source');
           let file_id = null;
@@ -134,12 +134,14 @@
 
           //make a new session
           let session = new MosaicSession(clientAppNum);
-          session.promiseInit(source, projectId, tokenType, geneList);
+          session.promiseInit(source, projectId, tokenType, geneListId, file_id);
 
           //get the file from the project
           let fileURL = await session.promiseGetSignedUrlForFile(projectId, file_id);
+          console.log(fileURL.url);
           //read the fileContent from the signed url
-          
+          let theText = await session.promiseGetFileFromSignedUrl(fileURL.url);
+          console.log(theText);
 
           //get the extension of the file
           //parse the file headers

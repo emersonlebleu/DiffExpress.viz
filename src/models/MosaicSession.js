@@ -21,11 +21,10 @@ export default class MosaicSession {
     this.authorizationString = null;
   }
 
-  promiseInit(source, projectId, tokenType, experimentId=null, geneSetId=null, fileID=null) {
+  promiseInit(source, projectId, tokenType, geneSetId=null, fileID=null) {
     let self = this;
     self.tokenType = tokenType;
     self.api = source + self.apiVersion;
-    self.experiment_id = experimentId;
     self.project_id = projectId;
 
     self.authorizationString = tokenType + " " + localStorage.getItem('mosaic-iobio-tkn');
@@ -77,9 +76,10 @@ export default class MosaicSession {
     return $.ajax({
       url: self.api + '/user',
       type: 'GET',
-      contentType: 'application/json',
+
       headers: {
         Authorization: self.authorizationString,
+        accept: 'application/json',
       },
     });
   } 
@@ -103,9 +103,9 @@ export default class MosaicSession {
     return $.ajax({
         url: self.api + '/projects/' + projectId,
         type: 'GET',
-        contentType: 'application/json',
         headers: {
             Authorization: self.authorizationString,
+            accept: 'application/json',
         }
     });
   }
@@ -130,9 +130,9 @@ export default class MosaicSession {
       return $.ajax({
           url: self.api +  '/projects/' + project_id + '/files',
           type: 'GET',
-          contentType: 'application/json',
           headers: {
               Authorization: self.authorizationString,
+              accept: 'application/json',
           }
       });
   }
@@ -157,7 +157,7 @@ export default class MosaicSession {
     return $.ajax({
       url: self.api +  '/projects/' + project_id + '/files' + '?file_types=' + self.fileTypes,
       type: 'GET',
-      contentType: 'application/json',
+      accept: 'application/json',
       headers: {
         Authorization: self.authorizationString,
       }
@@ -185,9 +185,37 @@ export default class MosaicSession {
     return $.ajax({
       url: self.api +  '/projects/' + project_id + '/files/' + fileId+ '/url',
       type: 'GET',
-      contentType: 'application/json',
       headers: {
         Authorization: self.authorizationString,
+        accept: 'application/json',
+      }
+    });
+  }
+
+  promiseGetFileFromSignedUrl(signedUrl) {
+    let self = this;
+    return new Promise((resolve, reject) => {
+      self.getFileFromSignedUrl(signedUrl)
+      .done(file => {
+        resolve(file);
+      })
+      .fail(error => {
+        let errorMsg = self.getErrorMessage(error);
+        let msg = "Could not get file from signed url " + signedUrl + " error: " + errorMsg;
+        console.log(msg)
+        reject(msg);
+      })
+    })
+  }
+
+  getFileFromSignedUrl(signedUrl) {
+    let self = this;
+    return $.ajax({
+      url: self.api + '/files' + '/serve/' + signedUrl,
+      type: 'GET',
+      headers: {
+        Authorization: self.authorizationString,
+        accept: 'application/json',
       }
     });
   }
@@ -216,9 +244,9 @@ export default class MosaicSession {
     return $.ajax({
       url: self.api + '/projects/' + projectId + '/genes/sets/' + geneSetId,
       type: 'GET',
-      contentType: 'application/json',
       headers: {
         Authorization: self.authorizationString,
+        accept: 'application/json',
       },
     });
   }
