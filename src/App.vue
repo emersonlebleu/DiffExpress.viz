@@ -113,6 +113,8 @@
       this.urlParams = new URLSearchParams(window.location.search);
       if (this.urlParams.get('access_token')){
         localStorage.setItem('mosaic-iobio-tkn', this.urlParams.get('access_token'));
+      } else {
+        localStorage.setItem('mosaic-iobio-tkn', '');
       }
     },
     methods: {
