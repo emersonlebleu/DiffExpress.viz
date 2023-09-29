@@ -128,10 +128,10 @@
           let file_id = 102877;
 
           //make a new session
-          let session = new MosaicSession(clientAppNum);
-          session.promiseInit(source, projectId, tokenType, geneList);
+          // let session = new MosaicSession(clientAppNum);
+          // session.promiseInit(source, projectId, tokenType, geneList);
           //get the file from the project
-          let fileURL = await session.promiseGetSignedUrlForFile(projectId, file_id);
+          // let fileURL = await session.promiseGetSignedUrlForFile(projectId, file_id);
           //read the fileContent from the signed url
           
 
