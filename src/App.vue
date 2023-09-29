@@ -119,19 +119,25 @@
       async init() {
         if (localStorage.getItem('mosaic-iobio-tkn') && localStorage.getItem('mosaic-iobio-tkn').length > 0) {
           //Get all the parameters from the url
-          let projectId = this.urlParams.get('project_id');
+          let projectId = Number(this.urlParams.get('project_id'));
           let geneList = this.urlParams.get('gene_list');
           let tokenType = this.urlParams.get('token_type');
           let source = this.urlParams.get('source');
+          let file_id = null;
 
-          let clientAppNum = 15;
-          let file_id = 102877;
+          let clientAppNum = this.urlParams.get('client_application_id');
+          if (projectId === 1047) {
+            file_id = 102877; //Fish project file
+          } else if (projectId === 1164) {
+            file_id = 104480; //Mouse project file
+          }
 
           //make a new session
-          // let session = new MosaicSession(clientAppNum);
-          // session.promiseInit(source, projectId, tokenType, geneList);
+          let session = new MosaicSession(clientAppNum);
+          session.promiseInit(source, projectId, tokenType, geneList);
+
           //get the file from the project
-          // let fileURL = await session.promiseGetSignedUrlForFile(projectId, file_id);
+          let fileURL = await session.promiseGetSignedUrlForFile(projectId, file_id);
           //read the fileContent from the signed url
           
 
@@ -141,7 +147,9 @@
           
           //jump to normal data flow with the file, headers, and format
           this.populateData();
+          //set to show the name of proje and file where "demo" usually is
         } else {
+          //Otherwise there is no mosaic token so just show the demo data and go with a normal flow
           this.populateData();
         }
       },
