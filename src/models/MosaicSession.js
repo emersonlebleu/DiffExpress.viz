@@ -183,7 +183,7 @@ export default class MosaicSession {
   getSignedUrlForFile (project_id, fileId) {
     let self = this;
     return $.ajax({
-      url: self.api +  '/projects/' + project_id + '/files/' + fileId+ '/url',
+      url: self.api +  '/projects/' + project_id + '/files/' + fileId + '/url',
       type: 'GET',
       headers: {
         Authorization: self.authorizationString,
@@ -207,11 +207,13 @@ export default class MosaicSession {
       })
     })
   }
-
+  
   getFileFromSignedUrl(signedUrl) {
     let self = this;
+    let proxyURL = 'https://cddrc.utah.edu/api/i/client-applications/igv/proxy/'; //proxy url
+    let builtURL = self.api + '/files/serve/' + encodeURIComponent(signedUrl); //the serve endpoint
     return $.ajax({
-      url: self.api + '/files' + '/serve/' + signedUrl,
+      url: proxyURL, 
       type: 'GET',
       headers: {
         Authorization: self.authorizationString,

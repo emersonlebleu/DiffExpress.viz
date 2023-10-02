@@ -141,10 +141,9 @@
           //get the file from the project
           let fileURL = await session.promiseGetSignedUrlForFile(projectId, file_id);
           console.log(fileURL.url);
-          //read the fileContent from the signed url
+          //get the file from the signed url
           try {
-            let theText = await session.promiseGetFileFromSignedUrl(fileURL.url);
-            console.log(theText);
+            let file = session.promiseGetFileFromSignedUrl(fileURL.url);
           } catch (error) {
             console.log(error);
           }
