@@ -53,6 +53,9 @@ export default async function processData(isDemo, pValFilter, log2FCFilter, hard
     case 'csv':
       splitChar = ',';
       break;
+    case 'plain':
+        splitChar = '\t';
+        break;
     default:
       splitChar = '\t';
   }

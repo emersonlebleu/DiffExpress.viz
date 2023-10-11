@@ -1,4 +1,18 @@
 <template>
+      <v-overlay
+        persistent
+        scroll-strategy="block"
+        class="align-center justify-center"
+        v-model="showOverlay"
+        v-if="headersList && fileExt">
+        <HeaderSelectDialog
+          :openedFromHomeObj="{isFromHome: true, projectId: projectId, fileName: mosaicFileName}"
+          :headers="headersList"
+          :fileExt="fileExt"
+          @closeBtnClicked="setFileAndFormat"
+          @closeNoData="showOverlay = !showOverlay"></HeaderSelectDialog>
+      </v-overlay>
+
       <div class="home-chart-container">
 
         <div id="volc-tips">
@@ -64,6 +78,9 @@
   import OptionsMenu from './components/parts/OptionsMenu.vue';
   import processData from './data/processData.js';
   import MosaicSession from './models/MosaicSession.js'
+  import fetchFileOnline from './data/fetchFileOnline';
+  import parseHeaders from './data/parseHeaders';
+  import HeaderSelectDialog from './components/parts/HeaderSelectDialog.vue';
   
   export default {
     name: 'App',
@@ -71,6 +88,7 @@
       RnaVolcanoCard,
       RnaHeatmapCard,
       OptionsMenu,
+      HeaderSelectDialog,
     }, 
     data() {
       return {
@@ -103,6 +121,11 @@
         mosaicProjectId: null,
         
         showOverlay: false, //To be used if loading from mosaic which requires an auto show of the overlay on load
+        headersList: null,
+        fileExt: null,
+        projectId: null,
+        mosaicFileName: null,
+        fileText: null,
       }
     },
     async mounted() {
@@ -133,25 +156,40 @@
           } else if (projectId === 1164) {
             file_id = 104480; //Mouse project file
           }
-
+          this.projectId = projectId;
           //make a new session
           let session = new MosaicSession(clientAppNum);
           session.promiseInit(source, projectId, tokenType, geneListId, file_id);
 
-          //get the file from the project
-          let fileURL = await session.promiseGetSignedUrlForFile(projectId, file_id);
-          console.log(fileURL.url);
-          //get the file from the signed url
-          try {
-            let file = session.promiseGetFileFromSignedUrl(fileURL.url);
-          } catch (error) {
-            console.log(error);
+          let files = await session.promiseGetFiles(projectId);
+          for (let file of files.data) {
+            if (file.id == file_id) {
+              this.mosaicFileName = file.name;
+            }
           }
 
-          //get the extension of the file
-          //parse the file headers
-          //open dialog to select the file headers
+          //get the file from the project
+          let fileURL = await session.promiseGetSignedUrlForFile(projectId, file_id);
+          //get the file from the signed url
+          let fetchObj = await fetchFileOnline(fileURL.url);
+          //get the text of the file
+          let fileText = fetchObj.text;
+          this.fileText = fileText;
           
+          //get the extension of the file
+          let fileFormat = fetchObj.format;
+          //What is returned is a bit odd I just want the "plain" or possibly "csv" part of the string
+          fileFormat = fileFormat.split('/')[1].split(';')[0];
+          this.fileExt = fileFormat;
+
+          //parse the file headers
+          let fileHeaders = parseHeaders(fileText, fileFormat);
+          //set the headers list to the parsed headers
+          this.headersList = fileHeaders;
+
+          //open dialog to select the file headers
+          this.showOverlay = true;
+
           //jump to normal data flow with the file, headers, and format
           this.populateData();
           //set to show the name of proje and file where "demo" usually is
@@ -159,6 +197,14 @@
           //Otherwise there is no mosaic token so just show the demo data and go with a normal flow
           this.populateData();
         }
+      },
+      setFileAndFormat(fileFormat) {
+        this.fileFormat = fileFormat;
+        this.selectedFile = this.fileText;
+        this.showOverlay = false;
+        this.isDemo = false;
+
+        this.populateData();
       },
       resetState(){
         this.diffGeneList = [];

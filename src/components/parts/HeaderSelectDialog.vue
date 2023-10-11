@@ -1,6 +1,19 @@
 <template>
     <v-card id="header-select-card">
-        <h4>Header Selection Dialog</h4>
+        <button 
+            @pointerenter="toggleShowCloseTip"
+            @pointerleave="toggleShowCloseTip"
+            @click="$emit('closeNoData')"
+            id="close-no-data" 
+            v-if="openedFromHomeObj">CLOSE
+            <div v-if="showCloseTip" id="close-tip">Close to use only demo data</div>       
+        </button>
+
+
+
+        <h4 v-if="!openedFromHomeObj">Header Selection Dialog</h4>
+        <h4 v-if="openedFromHomeObj">Select Headers from Mosaic File</h4>
+        <p v-if="openedFromHomeObj"><i>Mosaic file name: <b>{{ openedFromHomeObj.fileName }}</b></i></p>
 
         <div class="select-checkbox-container">
             <div class="half-width-select-container">
@@ -114,6 +127,7 @@ export default {
     props: {
         headers: Array,
         fileExt: String,
+        openedFromHomeObj: Object,
     },
     data() {
         return {
@@ -130,9 +144,13 @@ export default {
             selectedPValue: null,
             selectedFC: null,
             selectedLabel: null,
+            showCloseTip: false,
         }
     },
     methods: {
+        toggleShowCloseTip() {
+            this.showCloseTip = !this.showCloseTip
+        },
         emitClicked() {
             this.$emit('closeBtnClicked', this.fileFormat)
         },
@@ -213,6 +231,36 @@ export default {
 </script>
 
 <style scoped>
+    #close-no-data{
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 10px;
+        padding: 3px 8px;
+        border-radius: 4px;
+        background-color: #ff0000;
+        color: #f5f5f5;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    #close-no-data:hover {
+        background-color: #fd5e5e;
+    }
+
+    #close-tip{
+        position: absolute;
+        top: 32px;
+        right: 0;
+        text-align: center;
+        padding: 5px 10px;
+        border-radius: 4px;
+        border: #9d9b9b 1px solid;
+        background-color: rgba(44, 44, 44, 0.923);
+        color: white;
+        font-weight: bold;
+        width: 250px;
+    }
+
     #header-select-card {
         min-width: 40vw;
         min-height: 30vh;

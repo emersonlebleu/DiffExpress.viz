@@ -41,17 +41,6 @@ export default class MosaicSession {
         reject(error)
       })
 
-      //PROJECT
-      self.promiseGetProject(projectId)
-      .then(function(data) {
-        self.project = data;
-        return self.promiseGetFilesForProject(projectId, fileID);
-      })
-      .catch(function(error) {
-        console.log(error)
-        reject(error)
-      })
-
     })
   }
 
@@ -110,33 +99,7 @@ export default class MosaicSession {
     });
   }
 
-  promiseGetFilesForProject(project_id) {
-      let self = this;
-      return new Promise((resolve,reject) => {
-          self.getFilesForProject(project_id)
-              .done(response => {
-                  resolve(response);
-              })
-              .fail(error => {
-                let errorMsg = self.getErrorMessage(error);
-                console.log("Unable to get files for project " + project_id + " error: " + errorMsg);
-                reject(errorMsg);
-              })
-      })
-  }
-
-  getFilesForProject(project_id) {
-      let self = this;
-      return $.ajax({
-          url: self.api +  '/projects/' + project_id + '/files',
-          type: 'GET',
-          headers: {
-              Authorization: self.authorizationString,
-              accept: 'application/json',
-          }
-      });
-  }
-
+  //Used when file type is working
   promiseGetFileForDiffExp(project_id) {
     let self = this;
     return new Promise((resolve,reject) => {
@@ -151,11 +114,39 @@ export default class MosaicSession {
       })
     })
   }
-  //Not used yet until we have a file type to grab
+  //Used when file type is working
   getFileForDiffExp(project_id) {
     let self = this;
     return $.ajax({
       url: self.api +  '/projects/' + project_id + '/files' + '?file_types=' + self.fileTypes,
+      type: 'GET',
+      accept: 'application/json',
+      headers: {
+        Authorization: self.authorizationString,
+      }
+    });
+  }
+
+  //get files
+  promiseGetFiles(project_id) {
+    let self = this;
+    return new Promise((resolve,reject) => {
+      self.getFiles(project_id)
+      .done(response => {
+        resolve(response);
+      })
+      .fail(error => {
+        let errorMsg = self.getErrorMessage(error);
+        console.log("Unable to get files for project " + project_id + " error: " + errorMsg);
+        reject(errorMsg);
+      })
+    })
+  }
+
+  getFiles(project_id) {
+    let self = this;
+    return $.ajax({
+      url: self.api +  '/projects/' + project_id + '/files',
       type: 'GET',
       accept: 'application/json',
       headers: {
@@ -208,20 +199,6 @@ export default class MosaicSession {
     })
   }
   
-  getFileFromSignedUrl(signedUrl) {
-    let self = this;
-    let proxyURL = 'https://cddrc.utah.edu/api/i/client-applications/igv/proxy/'; //proxy url
-    let builtURL = self.api + '/files/serve?file_url=' + encodeURIComponent(signedUrl); //the serve endpoint
-    return $.ajax({
-      url: builtURL, 
-      type: 'GET',
-      headers: {
-        Authorization: self.authorizationString,
-        accept: 'application/json',
-      }
-    });
-  }
-
   //-------------------------------------Get Gene Set: related if we want to load a set of genes from mosaic to look for/preselect in the gene list
   promiseGetGeneSet(projectId, geneSetId) {
     let self = this;

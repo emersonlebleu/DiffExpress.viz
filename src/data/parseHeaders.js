@@ -10,6 +10,9 @@ export default function parseHeaders(dataText, fileExtension) {
         case 'txt':
             delimeter = '\t';
             break;
+        case 'plain':
+            delimeter = '\t';
+            break;
         default:
             delimeter = '\t';
     }
