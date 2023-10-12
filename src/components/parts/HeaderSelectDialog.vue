@@ -5,14 +5,14 @@
             @pointerleave="toggleShowCloseTip"
             @click="$emit('closeNoData')"
             id="close-no-data" 
-            v-if="openedFromHomeObj">CLOSE
+            v-if="openedFromHomeObj">X
             <div v-if="showCloseTip" id="close-tip">Close to use only demo data</div>       
         </button>
 
 
 
-        <h4 v-if="!openedFromHomeObj">Header Selection Dialog</h4>
-        <h4 v-if="openedFromHomeObj">Select Headers from Mosaic File</h4>
+        <h4 v-if="!openedFromHomeObj" class="select-dialog-title">Header Selection Dialog</h4>
+        <h4 v-if="openedFromHomeObj" class="select-dialog-title">Select Headers from Mosaic File</h4>
         <p v-if="openedFromHomeObj"><i>Mosaic file name: <b>{{ openedFromHomeObj.fileName }}</b></i></p>
 
         <div class="select-checkbox-container">
@@ -117,6 +117,9 @@
                 </div>  
             </div>
         </div>
+
+        <div id="mosaic-gene-set-div" v-if="openedFromHomeObj && openedFromHomeObj.mosaicGeneList"><b>Mosaic Gene Set:</b>
+            <p>{{ openedFromHomeObj.mosaicGeneList }}</p></div>
         <v-btn id="done-btn" @click="emitClicked" :disabled="!fileFormat.pValue || !fileFormat.foldChange || !fileFormat.labelColumn ? true : false">DONE</v-btn>
     </v-card>
 </template>
@@ -236,7 +239,7 @@ export default {
         top: 0;
         right: 0;
         margin: 10px;
-        padding: 3px 8px;
+        padding: 2px 8px;
         border-radius: 4px;
         background-color: #ff0000;
         color: #f5f5f5;
@@ -257,7 +260,7 @@ export default {
         border: #9d9b9b 1px solid;
         background-color: rgba(44, 44, 44, 0.923);
         color: white;
-        font-weight: bold;
+        font-size: 1em;
         width: 250px;
     }
 
@@ -275,6 +278,24 @@ export default {
         justify-content: center;
         align-content: center;
         flex-wrap: wrap;
+    }
+
+    .select-dialog-title {
+        max-width: 80%;
+        font-size: 1.2em;
+        font-weight: bolder;
+    }
+
+    #mosaic-gene-set-div {
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 3px;
+        font-size: .75em;
+        background-color: #e7e7e7;
+        text-align: center;
+    }
+    #mosaic-gene-set-div p {
+        margin: 0;
     }
 
     #header-select-card .header-chip {

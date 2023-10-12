@@ -4,11 +4,11 @@
         scroll-strategy="block"
         class="align-center justify-center"
         v-model="showOverlay"
-        v-if="headersList && fileExt">
+        v-if="headersList && mosaicFileExt">
         <HeaderSelectDialog
-          :openedFromHomeObj="{isFromHome: true, projectId: projectId, fileName: mosaicFileName}"
+          :openedFromHomeObj="{isFromHome: true, projectId: mosaicProjectId, fileName: mosaicFileName, mosaicGeneList: mosaicGeneList}"
           :headers="headersList"
-          :fileExt="fileExt"
+          :fileExt="mosaicFileExt"
           @closeBtnClicked="setFileAndFormat"
           @closeNoData="showOverlay = !showOverlay"></HeaderSelectDialog>
       </v-overlay>
@@ -115,17 +115,16 @@
         fileFormat: {},
         hardFilterFC: false,
 
-        urlParams: null,
+        mosaicUrlParams: null,
         mosaicLink: null, 
         mosaicGeneList: null,
-        mosaicProjectId: null,
-        
-        showOverlay: false, //To be used if loading from mosaic which requires an auto show of the overlay on load
-        headersList: null,
-        fileExt: null,
-        projectId: null,
         mosaicFileName: null,
-        fileText: null,
+        mosaicFileExt: null,
+        mosaicProjectId: null,
+        mosaicFileText: null,
+
+        headersList: null,
+        showOverlay: false, //To be used if loading from mosaic which requires an auto show of the overlay on load
       }
     },
     async mounted() {
@@ -133,9 +132,9 @@
     },
     created(){
       //grab the url params and store the token in local storage
-      this.urlParams = new URLSearchParams(window.location.search);
-      if (this.urlParams.get('access_token')){
-        localStorage.setItem('mosaic-iobio-tkn', this.urlParams.get('access_token'));
+      this.mosaicUrlParams = new URLSearchParams(window.location.search);
+      if (this.mosaicUrlParams.get('access_token')){
+        localStorage.setItem('mosaic-iobio-tkn', this.mosaicUrlParams.get('access_token'));
       } else {
         localStorage.setItem('mosaic-iobio-tkn', '');
       }
@@ -144,67 +143,62 @@
       async init() {
         if (localStorage.getItem('mosaic-iobio-tkn') && localStorage.getItem('mosaic-iobio-tkn').length > 0) {
           //Get all the parameters from the url
-          let projectId = Number(this.urlParams.get('project_id'));
-          let geneListId = this.urlParams.get('gene_list');
-          let tokenType = this.urlParams.get('token_type');
-          let source = this.urlParams.get('source');
+          this.mosaicProjectId = Number(this.mosaicUrlParams.get('project_id'));
+
+          let geneListId = this.mosaicUrlParams.get('gene_set_id');
+
+          let tokenType = this.mosaicUrlParams.get('token_type');
+          let source = this.mosaicUrlParams.get('source');
           let file_id = null;
 
-          let clientAppNum = this.urlParams.get('client_application_id');
-          if (projectId === 1047) {
+          let clientAppNum = this.mosaicUrlParams.get('client_application_id');
+          if (this.mosaicProjectId === 1047) {
             file_id = 102877; //Fish project file
-          } else if (projectId === 1164) {
+          } else if (this.mosaicProjectId === 1164) {
             file_id = 104480; //Mouse project file
           }
-          this.projectId = projectId;
-          //make a new session
-          let session = new MosaicSession(clientAppNum);
-          session.promiseInit(source, projectId, tokenType, geneListId, file_id);
 
-          let files = await session.promiseGetFiles(projectId);
+          //make a new session to use methods from the mosaic session class
+          let session = new MosaicSession(clientAppNum);
+          session.promiseInit(source, this.mosaicProjectId, tokenType, geneListId, file_id);
+
+          let files = await session.promiseGetFiles(this.mosaicProjectId); //Get the files so that we can pull the name of the file that is being used
           for (let file of files.data) {
             if (file.id == file_id) {
-              this.mosaicFileName = file.name;
+              this.mosaicFileName = file.name; //Assign the file name to the mosaicFileName variable
             }
           }
 
-          //get the file from the project
-          let fileURL = await session.promiseGetSignedUrlForFile(projectId, file_id);
-          //get the file from the signed url
-          let fetchObj = await fetchFileOnline(fileURL.url);
-          //get the text of the file
-          let fileText = fetchObj.text;
-          this.fileText = fileText;
+          //if there is a gene set id then get the gene list
+          if (geneListId) {
+            let geneListObj = await session.promiseGetGeneSet(this.mosaicProjectId, geneListId);
+            this.mosaicGeneList = geneListObj.genes;
+          }
+
+          let fileURL = await session.promiseGetSignedUrlForFile(this.mosaicProjectId, file_id); //get the file from the project
+          let fetchObj = await fetchFileOnline(fileURL.url); //get the file from the signed url
           
-          //get the extension of the file
-          let fileFormat = fetchObj.format;
-          //What is returned is a bit odd I just want the "plain" or possibly "csv" part of the string
-          fileFormat = fileFormat.split('/')[1].split(';')[0];
-          this.fileExt = fileFormat;
+          this.mosaicFileText = fetchObj.text; //get the text of the file
+          this.mosaicFileExt = fetchObj.format.split('/')[1].split(';')[0]; //get the extension; just want the "plain" or possibly "csv" part of the string
 
-          //parse the file headers
-          let fileHeaders = parseHeaders(fileText, fileFormat);
-          //set the headers list to the parsed headers
-          this.headersList = fileHeaders;
+          this.headersList = parseHeaders(this.mosaicFileText, this.mosaicFileExt); //set the headers list to the parsed headers
 
-          //open dialog to select the file headers
-          this.showOverlay = true;
+          this.showOverlay = true; //open dialog to select the file headers
 
-          //jump to normal data flow with the file, headers, and format
-          this.populateData();
-          //set to show the name of proje and file where "demo" usually is
+          this.populateData(); //jump to normal data flow with the file, headers, and format
+
+          //set to show the name of proj. and file where "demo" usually is
         } else {
-          //Otherwise there is no mosaic token so just show the demo data and go with a normal flow
-          this.populateData();
+          this.populateData(); //Otherwise there is no mosaic token so just show the demo data and go with a normal flow
         }
       },
-      setFileAndFormat(fileFormat) {
+      async setFileAndFormat(fileFormat) {
         this.fileFormat = fileFormat;
-        this.selectedFile = this.fileText;
+        this.selectedFile = this.mosaicFileText;
         this.showOverlay = false;
         this.isDemo = false;
-
-        this.populateData();
+        await this.populateData(); //wait for this to finish before changing the mosaic list to null; we need the list to populate the selected genes before we set it to null
+        this.mosaicGeneList = null;
       },
       resetState(){
         this.diffGeneList = [];
@@ -248,11 +242,7 @@
         this.hmGeneNames = this.getHmGeneNames(this.hmGenes);
         this.hmSummaryData = this.getHmSummaryData(this.hmGenes, this.hmGroupNames);
       },
-      updateSelectedGenes(n) {
-        //n here is the new selection object from the options menu
-        this.optionsSelectedGenes = n;
-      },
-      syncSelectedGenes(n, source) {
+      syncSelectedGenes(n, source=null) {
         if (source === 'volcano') {
           this.updateHmSelect(n)
           this.volcSelectedGenes = n;
@@ -335,26 +325,37 @@
 
           [this.diffGeneList, this.summaryData, this.hmGroupNames, this.numOfGenes] = outputData;
 
-          this.hmGeneNames = this.getHmGeneNames(this.hmGenes);
-          this.hmSummaryData = this.getHmSummaryData(this.hmGenes, this.hmGroupNames);
+          //If there is a mosaic gene list then we want to have the selected genes be the genes from the mosaic gene list
+          if (this.mosaicGeneList && !this.isDemo) { //should only ever be true the first time we populate after a mosaic file is selected
+            let newVolcSelectedGenes = [];
+            for (let geneName of this.mosaicGeneList) {
+              let geneObj = this.diffGeneList.find(obj => obj.geneName === geneName);
+              if (geneObj) {
+                newVolcSelectedGenes.push(geneObj);
+              }
+            }
+            this.volcSelectedGenes = newVolcSelectedGenes;
+            this.optionsSelectedGenes = this.volcSelectedGenes;
+          } else {
+            //Ensure that the volcSelec genes are still in the data if this is running this is not the first time we are populating data or a mosaic file was not selected
+            let newVolcSelectedGenes = [];
+            for (let diffGene of this.volcSelectedGenes) {
+              let geneName = diffGene.geneName;
+              let geneObj = this.diffGeneList.find(obj => obj.geneName === geneName);
+              if (geneObj) {
+                newVolcSelectedGenes.push(geneObj);
+              }
+            }
+            this.volcSelectedGenes = newVolcSelectedGenes;
+            this.optionsSelectedGenes = this.volcSelectedGenes;
+          }
+
+          this.updateHmSelect(this.volcSelectedGenes);
 
           //If there are no group names then the heatmap options should be removed
           if (this.hmGroupNames.length == 0) {
             this.subChartSelection = 'None';
           }
-
-          //VolcSelect & OptionsSelect should be the same
-          //Ensure that the volcSelec genes are still in the data
-          let newVolcSelectedGenes = [];
-          for (let diffGene of this.volcSelectedGenes) {
-            let geneName = diffGene.geneName;
-            let geneObj = this.diffGeneList.find(obj => obj.geneName === geneName);
-            if (geneObj) {
-              newVolcSelectedGenes.push(geneObj);
-            }
-          }
-          this.volcSelectedGenes = newVolcSelectedGenes;
-          this.optionsSelectedGenes = this.volcSelectedGenes;
 
         } catch (error) {
           console.error('Error fetching data:', error);

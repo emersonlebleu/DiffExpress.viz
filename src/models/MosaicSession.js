@@ -202,7 +202,7 @@ export default class MosaicSession {
   //-------------------------------------Get Gene Set: related if we want to load a set of genes from mosaic to look for/preselect in the gene list
   promiseGetGeneSet(projectId, geneSetId) {
     let self = this;
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
       self.getGeneSet(projectId, geneSetId)
       .done(response => {
         resolve(response)
@@ -217,7 +217,7 @@ export default class MosaicSession {
 
   }
 
-  async getGeneSet(projectId, geneSetId) {
+  getGeneSet(projectId, geneSetId) {
     let self = this;
 
     return $.ajax({
