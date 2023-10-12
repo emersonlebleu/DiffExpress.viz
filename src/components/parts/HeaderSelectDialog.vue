@@ -6,7 +6,14 @@
             @click="$emit('closeNoData')"
             id="close-no-data" 
             v-if="openedFromHomeObj">X
-            <div v-if="showCloseTip" id="close-tip">Close to use only demo data</div>       
+            <v-tooltip
+                max-width="250"
+                id="group-column-instructions"
+                activator="parent"
+                location="bottom">
+                <br>
+                <p style="padding-left: 10px;">! ! Closing now will ignore mosaic options and load demo data only ! !</p>
+            </v-tooltip>
         </button>
 
 
@@ -71,8 +78,9 @@
             </div>
         </div>
 
-        <div class="half-width-container">
-            <v-select
+        <div class="full-width-container">
+            <div class="select-container">
+                <v-select
                 clearable
                 chips
                 id="labelColumn"
@@ -82,6 +90,20 @@
                 label="Select label / name column"
                 @update:modelValue="labelColumnSelected"
                 @click:clear="labelCleared"></v-select>
+            </div>
+            <div v-if="openedFromHomeObj && openedFromHomeObj.mosaicGeneList" class="tip-container">
+                <div id="label-tip">
+                    ?
+                    <v-tooltip
+                        max-width="250"
+                        id="group-column-instructions"
+                        activator="parent"
+                        location="bottom">
+                        <br>
+                        <p style="padding-left: 10px;">If there is a mosaic gene list your label column values must match the gene set labels.</p>
+                    </v-tooltip>
+                </div>  
+            </div>
         </div>
 
         <div class="full-width-container">
@@ -109,10 +131,8 @@
                         activator="parent"
                         location="bottom">
                         <br>
-                        <ul>
-                            <li>If your data has time point or group labels, select those column names here.</li>
-                            <li>These labels will be used to identify the groups for the heatmap y-axis.</li>
-                        </ul>
+                        <p style="padding-left: 10px;">If your data has time point or group labels, select those column names here.</p>
+                        <p style="padding-left: 10px;">These labels will be used to identify the groups for the heatmap y-axis.</p>
                     </v-tooltip>
                 </div>  
             </div>
@@ -328,6 +348,18 @@ export default {
     }
 
     #group-tips {
+        width: 1.5em;
+        height: 1.5em;
+        margin-left: 5px;
+        text-align: center;
+        background-color: #f5f5f5;
+        border-radius: 50%;
+        border: 1px solid #d2cdcd;
+        font-size: 1em;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    #label-tip {
         width: 1.5em;
         height: 1.5em;
         margin-left: 5px;
