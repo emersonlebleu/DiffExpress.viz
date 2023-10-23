@@ -62,6 +62,7 @@
       :hardFilterFoldChange="hardFilterFC"
       :hmGroupNamesPresent="hmGroupNames.length > 0"
       :showOverlayFromParent="showOverlay"
+      :mosaicFileName="mosaicFileName"
       @newfileSelected="changeData"
       @clearSelection="clearSelection"
       @newPFilter="filterPVal"
@@ -152,22 +153,14 @@
           let file_id = null;
 
           let clientAppNum = this.mosaicUrlParams.get('client_application_id');
-          if (this.mosaicProjectId === 1047) {
-            file_id = 102877; //Fish project file
-          } else if (this.mosaicProjectId === 1164) {
-            file_id = 104480; //Mouse project file
-          }
 
           //make a new session to use methods from the mosaic session class
           let session = new MosaicSession(clientAppNum);
           session.promiseInit(source, this.mosaicProjectId, tokenType, geneListId, file_id);
 
-          let files = await session.promiseGetFiles(this.mosaicProjectId); //Get the files so that we can pull the name of the file that is being used
-          for (let file of files.data) {
-            if (file.id == file_id) {
-              this.mosaicFileName = file.name; //Assign the file name to the mosaicFileName variable
-            }
-          }
+          let fileInformation = await session.promiseGetFileForDiffExp(this.mosaicProjectId); //Get the file so that we can pull the name, id
+          file_id = fileInformation["data"][0].id; //Assign the file id to the file_id variable
+          this.mosaicFileName = fileInformation["data"][0].name; //Assign the file name to the mosaicFileName variable
 
           //if there is a gene set id then get the gene list
           if (geneListId) {
@@ -219,6 +212,20 @@
         this.numOfGenes = 0;
         this.fileFormat = {};
         this.hardFilterFC = false;
+
+        this.mosaicUrlParams = null;
+        this.mosaicLink = null;
+        this.mosaicGeneList = null;
+        this.mosaicFileName = null;
+        this.mosaicFileExt = null;
+        this.mosaicProjectId = null;
+        this.mosaicFileText = null;
+
+        this.headersList = null;
+      },
+      closeNoData() {
+        this.resetState();
+        this.showOverlay = false;
       },
       changeSubChart(subChart) {
         this.subChartSelection = subChart;

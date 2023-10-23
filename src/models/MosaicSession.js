@@ -12,7 +12,7 @@ export default class MosaicSession {
     this.project = null;
     this.geneSet = null;
 
-    this.fileTypes = "diffExp"; //NOTE: will be whatever it is in mosaic in terms of file name; api indicates this should be a list of strings but there is only one type we would like to get
+    this.fileTypes = 'deseq2'; //NOTE: will be whatever it is in mosaic in terms of file name; api indicates this should be a list of strings but there is only one type we would like to get
 
     this.theFile = null;
     this.theFileType = null;
@@ -118,7 +118,7 @@ export default class MosaicSession {
   getFileForDiffExp(project_id) {
     let self = this;
     return $.ajax({
-      url: self.api +  '/projects/' + project_id + '/files' + '?file_types=' + self.fileTypes,
+      url: self.api +  '/projects/' + project_id + '/files' + '?file_types%5B%5D=' + encodeURIComponent(self.fileTypes),
       type: 'GET',
       accept: 'application/json',
       headers: {

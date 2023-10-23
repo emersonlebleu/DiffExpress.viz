@@ -5,6 +5,10 @@
         <p class="label demo">*Showing Demo Data</p>     
       </div>
 
+      <div v-if="mosaicFileName != null && !isDemo" class="label-input-container mosaic">
+        <p class="label mosaic">{{ mosaicFileName }}</p>
+      </div>
+
       <v-expansion-panels v-model="openPanels" multiple>
         <v-expansion-panel>
           <v-expansion-panel-title color="rgb(19, 52, 102)">Select File</v-expansion-panel-title>
@@ -214,6 +218,7 @@
       hardFilterFoldChange: Boolean,
       hmGroupNamesPresent: Boolean,
       showOverlayFromParent: Boolean,
+      mosaicFileName: String,
     },
     data() {
       return {
@@ -496,7 +501,21 @@
       padding: 10px 0px 10px 0px;
       font-weight: bold;
     }
+    .label.mosaic {
+      border-radius: 3px;
+      background-color: rgb(72, 103, 150); 
+      border: 1px rgb(48, 8, 8) dashed;
+      padding: 10px 0px 10px 0px;
+      font-weight: bold;
+    }
+
     .label-input-container.demo {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      opacity: 0.85;
+    }
+    .label-input-container.mosaic {
       position: sticky;
       top: 0;
       z-index: 3;
