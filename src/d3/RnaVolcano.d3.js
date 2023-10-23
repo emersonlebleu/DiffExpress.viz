@@ -537,11 +537,15 @@ export default function RnaVolcanoD3() {
         }
 
         function showZoomTip() {
-            d3.select("#zoom-tip").style("display", "block");
+            let tip= d3.select("#zoom-tip");
+            //change the text of the tooltip to the default
+            tip.html("<b>Zoom/Pan ON</b> <br> <i>&lt;shift&gt; to toggle OFF</i>")
         }
 
         function hideZoomTip() {
-            d3.select("#zoom-tip").style("display", "none");
+            let tip = d3.select("#zoom-tip");
+            //change the text of the tooltip to the default
+            tip.html("<b>Zoom/Pan OFF</b> <br> <i>&lt;shift&gt; to toggle ON</i>")
         }
 
         function reset() {

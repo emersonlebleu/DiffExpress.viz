@@ -2,7 +2,11 @@
     <div class="card-tool-bar">
       
       <div v-if="isDemo" class="label-input-container demo">
-        <p class="label demo">Demo</p>     
+        <p class="label demo">*Showing Demo Data</p>     
+      </div>
+
+      <div v-if="mosaicFileName != null && !isDemo" class="label-input-container mosaic">
+        <p class="label mosaic">{{ mosaicFileName }}</p>
       </div>
 
       <v-expansion-panels v-model="openPanels" multiple>
@@ -15,10 +19,10 @@
                   id="file-input-field"
                   v-model="file"
                   persistent-hint
-                  hint=".txt, .csv, .xls, xlsx, or xlsm file."
+                  hint=".txt *tab separated, .tsv, or .csv"
                   density="compact" 
                   variant="solo-filled" 
-                  clearable accept=".txt, .csv, .xls, xlsx, xlsm" 
+                  clearable accept=".txt, .csv, .tsv" 
                   label="Select data file..."
                   @change="processFile"
                   @click:clear="clearFile">
@@ -33,6 +37,7 @@
             v-model="showOverlay">
             <HeaderSelectDialog
               :headers="headers"
+              :fileExt="fileExt"
               @closeBtnClicked="emitFileAndFormat"></HeaderSelectDialog>
           </v-overlay>
         </v-expansion-panel>
@@ -212,6 +217,8 @@
       subChartSelect: String,
       hardFilterFoldChange: Boolean,
       hmGroupNamesPresent: Boolean,
+      showOverlayFromParent: Boolean,
+      mosaicFileName: String,
     },
     data() {
       return {
@@ -227,7 +234,8 @@
         showLabels: this.showSelectedLabels || true,
         file: null,
         fileText: null,
-        showOverlay: false,
+        fileExt: null,
+        showOverlay: this.showOverlayFromParent,
         headers: [],
         cutPasteGeneList: '',
         hardFilterFC: this.hardFilterFoldChange || false,
@@ -311,11 +319,13 @@
       },
       async processFile(event){
         let file = event.target.files[0];
+        let ext = file.name.split('.').pop();
+        this.fileExt = ext;
 
         if (file){
           let theFile = await readFile(file);
           this.showOverlay = true;
-          this.headers = parseHeaders(theFile);
+          this.headers = parseHeaders(theFile, this.fileExt);
           this.fileText = theFile;
         }
       },
@@ -453,6 +463,9 @@
       border: #ced4da 1px solid;
       border-radius: 3px;
       margin: 3px 0px 3px 0px;
+      cursor: pointer;
+      -webkit-appearance: menulist;
+      appearance: menulist;
     }
 
     #filter-selection-dropdown .data-selector.checkbox {
@@ -488,7 +501,21 @@
       padding: 10px 0px 10px 0px;
       font-weight: bold;
     }
+    .label.mosaic {
+      border-radius: 3px;
+      background-color: rgb(72, 103, 150); 
+      border: 1px rgb(48, 8, 8) dashed;
+      padding: 10px 0px 10px 0px;
+      font-weight: bold;
+    }
+
     .label-input-container.demo {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      opacity: 0.85;
+    }
+    .label-input-container.mosaic {
       position: sticky;
       top: 0;
       z-index: 3;

@@ -1,6 +1,26 @@
 <template>
     <v-card id="header-select-card">
-        <h4>Header Selection Dialog</h4>
+        <button 
+            @pointerenter="toggleShowCloseTip"
+            @pointerleave="toggleShowCloseTip"
+            @click="$emit('closeNoData')"
+            id="close-no-data" 
+            v-if="openedFromHomeObj">X
+            <v-tooltip
+                max-width="250"
+                id="group-column-instructions"
+                activator="parent"
+                location="bottom">
+                <br>
+                <p style="padding-left: 10px;">! ! Closing now will ignore mosaic options and load demo data only ! !</p>
+            </v-tooltip>
+        </button>
+
+
+
+        <h4 v-if="!openedFromHomeObj" class="select-dialog-title">Header Selection Dialog</h4>
+        <h4 v-if="openedFromHomeObj" class="select-dialog-title">Select Headers from Mosaic File</h4>
+        <p v-if="openedFromHomeObj"><i>Mosaic file name: <b>{{ openedFromHomeObj.fileName }}</b></i></p>
 
         <div class="select-checkbox-container">
             <div class="half-width-select-container">
@@ -58,8 +78,9 @@
             </div>
         </div>
 
-        <div class="half-width-container">
-            <v-select
+        <div class="full-width-container">
+            <div class="select-container">
+                <v-select
                 clearable
                 chips
                 id="labelColumn"
@@ -69,6 +90,20 @@
                 label="Select label / name column"
                 @update:modelValue="labelColumnSelected"
                 @click:clear="labelCleared"></v-select>
+            </div>
+            <div v-if="openedFromHomeObj && openedFromHomeObj.mosaicGeneList" class="tip-container">
+                <div id="label-tip">
+                    ?
+                    <v-tooltip
+                        max-width="250"
+                        id="group-column-instructions"
+                        activator="parent"
+                        location="bottom">
+                        <br>
+                        <p style="padding-left: 10px;">If there is a mosaic gene list your label column values must match the gene set labels.</p>
+                    </v-tooltip>
+                </div>  
+            </div>
         </div>
 
         <div class="full-width-container">
@@ -96,14 +131,15 @@
                         activator="parent"
                         location="bottom">
                         <br>
-                        <ul>
-                            <li>If your data has time point or group labels, select those column names here.</li>
-                            <li>These labels will be used to identify the groups for the heatmap y-axis.</li>
-                        </ul>
+                        <p style="padding-left: 10px;">If your data has time point or group labels, select those column names here.</p>
+                        <p style="padding-left: 10px;">These labels will be used to identify the groups for the heatmap y-axis.</p>
                     </v-tooltip>
                 </div>  
             </div>
         </div>
+
+        <div id="mosaic-gene-set-div" v-if="openedFromHomeObj && openedFromHomeObj.mosaicGeneList"><b>Mosaic Gene Set:</b>
+            <p>{{ openedFromHomeObj.mosaicGeneList }}</p></div>
         <v-btn id="done-btn" @click="emitClicked" :disabled="!fileFormat.pValue || !fileFormat.foldChange || !fileFormat.labelColumn ? true : false">DONE</v-btn>
     </v-card>
 </template>
@@ -113,6 +149,8 @@ export default {
     name: 'HeaderSelectDialog',
     props: {
         headers: Array,
+        fileExt: String,
+        openedFromHomeObj: Object,
     },
     data() {
         return {
@@ -123,14 +161,19 @@ export default {
                 foldChangeLog2: true,
                 labelColumn: null,
                 groups: [],
+                fileExtension: this.fileExt,
             },
             internalHeaders: this.headers.sort(),
             selectedPValue: null,
             selectedFC: null,
             selectedLabel: null,
+            showCloseTip: false,
         }
     },
     methods: {
+        toggleShowCloseTip() {
+            this.showCloseTip = !this.showCloseTip
+        },
         emitClicked() {
             this.$emit('closeBtnClicked', this.fileFormat)
         },
@@ -211,6 +254,36 @@ export default {
 </script>
 
 <style scoped>
+    #close-no-data{
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 10px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        background-color: #ff0000;
+        color: #f5f5f5;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    #close-no-data:hover {
+        background-color: #fd5e5e;
+    }
+
+    #close-tip{
+        position: absolute;
+        top: 32px;
+        right: 0;
+        text-align: center;
+        padding: 5px 10px;
+        border-radius: 4px;
+        border: #9d9b9b 1px solid;
+        background-color: rgba(44, 44, 44, 0.923);
+        color: white;
+        font-size: 1em;
+        width: 250px;
+    }
+
     #header-select-card {
         min-width: 40vw;
         min-height: 30vh;
@@ -225,6 +298,24 @@ export default {
         justify-content: center;
         align-content: center;
         flex-wrap: wrap;
+    }
+
+    .select-dialog-title {
+        max-width: 80%;
+        font-size: 1.2em;
+        font-weight: bolder;
+    }
+
+    #mosaic-gene-set-div {
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 3px;
+        font-size: .75em;
+        background-color: #e7e7e7;
+        text-align: center;
+    }
+    #mosaic-gene-set-div p {
+        margin: 0;
     }
 
     #header-select-card .header-chip {
@@ -257,6 +348,18 @@ export default {
     }
 
     #group-tips {
+        width: 1.5em;
+        height: 1.5em;
+        margin-left: 5px;
+        text-align: center;
+        background-color: #f5f5f5;
+        border-radius: 50%;
+        border: 1px solid #d2cdcd;
+        font-size: 1em;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    #label-tip {
         width: 1.5em;
         height: 1.5em;
         margin-left: 5px;
