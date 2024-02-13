@@ -191,7 +191,7 @@
         this.showOverlay = false;
         this.isDemo = false;
         await this.populateData(); //wait for this to finish before changing the mosaic list to null; we need the list to populate the selected genes before we set it to null
-        this.mosaicGeneList = null;
+        // this.mosaicGeneList = null;
       },
       resetState(){
         this.diffGeneList = [];
